@@ -240,6 +240,13 @@ public class AppraisalController {
             return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.OK);
         }
     }
+
+    @RequestMapping(value = "/{id}/completeAppraisal", method = RequestMethod.POST)
+    public void completeAppraisal(@PathVariable("id") String id) {
+        Appraisal appraisal = repository.findById(id).orElse(null);
+        appraisal.setStatus(AppraisalStatusType.COMPLETE);
+        repository.save(appraisal);
+    }
 }
 
 @Data
