@@ -5,6 +5,7 @@ import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
 import com.westernacher.internal.feedback.domain.Appraisal;
+import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.domain.Person;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
@@ -51,7 +52,7 @@ public class NotificationController {
     public String sendByCycleId(@PathVariable("cycleId") String cycleId,
                                 @Valid @RequestBody MailResource resource) {
         try {
-            List<Appraisal> appraisals = appraisalRepository.findAllByCycleId(cycleId);
+            List<Appraisal> appraisals = appraisalRepository.findAllByCycleIdAndStatus(cycleId, AppraisalStatusType.SELF_REVIEW.name());
 
             List<String> emailIdList = new ArrayList<>();
             appraisals.stream().forEach(appraisal -> {
@@ -74,7 +75,6 @@ public class NotificationController {
 
             helper.setFrom(from);
             helper.setBcc(InternetAddress.parse(StringUtils.join(toList, ',')));
-            helper.setTo(InternetAddress.parse(StringUtils.join(toList, ',')));
             helper.setSubject(subject);
             helper.setText(body);
 

@@ -8,4 +8,6 @@ import java.util.List;
 public interface AppraisalRepository extends MongoRepository<Appraisal, String> {
     List<Appraisal> findAllByCycleId(String cycleId);
     Appraisal findOneByCycleIdAndUserId(String cycleId, String userId);
+    List<Appraisal> findAllByCycleIdAndStatus(String cycleId, String status);
+
 }
