@@ -247,11 +247,46 @@ public class AppraisalController {
         appraisal.setStatus(AppraisalStatusType.COMPLETE);
         repository.save(appraisal);
     }
+
+    @RequestMapping(value = "/getStatusCount", method = RequestMethod.GET)
+    public StatusResource getAllByCycle () {
+        List<Appraisal> appraisals = repository.findAll();
+        int selfReview=0;
+        int headReview=0;
+        int scheduled=0;
+        int complete=0;
+        for (Appraisal appraisal:appraisals) {
+            if (appraisal.getStatus()==AppraisalStatusType.SELF_REVIEW) {
+                selfReview++;
+            }else if (appraisal.getStatus()==AppraisalStatusType.HEAD_REVIEW) {
+                headReview++;
+            }else if (appraisal.getStatus()==AppraisalStatusType.SCHEDULED) {
+                scheduled++;
+            }else if (appraisal.getStatus()==AppraisalStatusType.COMPLETE) {
+                complete++;
+            }
+        }
+        StatusResource resource = new StatusResource();
+        resource.setSelfReview(String.valueOf(selfReview));
+        resource.setHeadReview(String.valueOf(headReview));
+        resource.setScheduled(String.valueOf(scheduled));
+        resource.setComplete(String.valueOf(complete));
+
+        return resource;
+    }
 }
 
 @Data
 class ErrorResource {
     List<String> sectionOneError = new ArrayList<>();
+}
+
+@Data
+class StatusResource {
+    String selfReview;
+    String headReview;
+    String scheduled;
+    String complete;
 }
 
 
