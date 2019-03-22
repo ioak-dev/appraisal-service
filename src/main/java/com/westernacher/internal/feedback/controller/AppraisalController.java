@@ -1,6 +1,7 @@
 package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.*;
+import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.service.AppraisalService;
 import lombok.Data;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,9 @@ public class AppraisalController {
 
     @Autowired
     private AppraisalRepository repository;
+
+    @Autowired
+    private AppraisalCycleRepository appraisalCycleRepository;
 
     @Autowired
     private AppraisalService service;
@@ -59,6 +64,16 @@ public class AppraisalController {
                                 @RequestBody List<SubjectiveResponse> sectiontwo) {
         Appraisal appraisal = repository.findOneByCycleIdAndUserId(id, userId);
         appraisal.setSectiontwoResponse(sectiontwo);
+
+        if (appraisal.getSectiontwoResponse()!=null) {
+            List<SubjectiveResponse> nonEmptySectiontwoResponse= appraisal.getSectiontwoResponse().stream().filter(subjectiveResponse ->
+                    ((subjectiveResponse.getComment()!=null && !subjectiveResponse.getComment().isEmpty())
+                            ||(subjectiveResponse.getDuration()!=null && !subjectiveResponse.getDuration().isEmpty())
+                            ||(subjectiveResponse.getTopic()!=null && !subjectiveResponse.getTopic().isEmpty())))
+                    .collect(Collectors.toList());
+
+            appraisal.setSectiontwoResponse(nonEmptySectiontwoResponse);
+        }
         repository.save(appraisal);
     }
 
@@ -72,6 +87,17 @@ public class AppraisalController {
                                   @RequestBody List<SubjectiveResponse> sectionthree) {
         Appraisal appraisal = repository.findOneByCycleIdAndUserId(id, userId);
         appraisal.setSectionthreeResponse(sectionthree);
+
+        if (appraisal.getSectionthreeResponse()!=null) {
+            List<SubjectiveResponse> nonEmptySectionthreeResponse = appraisal.getSectionthreeResponse().stream().filter(subjectiveResponse ->
+                    ((subjectiveResponse.getComment()!=null && !subjectiveResponse.getComment().isEmpty())
+                            ||(subjectiveResponse.getDuration()!=null && !subjectiveResponse.getDuration().isEmpty())
+                            ||(subjectiveResponse.getTopic()!=null && !subjectiveResponse.getTopic().isEmpty())))
+                    .collect(Collectors.toList());
+
+            appraisal.setSectionthreeResponse(nonEmptySectionthreeResponse);
+        }
+
         repository.save(appraisal);
     }
 
@@ -250,7 +276,31 @@ public class AppraisalController {
 
     @RequestMapping(value = "/getStatusCount", method = RequestMethod.GET)
     public StatusResource getAllByCycle () {
-        List<Appraisal> appraisals = repository.findAll();
+        String cycleId = null;
+
+        List<AppraisalCycle> appraisalCycles = appraisalCycleRepository.findAll();
+
+        for (AppraisalCycle appraisalCycle:appraisalCycles) {
+            if (appraisalCycle.getStatus()==AppraisalCycleStatusType.ACTIVE) {
+                cycleId = appraisalCycle.getId();
+            }
+        }
+
+        if (cycleId==null) {
+            Date date = null;
+            for (AppraisalCycle appraisalCycle:appraisalCycles) {
+                cycleId = appraisalCycle.getId();
+                date = appraisalCycle.getStartDate();
+            }
+            for (AppraisalCycle appraisalCycle:appraisalCycles) {
+                if (appraisalCycle.getStartDate().compareTo(date)>0)  {
+                    date = appraisalCycle.getStartDate();
+                    cycleId = appraisalCycle.getId();
+                }
+            }
+        }
+
+        List<Appraisal> appraisals = repository.findAllByCycleId(cycleId);
         int selfReview=0;
         int headReview=0;
         int scheduled=0;
@@ -273,6 +323,114 @@ public class AppraisalController {
         resource.setComplete(String.valueOf(complete));
 
         return resource;
+    }
+
+    @RequestMapping(value = "/{cycleName}/appraisalSectionOne", method = RequestMethod.GET)
+    public StringBuffer getAppraisalSectionOne (@PathVariable("cycleName") String cycleName) {
+        AppraisalCycle appraisalCycle = appraisalCycleRepository.findByName(cycleName);
+        List<Appraisal> appraisals = repository.findAllByCycleId(appraisalCycle.getId());
+        StringBuffer sectiononeContent = new StringBuffer();
+
+        for (Appraisal appraisal:appraisals){
+            List<ObjectiveResponseGroup> sectiononeResponses = appraisal.getSectiononeResponse();
+            for (ObjectiveResponseGroup objectiveResponseGroup:sectiononeResponses){
+                for (ObjectiveResponse objectiveResponse:objectiveResponseGroup.getResponse()) {
+                    sectiononeContent.append(objectiveResponseGroup.getGroup());
+                    sectiononeContent.append(",");
+                    sectiononeContent.append(getCommaSeparatedString(objectiveResponse));
+                    sectiononeContent.append('\n');
+                }
+            }
+        }
+
+        return sectiononeContent;
+    }
+
+    private StringBuffer getCommaSeparatedString(ObjectiveResponse objectiveResponse) {
+        StringBuffer objectiveResponseContent = new StringBuffer();
+        objectiveResponseContent.append(objectiveResponse.getCriteria());
+        objectiveResponseContent.append(",");
+        objectiveResponseContent.append(objectiveResponse.getWeightage());
+        objectiveResponseContent.append(",");
+        objectiveResponseContent.append(objectiveResponse.getSelfComment());
+        objectiveResponseContent.append(",");
+        objectiveResponseContent.append(objectiveResponse.getSelfRating());
+        objectiveResponseContent.append(",");
+        objectiveResponseContent.append(objectiveResponse.getReviewerComment());
+        objectiveResponseContent.append(",");
+        objectiveResponseContent.append(objectiveResponse.getReviewerRating());
+        return objectiveResponseContent;
+    }
+
+    @RequestMapping(value = "/{cycleName}/appraisalSectionTwo", method = RequestMethod.GET)
+    public StringBuffer getAppraisalSectionTwo (@PathVariable("cycleName") String cycleName) {
+
+        AppraisalCycle appraisalCycle = appraisalCycleRepository.findByName(cycleName);
+        List<Appraisal> appraisals = repository.findAllByCycleId(appraisalCycle.getId());
+        StringBuffer sectionTwoContent = new StringBuffer();
+
+        for (Appraisal appraisal:appraisals) {
+            List<SubjectiveResponse> sectionTwoResponses = appraisal.getSectiontwoResponse();
+
+            for (SubjectiveResponse subjectiveResponse:sectionTwoResponses){
+                sectionTwoContent.append(subjectiveResponse.getTopic());
+                sectionTwoContent.append(",");
+                sectionTwoContent.append(subjectiveResponse.getDuration());
+                sectionTwoContent.append(",");
+                sectionTwoContent.append(subjectiveResponse.getComment());
+                sectionTwoContent.append('\n');
+            }
+        }
+        return sectionTwoContent;
+    }
+
+    @RequestMapping(value = "/{cycleName}/appraisalSectionThree", method = RequestMethod.GET)
+    public StringBuffer getAppraisalSectionThree (@PathVariable("cycleName") String cycleName) {
+
+        AppraisalCycle appraisalCycle = appraisalCycleRepository.findByName(cycleName);
+        List<Appraisal> appraisals = repository.findAllByCycleId(appraisalCycle.getId());
+        StringBuffer sectionThreeContent = new StringBuffer();
+
+        for (Appraisal appraisal:appraisals) {
+            List<SubjectiveResponse> sectionThreeResponses = appraisal.getSectionthreeResponse();
+            for (SubjectiveResponse subjectiveResponse:sectionThreeResponses){
+                sectionThreeContent.append(subjectiveResponse.getTopic());
+                sectionThreeContent.append(",");
+                sectionThreeContent.append(subjectiveResponse.getDuration());
+                sectionThreeContent.append(",");
+                sectionThreeContent.append(subjectiveResponse.getComment());
+                sectionThreeContent.append('\n');
+            }
+        }
+        return sectionThreeContent;
+    }
+
+    @RequestMapping(value = "/{cycleName}/appraisalSectionFour", method = RequestMethod.GET)
+    public StringBuffer getAppraisalSectionFour (@PathVariable("cycleName") String cycleName) {
+        AppraisalCycle appraisalCycle = appraisalCycleRepository.findByName(cycleName);
+        List<Appraisal> appraisals = repository.findAllByCycleId(appraisalCycle.getId());
+        StringBuffer sectionFourContent = new StringBuffer();
+
+        for (Appraisal appraisal:appraisals) {
+            String sectionFourResponse = appraisal.getSectionfourResponse();
+            sectionFourContent.append(sectionFourResponse);
+            sectionFourContent.append('\n');
+        }
+        return sectionFourContent;
+    }
+
+    @RequestMapping(value = "/{cycleName}/appraisalSectionFive", method = RequestMethod.GET)
+    public StringBuffer getAppraisalSectionFive (@PathVariable("cycleName") String cycleName) {
+        AppraisalCycle appraisalCycle = appraisalCycleRepository.findByName(cycleName);
+        List<Appraisal> appraisals = repository.findAllByCycleId(appraisalCycle.getId());
+        StringBuffer sectionFiveContent = new StringBuffer();
+
+        for (Appraisal appraisal:appraisals) {
+            String sectionFiveResponse = appraisal.getSectionfiveResponse();
+            sectionFiveContent.append(sectionFiveResponse);
+            sectionFiveContent.append('\n');
+        }
+        return sectionFiveContent;
     }
 }
 
