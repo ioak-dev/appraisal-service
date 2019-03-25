@@ -37,7 +37,7 @@ public class PersonController {
 
     @RequestMapping(value = "/email/{email}", method = RequestMethod.GET)
     public Person getPersonByEmail (@PathVariable("email") String email) {
-        return repository.findPersonByEmail(email);
+        return repository.findPersonByEmail(email.toLowerCase());
     }
 
     @RequestMapping(method = RequestMethod.PUT)
