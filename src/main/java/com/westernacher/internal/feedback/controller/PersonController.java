@@ -47,7 +47,10 @@ public class PersonController {
 
     @RequestMapping(method = RequestMethod.POST)
     public void create (@Valid @RequestBody List<Person> persons) {
-        persons.forEach(person -> repository.save(person));
+        persons.forEach(person -> {
+            person.setEmail(person.getEmail().toLowerCase());
+            repository.save(person);
+        });
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
