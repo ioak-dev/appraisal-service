@@ -1,0 +1,856 @@
+{
+	"info": {
+		"_postman_id": "0418faf8-8fc2-1107-b7c8-82087dcfcc41",
+		"name": "Appraisal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/person [DATA LOAD]",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n\t{\n\t\"name\": \"John Doe\",\n\t\"email\": \"securedevicetwo@outlook.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Arun Selvaraj\",\n\t\"email\": \"arunkumar.selvaraj@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Shashank Mittal\",\n\t\"email\": \"shashank.mittal@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Amarendra Sahoo\",\n\t\"email\": \"amarendra.sahoo@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Manoj Victor\",\n\t\"email\": \"manoj.victor@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t}\n]"
+				},
+				"url": {
+					"raw": "localhost:8080/person",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/DON'T USE THIS (ONLY FOR PRODUCTION)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n    [\r\n        {\r\n            \"empId\": \"418\",\r\n            \"name\": \"Chandrashekar Deekonda\",\r\n            \"joiningDate\": \"2014-06-23\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"chandrashekar.deekonda@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"421\",\r\n            \"name\": \"Manish Pradhan\",\r\n            \"joiningDate\": \"2014-10-15\",\r\n            \"designation\": \"Principal Consultant\",\r\n            \"email\": \"manish.pradhan@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"415\",\r\n            \"name\": \"Sunit Kanoi\",\r\n            \"joiningDate\": \"2014-11-01\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"sunit.kanoi@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"423\",\r\n            \"name\": \"Pradipkumar Mishra\",\r\n            \"joiningDate\": \"2015-05-22\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"pradipkumar.mishra@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"424\",\r\n            \"name\": \"Deepti Trivedi\",\r\n            \"joiningDate\": \"2015-07-06\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"deepti.trivedi@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"339\",\r\n            \"name\": \"Pradeep Gollamudi\",\r\n            \"joiningDate\": \"2015-09-15\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"pradeep.gollamudi@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"426\",\r\n            \"name\": \"Mohammad Ahasanullah Mulla\",\r\n            \"joiningDate\": \"2015-09-16\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"mohammed.ahasanullah@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"429\",\r\n            \"name\": \"Varsha Baraskar\",\r\n            \"joiningDate\": \"2015-12-02\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"varsha.baraskar@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"431\",\r\n            \"name\": \"Sam Salim\",\r\n            \"joiningDate\": \"2015-12-14\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"sam.salim@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"433\",\r\n            \"name\": \"Pratap Kumar Jagdam\",\r\n            \"joiningDate\": \"2015-12-28\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"pratap.jagadam@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"436\",\r\n            \"name\": \"Muralidhar Karamballi\",\r\n            \"joiningDate\": \"2016-01-08\",\r\n            \"designation\": \"Principal Consultant\",\r\n            \"email\": \"muralidhar.karamballi@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"459\",\r\n            \"name\": \"Biplab Srimany\",\r\n            \"joiningDate\": \"2016-09-27\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"biplab.srimany@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"470\",\r\n            \"name\": \"Apan Motilal\",\r\n            \"joiningDate\": \"2016-10-24\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"apan.motilal@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"471\",\r\n            \"name\": \"Prajith Kizhakkepattu\",\r\n            \"joiningDate\": \"2016-11-02\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"prajith.kizhakkepattu@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"477\",\r\n            \"name\": \"Ponsamuel Nadar\",\r\n            \"joiningDate\": \"2016-12-07\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"ponsamuel.nadar@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"528\",\r\n            \"name\": \"Madhup Paturkar\",\r\n            \"joiningDate\": \"2016-12-19\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"madhup.paturkar@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"538\",\r\n            \"name\": \"Avichal Jain\",\r\n            \"joiningDate\": \"2017-01-08\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"avichal.jain@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"543\",\r\n            \"name\": \"Nishand  A S\",\r\n            \"joiningDate\": \"2017-01-23\",\r\n            \"designation\": \"Consultant-IT\",\r\n            \"email\": \"nishand.saliya@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"552\",\r\n            \"name\": \"Raghavendra Shenoy\",\r\n            \"joiningDate\": \"2017-03-13\",\r\n            \"designation\": \"Manager- Finance\",\r\n            \"email\": \"raghavendra.shenoy@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"564\",\r\n            \"name\": \"Vishal Modi\",\r\n            \"joiningDate\": \"2017-03-20\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"vishal.modi@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"580\",\r\n            \"name\": \"Merry George\",\r\n            \"joiningDate\": \"2017-05-02\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"merry.george@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"589\",\r\n            \"name\": \"Saurabh Deshpande\",\r\n            \"joiningDate\": \"2017-05-22\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"Saurabh.Deshpande@Westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"590\",\r\n            \"name\": \"Satyajit Mohanty\",\r\n            \"joiningDate\": \"2017-05-22\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"satyajit.mohanty@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"604\",\r\n            \"name\": \"Yashwanth Kumar S\",\r\n            \"joiningDate\": \"2017-06-12\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"yashwanth.kumar@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"605\",\r\n            \"name\": \"Srikanth Reddy Kondamadugula\",\r\n            \"joiningDate\": \"2017-06-14\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Srikanth.Kondamadugula@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"606\",\r\n            \"name\": \"Abhijit Kadam\",\r\n            \"joiningDate\": \"2017-06-28\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"abhijit.kadam@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"608\",\r\n            \"name\": \"Martin Paul\",\r\n            \"joiningDate\": \"2017-06-28\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"martin.paul@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"624\",\r\n            \"name\": \"Anusha Agrawal\",\r\n            \"joiningDate\": \"2017-07-27\",\r\n            \"designation\": \"Executive HR\",\r\n            \"email\": \"anusha.agarwal@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"619\",\r\n            \"name\": \"Deep Agrawal\",\r\n            \"joiningDate\": \"2017-08-01\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"deep.agrawal@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"622\",\r\n            \"name\": \"Ashwani k Singh\",\r\n            \"joiningDate\": \"2017-08-16\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Ashwani.Singh@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"615\",\r\n            \"name\": \"Arun Kumar Selvaraj\",\r\n            \"joiningDate\": \"2017-09-11\",\r\n            \"designation\": \"Java Lead\",\r\n            \"email\": \"arunkumar.selvaraj@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"638\",\r\n            \"name\": \"Abhishek Dey\",\r\n            \"joiningDate\": \"2017-10-16\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Abhishek.Dey@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"640\",\r\n            \"name\": \"Sachin Varghese\",\r\n            \"joiningDate\": \"2017-10-16\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Sachin.Varghese@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"641\",\r\n            \"name\": \"Rudra Narayan\",\r\n            \"joiningDate\": \"2017-10-17\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Rudra.Narayan@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"639\",\r\n            \"name\": \"Amarendra Sahoo\",\r\n            \"joiningDate\": \"2017-10-18\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Amarendra.Sahoo@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"643\",\r\n            \"name\": \"Sumit Kumar\",\r\n            \"joiningDate\": \"2017-10-30\",\r\n            \"designation\": \"Managing Consultant\",\r\n            \"email\": \"sumit.kumar@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"675\",\r\n            \"name\": \"Yogaraj Velusamy\",\r\n            \"joiningDate\": \"2017-12-13\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Yogaraj.Velusamy@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"677\",\r\n            \"name\": \"Dhananjoy Tripathy\",\r\n            \"joiningDate\": \"2017-12-18\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Dhananjoy.Tripathy@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"678\",\r\n            \"name\": \"Manisha Mazumder\",\r\n            \"joiningDate\": \"2017-12-29\",\r\n            \"designation\": \"Manager-HRD\",\r\n            \"email\": \"manisha.mazumder@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-04-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"365\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"693\",\r\n            \"name\": \"Bellona Sahu\",\r\n            \"joiningDate\": \"2018-01-22\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"bellona.sahu@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-01-22\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"434\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"697\",\r\n            \"name\": \"Ankita Wadhwa\",\r\n            \"joiningDate\": \"2018-02-05\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"ankita.wadhwa@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-02-05\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"420\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"700\",\r\n            \"name\": \"Shashank Mittal\",\r\n            \"joiningDate\": \"2018-02-14\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"shashank.mittal@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-02-14\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"411\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"701\",\r\n            \"name\": \"Irfan AB\",\r\n            \"joiningDate\": \"2018-02-27\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"irfan.ab@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-02-27\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"398\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"712\",\r\n            \"name\": \"Feroz Hussain\",\r\n            \"joiningDate\": \"2018-03-15\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"feroz.hussain@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-03-15\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"382\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"740\",\r\n            \"name\": \"Trishala Parihar \",\r\n            \"joiningDate\": \"2018-05-02\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Trishala.Parihar@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-05-02\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"334\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"727\",\r\n            \"name\": \"Ashima Banyal\",\r\n            \"joiningDate\": \"2018-05-10\",\r\n            \"designation\": \"Executive HR\",\r\n            \"email\": \"ashima.banyal@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-05-10\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"326\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"744\",\r\n            \"name\": \"Sayantan Pal\",\r\n            \"joiningDate\": \"2018-05-14\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Sayantan.Pal@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-05-14\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"322\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"741\",\r\n            \"name\": \"Tanu Shrivastava\",\r\n            \"joiningDate\": \"2018-05-17\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"tanu.shrivastava@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-05-17\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"319\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"750\",\r\n            \"name\": \"Sivarajan Sankaranarayan\",\r\n            \"joiningDate\": \"2018-05-21\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"sankar.sivarajan@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-05-21\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"315\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"752\",\r\n            \"name\": \"Suhas Lakshmikanthaiah\",\r\n            \"joiningDate\": \"2018-06-04\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"suhas.lakshmikanthaiah@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-06-04\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"301\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"759\",\r\n            \"name\": \"Anumeha Shah\",\r\n            \"joiningDate\": \"2018-06-18\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Anumeha.Shah@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-06-18\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"287\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"760\",\r\n            \"name\": \"Atanu Bandyopadhyay\",\r\n            \"joiningDate\": \"2018-06-27\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Atanu.Bandyopadhyay@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-06-27\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"278\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"765\",\r\n            \"name\": \"Shailesh Tripathi\",\r\n            \"joiningDate\": \"2018-06-27\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Shailesh.Tripathi@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-06-27\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"278\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"467\",\r\n            \"name\": \"Saravanan Mani\",\r\n            \"joiningDate\": \"2018-07-06\",\r\n            \"designation\": \"Principal Consultant\",\r\n            \"email\": \"saravanan.mani@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-07-06\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"269\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"761\",\r\n            \"name\": \"Supriya Sahu\",\r\n            \"joiningDate\": \"2018-08-01\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Supriya.Sahu@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-08-01\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"243\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"786\",\r\n            \"name\": \"Rutu Jaju\",\r\n            \"joiningDate\": \"2018-08-07\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"rutu.jaju@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-08-07\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"237\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"799\",\r\n            \"name\": \"Oritra Banerjee\",\r\n            \"joiningDate\": \"2018-10-04\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Oritra.Banerjee@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-10-04\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"179\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"814\",\r\n            \"name\": \"Ritesh Akhande\",\r\n            \"joiningDate\": \"2018-10-04\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Ritesh.Akhande@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-10-04\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"179\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"817\",\r\n            \"name\": \"Dheeraj CD\",\r\n            \"joiningDate\": \"2018-10-08\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Dheeraj.CD@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-10-08\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"175\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"815\",\r\n            \"name\": \"Atul Sharma\",\r\n            \"joiningDate\": \"2018-10-15\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Atul.sharma@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-10-15\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"168\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"832\",\r\n            \"name\": \"Bhaskar G\",\r\n            \"joiningDate\": \"2018-11-02\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Bhaskar.G@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-11-02\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"150\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"806\",\r\n            \"name\": \"Venkitachalam M\",\r\n            \"joiningDate\": \"2018-11-16\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Venkitachalam.Mahadevan@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-11-16\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"136\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"804\",\r\n            \"name\": \"Leena Bindal\",\r\n            \"joiningDate\": \"2018-11-19\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Leena.bindal@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-11-19\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"133\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"846\",\r\n            \"name\": \"Manoj Victor F\",\r\n            \"joiningDate\": \"2018-11-19\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Manoj.Victor@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-11-19\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"133\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"843\",\r\n            \"name\": \"Ramesh Natarajan\",\r\n            \"joiningDate\": \"2018-11-26\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"Ramesh.Natarajan@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-11-26\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"126\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"850\",\r\n            \"name\": \"Prathamesh Kulkarni\",\r\n            \"joiningDate\": \"2018-12-03\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"prathamesh.kulkarni@westernacher.com \",\r\n            \"lastAppraisalDate\": \"2018-12-03\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"119\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"805\",\r\n            \"name\": \"Atul Joshi\",\r\n            \"joiningDate\": \"2018-12-05\",\r\n            \"designation\": \"Senior Consultant\",\r\n            \"email\": \"atul.joshi@westernacher.com \",\r\n            \"lastAppraisalDate\": \"2018-12-05\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"117\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"852\",\r\n            \"name\": \"Gaurav Gautam\",\r\n            \"joiningDate\": \"2018-12-10\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Gaurav.Gautam@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-12-10\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"112\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"854\",\r\n            \"name\": \"Akhil Rathod\",\r\n            \"joiningDate\": \"2018-12-17\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Akhil.rathod@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-12-17\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"105\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"855\",\r\n            \"name\": \"Sanjay KV\",\r\n            \"joiningDate\": \"2018-12-17\",\r\n            \"designation\": \"Principal Consultant\",\r\n            \"email\": \"Sanjay.KV@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-12-17\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"105\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"856\",\r\n            \"name\": \"Abhijeet Singh\",\r\n            \"joiningDate\": \"2018-12-18\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Abhijeet.Singh@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-12-18\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"104\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"857\",\r\n            \"name\": \"Somesh Kumar\",\r\n            \"joiningDate\": \"2018-12-26\",\r\n            \"designation\": \"Consultant\",\r\n            \"email\": \"Somesh.Kumar@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-12-26\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"96\",\r\n\t\t\t\"roles\": []\r\n        },\r\n        {\r\n            \"empId\": \"858\",\r\n            \"name\": \"Venkata Ramani\",\r\n            \"joiningDate\": \"2018-12-28\",\r\n            \"designation\": \"Principal Consultant\",\r\n            \"email\": \"Venkata.Ramani@westernacher.com\",\r\n            \"lastAppraisalDate\": \"2018-12-28\",\r\n            \"unit\":\"WIN\",\r\n            \"duration\": \"94\",\r\n\t\t\t\"roles\": []\r\n        }\r\n    ]\r\n"
+				},
+				"url": {
+					"raw": "{{url}}/person",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/person [DATA LOAD]",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/person",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/cycle",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"name\": \"2019\",\r\n\t\"evaluationPeriod\": \"April 2018 to March 2019\",\r\n\t\"selfAppraisalDeadline\": \"2019-04-05\",\r\n\t\"sectiononeCriteria\": [\r\n\t\t{\r\n\t\t\t\"group\": \"Performance on Core Competency\",\r\n\t\t\t\"criterias\": [\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":35,\r\n\t\t\t\t\t\"text\":\"Technical Skills\"\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":2.5,\r\n\t\t\t\t\t\"text\":\"Cross Skill Expertise\"\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":5,\r\n\t\t\t\t\t\"text\":\"initiative/innovation\"\r\n\t\t\t\t}\r\n\t\t\t]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"group\": \"Business Generation & Execution\",\r\n\t\t\t\"criterias\": [{\r\n\t\t\t\t\t\"weightage\":15,\r\n\t\t\t\t\t\"text\":\"Billability / SLA & Ops Excellence\"\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":10,\r\n\t\t\t\t\t\"text\":\"Presales / Analysis & Metric Oriented\"\r\n\t\t\t\t}]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"group\": \"Capability Development\",\r\n\t\t\t\"criterias\": [{\r\n\t\t\t\t\t\"weightage\":2.5,\r\n\t\t\t\t\t\"text\":\"Business & Industry Knowledge\"\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":2.5,\r\n\t\t\t\t\t\"text\":\"Leadership / Mentoring\"\r\n\t\t\t\t}]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"group\": \"Work Ethic\",\r\n\t\t\t\"criterias\": [{\r\n\t\t\t\t\t\"weightage\":2.5,\r\n\t\t\t\t\t\"text\":\"Process Adherence\"\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":5,\r\n\t\t\t\t\t\"text\":\"Communication / Presentations\"\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":2.5,\r\n\t\t\t\t\t\"text\":\"Cohesiveness /Team player\"\r\n\t\t\t\t},\r\n\t\t\t\t{\r\n\t\t\t\t\t\"weightage\":2.5,\r\n\t\t\t\t\t\"text\":\"Cost Consciousness\"\r\n\t\t\t\t}]\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"group\": \"Customer Feedback\",\r\n\t\t\t\"criterias\": [{\r\n\t\t\t\t\t\"weightage\":15,\r\n\t\t\t\t\t\"text\":\"Customer Feedback\"\r\n\t\t\t\t}]\r\n\t\t}\r\n\t\t]\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/cycle",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"cycle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/cycle",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/cycle",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"cycle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/cycle",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/cycle",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"cycle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/cycle/{id}/activate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/cycle/{{cycleId}}/activate",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"cycle",
+						"{{cycleId}}",
+						"activate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/cycle",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/cycle/{{cycleId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"cycle",
+						"{{cycleId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal ByCycleID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/appraisal/cycle/{{cycleId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal ByAppraisalId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/appraisal/5c8a3f640c9b0f3458b5be23",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"5c8a3f640c9b0f3458b5be23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/{id}/errorCheck",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/5c8b4dab0c9b0f30a4193477/errorCheck",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"5c8b4dab0c9b0f30a4193477",
+						"errorCheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal//{id}/submitSelfAppraisal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/5c8b4dab0c9b0f30a4193477/submitSelfAppraisal",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"5c8b4dab0c9b0f30a4193477",
+						"submitSelfAppraisal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal//{id}/submitReviewerAppraisal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/5c8b4dab0c9b0f30a4193477/submitReviewerAppraisal",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"5c8b4dab0c9b0f30a4193477",
+						"submitReviewerAppraisal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"id\": \"5c8a3f640c9b0f3458b5be23\",\r\n        \"cycleId\": \"5c8a3f640c9b0f3458b5be22\",\r\n        \"userId\": \"5c8a3f600c9b0f3458b5be1d\",\r\n        \"sectiononeResponse\": [\r\n            {\r\n                \"group\": \"Performance on Core Competency\",\r\n                \"response\": [\r\n                    {\r\n                        \"criteria\": \"Technical Skills\",\r\n                        \"weightage\": 10,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    },\r\n                    {\r\n                        \"criteria\": \"Cross Skill Expertise\",\r\n                        \"weightage\": 20,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    },\r\n                    {\r\n                        \"criteria\": \"initiative/innovation\",\r\n                        \"weightage\": 20,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    }\r\n                ]\r\n            },\r\n            {\r\n                \"group\": \"Work Ethic\",\r\n                \"response\": [\r\n                    {\r\n                        \"criteria\": \"Cost Consciousness\",\r\n                        \"weightage\": 30,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    }\r\n                ]\r\n            }\r\n        ],\r\n        \"sectiontwoResponse\": \r\n        [\r\n        \t{\r\n        \t\t\"topic\":\"done\",\r\n        \t\t\"duration\": \"done\",\r\n        \t\t\"comment\":\"done\"\r\n        \t},\r\n        \t{\r\n        \t\t\"topic\":null,\r\n        \t\t\"duration\": null,\r\n        \t\t\"comment\":null\r\n        \t},\r\n        \t{\r\n        \t\t\"topic\":\"\",\r\n        \t\t\"duration\": \"\",\r\n        \t\t\"comment\":\"\"\r\n        \t}\r\n        ],\r\n        \"sectionthreeResponse\": [],\r\n        \"sectionfourResponse\": null,\r\n        \"sectionfiveResponse\": null,\r\n        \"status\": \"SELF_REVIEW\"\r\n    }"
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{cycleId}/user/{userId}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{cycleId}/user/{userId}/sectionone",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionone",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{cycleId}/user/{userId}/sectionone",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"group\": \"Performance on Core Competency\",\n        \"response\": [\n            {\n                \"criteria\": \"Technical Skills\",\n                \"selfComment\": \"text comment\",\n                \"selfRating\": \"Outstanding\",\n                \"reviewerComment\": null,\n                \"reviewerRating\": null\n            },\n            {\n                \"criteria\": \"Cross Skill Expertise\",\n                \"selfComment\": null,\n                \"selfRating\": null,\n                \"reviewerComment\": null,\n                \"reviewerRating\": null\n            }\n        ]\n    },\n    {\n        \"group\": \"Work Ethic\",\n        \"response\": [\n            {\n                \"criteria\": \"Cost Consciousness\",\n                \"selfComment\": null,\n                \"selfRating\": null,\n                \"reviewerComment\": null,\n                \"reviewerRating\": null\n            }\n        ]\n    }\n]"
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionone",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{id}/user/{userId}/sectiontwo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectiontwo",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectiontwo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{cycleId}/user/{userId}/sectiontwo",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n\t{\n\t\t\"topic\" : \"Test topic\",\n\t\t\"duration\" : \"Test duration\",\n\t\t\"comment\" : \"Test comment\"\n\t},\n\t{\n\t\t\"topic\" : \"Test topic1\",\n\t\t\"duration\" : \"Test duration2\",\n\t\t\"comment\" : \"Test comment3\"\n\t}\n]"
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectiontwo",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectiontwo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{id}/user/{userId}/sectionfour",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionfour",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionfour"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{id}/user/{userId}/sectionthree",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionthree",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionthree"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{cycleId}/user/{userId}/sectionthree",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n\t{\n\t\t\"topic\" : \"Test topic\",\n\t\t\"duration\" : \"Test duration\",\n\t\t\"comment\" : \"Test comment\"\n\t},\n\t{\n\t\t\"topic\" : \"Test topic1\",\n\t\t\"duration\" : \"Test duration2\",\n\t\t\"comment\" : \"Test comment3\"\n\t}\n]"
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionthree",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionthree"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{cycleId}/user/{userId}/sectionfour",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sectionfour\" : \"test data\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionfour",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionfour"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{id}/user/{userId}/sectionfive",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionfive",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionfive"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/cycle/{cycleId}/user/{userId}/sectionfive",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sectionfive\" : \"test data\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/appraisal/cycle/{{cycleId}}/user/{{userId}}/sectionfive",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"appraisal",
+						"cycle",
+						"{{cycleId}}",
+						"user",
+						"{{userId}}",
+						"sectionfive"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/notification/send",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"to\": \"amarendra.sahoo@westernacher.com\",\r\n  \"subject\": \"my test for new mail id\",\r\n  \"body\": \"Subject final body\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/notification/send",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"notification",
+						"send"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/notification/{cycleId}/send",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"subject\": \"Test Subject\",\r\n  \"body\": \"Test Body\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/notification/{{cycleId}}/send",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"notification",
+						"{{cycleId}}",
+						"send"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/goalDefinition",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/goalDefinition",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"goalDefinition"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/goalDefinition",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n[\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Performance on Core Competency\",\r\n\t    \"criteria\" : \"Technical Skills\",\r\n\t    \"weightage\" : 35.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Possess complete knowledge of all aspects of core skill, indepth understanding of system architechture, demonstrates deep business understanding across industries\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Proficient in his respective application / module and is able to exhibit knowledge of all the functionaltiies. Also demonstrate the experience by means of recommending appropirate workaround to meet business needs\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Carries good knwoledge and application setup experience for most of the fucntions of his core skill. Is able to drive the process discussion & system setup on his / her own\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Has reasonable understanding of core application skill in terms of system functionality and able to work on detailed requirements described by customer with limited support from others. \"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Has basic understanding & thoerotical knowledge of the core module and its business application. Can work under the instructions from senior expert\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Has basic understanding & thoerotical knowledge of the core module and its business application. Finds challenging  to work even with support  from senior expert\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Performance on Core Competency\",\r\n\t    \"criteria\" : \"Cross Skill Expertise\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Has command on more than 2 core skills and demonstrate high level of expertise in both. Also has complete undertsanding of end to end SCM processes in SAP. \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Has build upon a secondary skill where the individual can work on a customer project with limited or no support from others. Posseses good knowledge on end-to-end SCM processes\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Has good understanding of overall processes in SCM and is able to provide high level guidence to customer on non-core skills. Upto date with the new modules released by SAP\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Has attended the basic presentations on all procesees in supply chain and has conceptual understanding of at least one additional module for basic functionalties\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Has got knwoledge of high level features and processes offered by at leats one other SAP supply chain module\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Has  less/no understanding  knowledge of high level features and processes offered by  other SAP supply chain module\"}]\r\n\t},\r\n\t\r\n\t\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Performance on Core Competency\",\r\n\t    \"criteria\" : \"Initiative /  Innovation\",\r\n\t    \"weightage\" : 5.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Drive asset  building for the organization covering differentiators and accelerators that saves efforts & resources for customer. Also build templates for internal processes\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Come up with the ideas of creating accelerators and is been able to build couple of them. Ensure extraction of value add / unique solutions from projects that can be reused\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Has assesed industry requirements and white spaces in SAP application and proposed a solution that can meet customer expetcations. Involved in building at least one reusable\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Come up with the ideas of building unique solution that differentiate us from competition. Provide good input to management to take it up for development\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Able to understand the gaps in standard solution and propose alternate solution. \"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"unable to understand the gaps in standard solution and propose alternate solution. \"}]\r\n\t},\r\n\t\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Business generation and Execution\",\r\n\t    \"criteria\" : \"Billability / SLA & Ops Excellence\",\r\n\t    \"weightage\" : 15.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Billable for at least 90% of the working days, during the period under consideration / atleast 90%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Billable for at least 80% of the working days, during the period under consideration / atleast 80%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Billable for at least 70% of the working days, during the period under consideration / atleast 70%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Billable for at least 50% of the working days, during the period under consideration / atleast 50%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Billable for at least 30% of the working days, during the perod under consideration / atleast 30%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Billable for less than 30% of the working days, during the perod under consideration / less than 30%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Business generation and Execution\",\r\n\t    \"criteria\" : \"Presales / Analysis & Metric Oriented\",\r\n\t    \"weightage\" : 10.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Able to provide top down view & build business case for customer. Provide value proposition, effort estimations and driving customer workshops. Able to successfully win new project \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Is able to anchor presales activities covering requirement assessment, solution building, project timelines and staffing and technical response. Drive sales pitch to customers & site visits.\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Is able to support presales with activities for specific SAP offering and propose effort estimation  and help build technical response documentation.\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Provide baseline input for RFP solutions and technical evaluation of requirement specified.\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Provide basic input to compare SAP standard function with stated requirement from customer\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Struggling  to provide basic input to compare SAP standard function with stated requirement from customer\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Capability Development\",\r\n\t    \"criteria\" : \"Business & Industry Knowledge\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Always updated on the business &  latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Mostly updated on the business & latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Keeps good updates on the business & latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Has an average update on the business & latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Has little update on the business & latest technologies , trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Stuggling  to keep self updated on the business & latest technologies , trends,best practices in the market applicable over business and implementing the same.\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Capability Development\",\r\n\t    \"criteria\" : \"Leadership / Mentoring\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Proactive in identifying, taking responsibility and accountability in executing a leadership / mentoring / Coach role independantly , successful execution of a leadership/mentoring/coaching program, excellent feedback on quality of output and value contribution from beneficiary of the program. \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Proactive in identifying and executing a leadership / mentoring / Coach role  , successful execution of a leadership/mentoring/coaching program, excellent feedback on quality of output and value contribution from beneficiary of the program\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Successful execution of a leadership/mentoring/coaching program, excellent feedback on quality of output and value contribution from beneficiary of the program\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Good execution of a leadership/mentoring/coaching program, good feedback on quality of output and value contribution from beneficiary of the program\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Average execution of a leadership/mentoring/coaching program. Quality of output and value contribution from beneficiary of the program - not as per pace desired\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Poor execution of a leadership/mentoring/coaching program. No Quality of output and value contribution from beneficiary of the program - not as per pace desired\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Process Adherence\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Compliance on all policy and process within stipulated timelines/Adherence to Structured norm\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Compliance on most policy and process within stipulated timelines/Adherence to Structured norm\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Compliance on all policy and process /Adherence to Structured norm\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Compliance on most policy and process /Adherence to Structured norm\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Repeated non compliance  on policy and process/Adherence to Structured norm\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Non compliance  on pollicy and process/Adherence to Structured norm\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Communication / Presentations\",\r\n\t    \"weightage\" : 5.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Excellent  & Valuable Communication capability across all methods & modes of communication, across all stakeholders and Good  display of professional approach to Business - dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Good & Valuable Communication capability across all methods & modes of communication, across all stakeholders and Good  display of professional approach to Business - dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Good & Valuable Communication capability across in most of the  methods & modes of communication, across all stakeholders and Good  display of professional approach to Business in mostly all parameters -  dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Average Communication capability across all methods & modes of communication, across all stakeholders and Good  display of professional approach to Business - dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Average Communication capability across all methods & modes of communication, across all stakeholders and average display of professional approach to Business in mostly all parameters -  dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Poor Communication capability across all methods & modes of communication, across all stakeholders and average display of professional approach to Business in mostly all parameters -  dependanbility, punctuality , flexibility and adaptability\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Cohesiveness / Team player\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Viewed as a excelllent team player across geographic boundaries and contributes significantly to building and maintaing a cohesive unit\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Viewed as a good team player across geographic boundaries and contributes significantly to building and maintaing a cohesive unit\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Viewed as a Valuable team player across geographic boundaries and contributes in certain aspects  to building and maintaing a cohesive unit\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Viewed as a  team player specific to a geography and contributes in certain aspects  to building and maintaing a cohesive unit. Needs to extend this capability beyond a specific geography\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Viewed as a  team player specific to a geography/ project with major focus to extend this capability beyond a specific geography and parameters\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Viewed as a  team player specific to a geography/ project with limited focus to extend this capability beyond a specific geography and parameters\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Cost Consciousness\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Proactively identify and take  inititiave to adopt cost saving options whenever , wherever possible \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Proactively identify and take initiative to adopt cost saving options on certain expenses\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Openess to adopt cost saving options on certain expenses and adherence to policy guidelines\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Cost Sensitivity and adherence to expense policy\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Poor cost sensitivity and compliance\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"No cost sensitivity and compliance\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Customer Orientation\",\r\n\t    \"criteria\" : \"Customer Feedback\",\r\n\t    \"weightage\" : 15.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Positive Feedback of all internal and external customers on all sub parameters leading to revenue generation in project / practice\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Positive Feedback of all internal and external customers on all sub parameters leading to potential revenue generation in project / practice\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Positive Feedback of all internal and external customerson all sub parameters \"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Mostly positive feedback and partial negative feedback of all internal and external customers with no major impact on business / project continuity and interest\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \" Feedback of all internal and external customers which directly impact business / project continuity and interest negatively\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \" Feedback of all internal and external customers which  impacts business / project continuity and interest negatively\"}]\r\n\t}\r\n]\r\n"
+				},
+				"url": {
+					"raw": "localhost:8080/goalDefinition",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"goalDefinition"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/person",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n\t{\n\t\"name\": \"John Doe\",\n\t\"email\": \"securedevicetwo@outlook.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Arun Selvaraj\",\n\t\"email\": \"arunkumar.selvaraj@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Shashank Mittal\",\n\t\"email\": \"shashank.mittal@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Amarendra Sahoo\",\n\t\"email\": \"amarendra.sahoo@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t},\n\t{\n\t\"name\": \"Manoj Victor\",\n\t\"email\": \"manoj.victor@westernacher.com\",\n\t\"unit\": \"SEN\",\n\t\"joiningDate\": \"2017-01-01\",\n\t\"designation\": \"Team-Lead\",\n\t\"lastAppraisalDate\": \"2018-03-20\",\n\t\"duration\": 12,\n\t\"roles\": []\n\t}\n]"
+				},
+				"url": {
+					"raw": "{{url}}/person/5c987b043dda843094e7e1e0/updateRoles",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"person",
+						"5c987b043dda843094e7e1e0",
+						"updateRoles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/appraisal/addAppraisals",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"id\": \"5c8a3f640c9b0f3458b5be23\",\r\n        \"cycleId\": \"5c8a3f640c9b0f3458b5be22\",\r\n        \"userId\": \"5c8a3f600c9b0f3458b5be1d\",\r\n        \"sectiononeResponse\": [\r\n            {\r\n                \"group\": \"Performance on Core Competency\",\r\n                \"response\": [\r\n                    {\r\n                        \"criteria\": \"Technical Skills\",\r\n                        \"weightage\": 10,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    },\r\n                    {\r\n                        \"criteria\": \"Cross Skill Expertise\",\r\n                        \"weightage\": 20,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    },\r\n                    {\r\n                        \"criteria\": \"initiative/innovation\",\r\n                        \"weightage\": 20,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    }\r\n                ]\r\n            },\r\n            {\r\n                \"group\": \"Work Ethic\",\r\n                \"response\": [\r\n                    {\r\n                        \"criteria\": \"Cost Consciousness\",\r\n                        \"weightage\": 30,\r\n                        \"selfComment\": null,\r\n                        \"selfRating\": null,\r\n                        \"reviewerComment\": null,\r\n                        \"reviewerRating\": null\r\n                    }\r\n                ]\r\n            }\r\n        ],\r\n        \"sectiontwoResponse\": \r\n        [\r\n        \t{\r\n        \t\t\"topic\":\"done\",\r\n        \t\t\"duration\": \"done\",\r\n        \t\t\"comment\":\"done\"\r\n        \t},\r\n        \t{\r\n        \t\t\"topic\":null,\r\n        \t\t\"duration\": null,\r\n        \t\t\"comment\":null\r\n        \t},\r\n        \t{\r\n        \t\t\"topic\":\"\",\r\n        \t\t\"duration\": \"\",\r\n        \t\t\"comment\":\"\"\r\n        \t}\r\n        ],\r\n        \"sectionthreeResponse\": [],\r\n        \"sectionfourResponse\": null,\r\n        \"sectionfiveResponse\": null,\r\n        \"status\": \"SELF_REVIEW\"\r\n    }"
+				},
+				"url": {
+					"raw": "{{url}}/appraisal/addAppraisals",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"appraisal",
+						"addAppraisals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/ratingScale",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/ratingScale",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ratingScale"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/ratingScale",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n[\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Performance on Core Competency\",\r\n\t    \"criteria\" : \"Technical Skills\",\r\n\t    \"weightage\" : 35.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Possess complete knowledge of all aspects of core skill, indepth understanding of system architechture, demonstrates deep business understanding across industries\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Proficient in his respective application / module and is able to exhibit knowledge of all the functionaltiies. Also demonstrate the experience by means of recommending appropirate workaround to meet business needs\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Carries good knwoledge and application setup experience for most of the fucntions of his core skill. Is able to drive the process discussion & system setup on his / her own\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Has reasonable understanding of core application skill in terms of system functionality and able to work on detailed requirements described by customer with limited support from others. \"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Has basic understanding & thoerotical knowledge of the core module and its business application. Can work under the instructions from senior expert\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Has basic understanding & thoerotical knowledge of the core module and its business application. Finds challenging  to work even with support  from senior expert\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Performance on Core Competency\",\r\n\t    \"criteria\" : \"Cross Skill Expertise\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Has command on more than 2 core skills and demonstrate high level of expertise in both. Also has complete undertsanding of end to end SCM processes in SAP. \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Has build upon a secondary skill where the individual can work on a customer project with limited or no support from others. Posseses good knowledge on end-to-end SCM processes\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Has good understanding of overall processes in SCM and is able to provide high level guidence to customer on non-core skills. Upto date with the new modules released by SAP\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Has attended the basic presentations on all procesees in supply chain and has conceptual understanding of at least one additional module for basic functionalties\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Has got knwoledge of high level features and processes offered by at leats one other SAP supply chain module\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Has  less/no understanding  knowledge of high level features and processes offered by  other SAP supply chain module\"}]\r\n\t},\r\n\t\r\n\t\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Performance on Core Competency\",\r\n\t    \"criteria\" : \"Initiative /  Innovation\",\r\n\t    \"weightage\" : 5.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Drive asset  building for the organization covering differentiators and accelerators that saves efforts & resources for customer. Also build templates for internal processes\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Come up with the ideas of creating accelerators and is been able to build couple of them. Ensure extraction of value add / unique solutions from projects that can be reused\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Has assesed industry requirements and white spaces in SAP application and proposed a solution that can meet customer expetcations. Involved in building at least one reusable\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Come up with the ideas of building unique solution that differentiate us from competition. Provide good input to management to take it up for development\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Able to understand the gaps in standard solution and propose alternate solution. \"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"unable to understand the gaps in standard solution and propose alternate solution. \"}]\r\n\t},\r\n\t\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Business generation and Execution\",\r\n\t    \"criteria\" : \"Billability / SLA & Ops Excellence\",\r\n\t    \"weightage\" : 15.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Billable for at least 90% of the working days, during the period under consideration / atleast 90%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Billable for at least 80% of the working days, during the period under consideration / atleast 80%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Billable for at least 70% of the working days, during the period under consideration / atleast 70%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Billable for at least 50% of the working days, during the period under consideration / atleast 50%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Billable for at least 30% of the working days, during the perod under consideration / atleast 30%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Billable for less than 30% of the working days, during the perod under consideration / less than 30%  delivery of assigned tasks and ensure complaince to regularations and mandatory activities\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Business generation and Execution\",\r\n\t    \"criteria\" : \"Presales / Analysis & Metric Oriented\",\r\n\t    \"weightage\" : 10.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Able to provide top down view & build business case for customer. Provide value proposition, effort estimations and driving customer workshops. Able to successfully win new project \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Is able to anchor presales activities covering requirement assessment, solution building, project timelines and staffing and technical response. Drive sales pitch to customers & site visits.\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Is able to support presales with activities for specific SAP offering and propose effort estimation  and help build technical response documentation.\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Provide baseline input for RFP solutions and technical evaluation of requirement specified.\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Provide basic input to compare SAP standard function with stated requirement from customer\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Struggling  to provide basic input to compare SAP standard function with stated requirement from customer\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Capability Development\",\r\n\t    \"criteria\" : \"Business & Industry Knowledge\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Always updated on the business &  latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Mostly updated on the business & latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Keeps good updates on the business & latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Has an average update on the business & latest technologies, trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Has little update on the business & latest technologies , trends,best practices in the market applicable over business and implementing the same.\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Stuggling  to keep self updated on the business & latest technologies , trends,best practices in the market applicable over business and implementing the same.\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t   \r\n\t    \"group\" : \"Capability Development\",\r\n\t    \"criteria\" : \"Leadership / Mentoring\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Proactive in identifying, taking responsibility and accountability in executing a leadership / mentoring / Coach role independantly , successful execution of a leadership/mentoring/coaching program, excellent feedback on quality of output and value contribution from beneficiary of the program. \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Proactive in identifying and executing a leadership / mentoring / Coach role  , successful execution of a leadership/mentoring/coaching program, excellent feedback on quality of output and value contribution from beneficiary of the program\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Successful execution of a leadership/mentoring/coaching program, excellent feedback on quality of output and value contribution from beneficiary of the program\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Good execution of a leadership/mentoring/coaching program, good feedback on quality of output and value contribution from beneficiary of the program\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Average execution of a leadership/mentoring/coaching program. Quality of output and value contribution from beneficiary of the program - not as per pace desired\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Poor execution of a leadership/mentoring/coaching program. No Quality of output and value contribution from beneficiary of the program - not as per pace desired\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Process Adherence\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Compliance on all policy and process within stipulated timelines/Adherence to Structured norm\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Compliance on most policy and process within stipulated timelines/Adherence to Structured norm\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Compliance on all policy and process /Adherence to Structured norm\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Compliance on most policy and process /Adherence to Structured norm\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Repeated non compliance  on policy and process/Adherence to Structured norm\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Non compliance  on pollicy and process/Adherence to Structured norm\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Communication / Presentations\",\r\n\t    \"weightage\" : 5.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Excellent  & Valuable Communication capability across all methods & modes of communication, across all stakeholders and Good  display of professional approach to Business - dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Good & Valuable Communication capability across all methods & modes of communication, across all stakeholders and Good  display of professional approach to Business - dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Good & Valuable Communication capability across in most of the  methods & modes of communication, across all stakeholders and Good  display of professional approach to Business in mostly all parameters -  dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Average Communication capability across all methods & modes of communication, across all stakeholders and Good  display of professional approach to Business - dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Average Communication capability across all methods & modes of communication, across all stakeholders and average display of professional approach to Business in mostly all parameters -  dependanbility, punctuality , flexibility and adaptability\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Poor Communication capability across all methods & modes of communication, across all stakeholders and average display of professional approach to Business in mostly all parameters -  dependanbility, punctuality , flexibility and adaptability\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Cohesiveness / Team player\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Viewed as a excelllent team player across geographic boundaries and contributes significantly to building and maintaing a cohesive unit\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Viewed as a good team player across geographic boundaries and contributes significantly to building and maintaing a cohesive unit\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Viewed as a Valuable team player across geographic boundaries and contributes in certain aspects  to building and maintaing a cohesive unit\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Viewed as a  team player specific to a geography and contributes in certain aspects  to building and maintaing a cohesive unit. Needs to extend this capability beyond a specific geography\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Viewed as a  team player specific to a geography/ project with major focus to extend this capability beyond a specific geography and parameters\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"Viewed as a  team player specific to a geography/ project with limited focus to extend this capability beyond a specific geography and parameters\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Work Ethics\",\r\n\t    \"criteria\" : \"Cost Consciousness\",\r\n\t    \"weightage\" : 2.5,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Proactively identify and take  inititiave to adopt cost saving options whenever , wherever possible \"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Proactively identify and take initiative to adopt cost saving options on certain expenses\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Openess to adopt cost saving options on certain expenses and adherence to policy guidelines\"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Cost Sensitivity and adherence to expense policy\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \"Poor cost sensitivity and compliance\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \"No cost sensitivity and compliance\"}]\r\n\t},\r\n\t\r\n\t{\r\n\t    \r\n\t    \"group\" : \"Customer Orientation\",\r\n\t    \"criteria\" : \"Customer Feedback\",\r\n\t    \"weightage\" : 15.0,\r\n\t    \"elements\" : [{\"rating\": \"Outstanding\", \"description\": \"Positive Feedback of all internal and external customers on all sub parameters leading to revenue generation in project / practice\"},\r\n\t{\"rating\": \"Exceeds Expectation\", \"description\": \"Positive Feedback of all internal and external customers on all sub parameters leading to potential revenue generation in project / practice\"},\r\n\t{\"rating\": \"Meets + Expectation\", \"description\": \"Positive Feedback of all internal and external customerson all sub parameters \"},\r\n\t{\"rating\": \"Meets  Expectation\", \"description\": \"Mostly positive feedback and partial negative feedback of all internal and external customers with no major impact on business / project continuity and interest\"},\r\n\t{\"rating\": \"Meets Partial Expectations\", \"description\": \" Feedback of all internal and external customers which directly impact business / project continuity and interest negatively\"},\r\n\t{\"rating\": \"Needs Improvement\", \"description\": \" Feedback of all internal and external customers which  impacts business / project continuity and interest negatively\"}]\r\n\t}\r\n]\r\n"
+				},
+				"url": {
+					"raw": "{{url}}/ratingScale",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ratingScale"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
