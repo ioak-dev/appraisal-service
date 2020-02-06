@@ -3,6 +3,7 @@ package com.westernacher.internal.feedback.controller;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
+import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class AppraisalController {
     private AppraisalRepository repository;
 
     @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
     private AppraisalCycleRepository appraisalCycleRepository;
 
     @Autowired
@@ -34,6 +38,44 @@ public class AppraisalController {
     @RequestMapping(value = "/cycle/{id}", method = RequestMethod.GET)
     public List<Appraisal> getAllByCycle (@PathVariable("id") String id) {
         return repository.findAllByCycleId(id);
+    }
+
+    @RequestMapping(value = "/cycle/{id}/manageable/{userId}", method = RequestMethod.GET)
+    public List<Appraisal> getAllByCycleManageable (@PathVariable("id") String id, @PathVariable("userId") String userId) {
+        List<Appraisal> result = new ArrayList<>();
+        List<Person> manageablePersons = new ArrayList<>();
+        List<String> manageablePersonIds = new ArrayList<>();
+        Person person = personRepository.findPersonById(userId);
+        for (Role role : person.getRoles()) {
+            if (role.getType().equals(RoleType.Administrator)) {
+                manageablePersons = personRepository.findAll();
+            }
+        }
+
+        if (manageablePersons.size() == 0) {
+            for (Role role : person.getRoles()) {
+                if (role.getType().equals(RoleType.Manager)) {
+                    manageablePersons = personRepository.findPersonsByEmail(role.getOptions());
+                }
+            }
+        }
+
+        for (Person item : manageablePersons) {
+            manageablePersonIds.add(item.getId());
+        }
+
+        log.info("******" + manageablePersonIds.size() + "**********"); // + manageablePersons.get(0).getEmail()
+
+        List<Appraisal> appraisals = repository.findAllByCycleId(id);
+
+        for (Appraisal appraisal : appraisals) {
+            if (manageablePersonIds.contains(appraisal.getUserId())) {
+                result.add(appraisal);
+            }
+        }
+
+        return result;
+
     }
 
     @RequestMapping(value = "/cycle/{id}/user/{userId}", method = RequestMethod.GET)
