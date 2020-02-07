@@ -15,6 +15,7 @@ public class Person {
     private String id;
     private String empId;
     private String name;
+    private JobName jobName;
     private String email;
     private String unit;
     private Date joiningDate;

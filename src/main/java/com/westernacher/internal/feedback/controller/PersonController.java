@@ -1,3 +1,4 @@
+
 package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.Person;
@@ -57,6 +58,11 @@ public class PersonController {
     @RequestMapping(method = RequestMethod.POST)
     public void create (@Valid @RequestBody List<Person> persons) {
         persons.forEach(person -> {
+            Person existingPerson = repository.findPersonByEmail(person.getEmail());
+            if (existingPerson != null) {
+                person.setId(existingPerson.getId());
+                person.setRoles(existingPerson.getRoles());
+            }
             person.setEmail(person.getEmail().toLowerCase());
             repository.save(person);
         });

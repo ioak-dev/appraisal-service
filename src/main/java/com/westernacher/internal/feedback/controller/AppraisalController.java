@@ -1,5 +1,6 @@
 package com.westernacher.internal.feedback.controller;
 
+import com.westernacher.internal.feedback.controller.representation.ReviewResource;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
@@ -13,9 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -64,8 +63,6 @@ public class AppraisalController {
             manageablePersonIds.add(item.getId());
         }
 
-        log.info("******" + manageablePersonIds.size() + "**********"); // + manageablePersons.get(0).getEmail()
-
         List<Appraisal> appraisals = repository.findAllByCycleId(id);
 
         for (Appraisal appraisal : appraisals) {
@@ -93,6 +90,27 @@ public class AppraisalController {
                                 @RequestBody List<ObjectiveResponseGroup> sectionone) {
         Appraisal appraisal = repository.findOneByCycleIdAndUserId(id, userId);
         appraisal.setSectiononeResponse(sectionone);
+        repository.save(appraisal);
+    }
+
+    @RequestMapping(value = "/cycle/{id}/user/{userId}/sectionone/reviewer/{reviewerId}", method = RequestMethod.PUT)
+    public void saveSectionOne (@PathVariable("id") String id, @PathVariable("userId") String userId, @PathVariable("reviewerId") String reviewerId,
+                                @RequestBody List<ReviewResource> reviewResourceList) {
+        Appraisal appraisal = repository.findOneByCycleIdAndUserId(id, userId);
+        Map<String, Map<String, ObjectiveResponse>> sourceMap = new HashMap<>();
+        appraisal.getSectiononeResponse().forEach(group -> {
+            Map<String, ObjectiveResponse> criteriaMap = new HashMap<>();
+            group.getResponse().forEach(criteria -> {
+                criteriaMap.put(criteria.getCriteria(), criteria);
+            });
+            sourceMap.put(group.getGroup(), criteriaMap);
+        });
+        reviewResourceList.forEach(item -> {
+            ReviewerElements elements = new ReviewerElements();
+            elements.setRating(item.getRating());
+            elements.setComment(item.getComment());
+            sourceMap.get(item.getGroup()).get(item.getCriteria()).getReviews().put(item.getReviewerId(), elements);
+        });
         repository.save(appraisal);
     }
 
@@ -257,9 +275,10 @@ public class AppraisalController {
 
             objectiveResponseGroups.stream().forEach(objectiveResponseGroup -> {
                 objectiveResponseGroup.getResponse().stream().forEach(objectiveResponse -> {
-                    if (objectiveResponse.getReviewerRating()==null) {
-                        sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Rating");
-                    }
+                    /* 20202020 */
+//                    if (objectiveResponse.getReviewerRating()==null) {
+//                        sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Rating");
+//                    }
                 });
                 errorResource.setSectionOneError(sectionOneError);
             });
@@ -397,10 +416,11 @@ public class AppraisalController {
         objectiveResponseContent.append(objectiveResponse.getSelfComment());
         objectiveResponseContent.append(",");
         objectiveResponseContent.append(objectiveResponse.getSelfRating());
-        objectiveResponseContent.append(",");
-        objectiveResponseContent.append(objectiveResponse.getReviewerComment());
-        objectiveResponseContent.append(",");
-        objectiveResponseContent.append(objectiveResponse.getReviewerRating());
+        /* 20202020 */
+//        objectiveResponseContent.append(",");
+//        objectiveResponseContent.append(objectiveResponse.getReviewerComment());
+//        objectiveResponseContent.append(",");
+//        objectiveResponseContent.append(objectiveResponse.getReviewerRating());
         return objectiveResponseContent;
     }
 

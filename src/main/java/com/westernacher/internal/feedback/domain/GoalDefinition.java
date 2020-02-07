@@ -13,14 +13,9 @@ import java.util.List;
 public class GoalDefinition {
     @Id
     private String id;
+    private JobName jobName;
     private String group;
     private String criteria;
-    private String weightage;
-    private List<Element> elements;
-}
-
-@Data
-class Element {
-    private String rating;
+    private int weightage;
     private String description;
 }

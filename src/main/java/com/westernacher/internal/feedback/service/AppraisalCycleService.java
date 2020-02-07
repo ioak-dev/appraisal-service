@@ -3,19 +3,23 @@ package com.westernacher.internal.feedback.service;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
+import com.westernacher.internal.feedback.repository.GoalDefinitionRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+@Slf4j
 @Service
 public class AppraisalCycleService {
 
     @Autowired
     private AppraisalCycleRepository repository;
+
+    @Autowired
+    private GoalDefinitionRepository goalDefinitionRepository;
 
     @Autowired
     private AppraisalRepository appraisalRepository;
@@ -30,14 +34,15 @@ public class AppraisalCycleService {
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
         personRepository.findAll().forEach(item -> {
-            List<ObjectiveResponseGroup> responseGroupList = new ArrayList<>();
-            cycle.getSectiononeCriteria().forEach(criteriaGroup -> responseGroupList.add(generateResponseGroup(criteriaGroup)));
+            List<ObjectiveResponseGroup> sectionone = new ArrayList<>();
+
+            sectionone.addAll(generateResponseGroup(goalDefinitionRepository.getAllByJobName(item.getJobName())));
             List<SubjectiveResponse> sectiontwo = new ArrayList<>();
             List<SubjectiveResponse> sectionthree = new ArrayList<>();
             Appraisal appraisal = Appraisal.builder()
                     .cycleId(cycle.getId())
                     .userId(item.getId())
-                    .sectiononeResponse(responseGroupList)
+                    .sectiononeResponse(sectionone)
                     .sectiontwoResponse(sectiontwo)
                     .sectionthreeResponse(sectionthree)
                     .status(AppraisalStatusType.SELF_REVIEW)
@@ -48,21 +53,37 @@ public class AppraisalCycleService {
         return cycle;
     }
 
-    private ObjectiveResponseGroup generateResponseGroup(CriteriaGroup criteriaGroup) {
+    private List<ObjectiveResponseGroup> generateResponseGroup(List<GoalDefinition> goalDefinitionList) {
 
-        List<ObjectiveResponse> responseList = new ArrayList<>();
+        List<ObjectiveResponseGroup> responseList = new ArrayList<>();
 
-        criteriaGroup.getCriterias().forEach(item ->
-                responseList.add(ObjectiveResponse.builder()
-                        .weightage(item.getWeightage())
-                        .criteria(item.getText())
-                        .build())
-        );
+        Map<String, List<ObjectiveResponse>> map = new HashMap<>();
 
-        return ObjectiveResponseGroup.builder()
-                .group(criteriaGroup.getGroup())
-                .response(responseList)
-                .build();
+        goalDefinitionList.forEach(item -> {
+            ObjectiveResponse objectiveResponse = ObjectiveResponse
+                    .builder()
+                    .criteria(item.getCriteria())
+                    .weightage(item.getWeightage())
+                    .build();
+            if (map.containsKey(item.getGroup())) {
+                map.get(item.getGroup()).add(objectiveResponse);
+            } else {
+                List<ObjectiveResponse> list = new ArrayList<>();
+                list.add(objectiveResponse);
+                map.put(item.getGroup(), list);
+            }
+        });
+
+        for (String key : map.keySet()) {
+            ObjectiveResponseGroup objectiveResponseGroup = ObjectiveResponseGroup
+                    .builder()
+                    .group(key)
+                    .response(map.get(key))
+                    .build();
+            responseList.add(objectiveResponseGroup);
+        }
+
+        return responseList;
 
     }
 

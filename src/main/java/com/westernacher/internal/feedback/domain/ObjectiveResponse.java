@@ -3,6 +3,8 @@ package com.westernacher.internal.feedback.domain;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Map;
+
 @Data
 @Builder
 public class ObjectiveResponse {
@@ -10,6 +12,6 @@ public class ObjectiveResponse {
     private int weightage;
     private String selfComment;
     private String selfRating;
-    private String reviewerComment;
-    private String reviewerRating;
+    private Map<String, ReviewerElements> reviews;
 }
+
