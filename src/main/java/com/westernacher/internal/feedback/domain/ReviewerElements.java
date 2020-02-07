@@ -6,4 +6,5 @@ import lombok.Data;
 public class ReviewerElements {
     private String comment;
     private String rating;
+    private String name;
 }

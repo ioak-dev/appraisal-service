@@ -109,6 +109,7 @@ public class AppraisalController {
             ReviewerElements elements = new ReviewerElements();
             elements.setRating(item.getRating());
             elements.setComment(item.getComment());
+            elements.setName(personRepository.findPersonById(item.getReviewerId()).getName());
             sourceMap.get(item.getGroup()).get(item.getCriteria()).getReviews().put(item.getReviewerId(), elements);
         });
         repository.save(appraisal);
