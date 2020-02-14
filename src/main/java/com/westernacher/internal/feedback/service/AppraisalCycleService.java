@@ -133,17 +133,19 @@ public class AppraisalCycleService {
     private Map<String, ReviewerElements> getReviewerElements(Map<String, List<String>> roleMap, Person person) {
         Map<String, ReviewerElements> map = new HashMap<>();
 
-        roleMap.get(person.getEmail()).forEach(managerId -> {
-            Person reviewer = personRepository.findPersonById(managerId);
-            ReviewerElements reviewerElements = ReviewerElements
-                    .builder()
-                    .comment("")
-                    .name(reviewer.getName())
-                    .rating("")
-                    .isComplete(false)
-                    .build();
-            map.put(reviewer.getId(), reviewerElements);
-        });
+        if (roleMap.get(person.getEmail()) != null) {
+            roleMap.get(person.getEmail()).forEach(managerId -> {
+                Person reviewer = personRepository.findPersonById(managerId);
+                ReviewerElements reviewerElements = ReviewerElements
+                        .builder()
+                        .comment("")
+                        .name(reviewer.getName())
+                        .rating("")
+                        .isComplete(false)
+                        .build();
+                map.put(reviewer.getId(), reviewerElements);
+            });
+        }
         return map;
     }
 
