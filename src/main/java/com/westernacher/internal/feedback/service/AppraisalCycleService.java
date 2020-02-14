@@ -33,10 +33,50 @@ public class AppraisalCycleService {
 
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
+        Map<String, List<String>> projectManagerRoleMap = new HashMap<>();
+        Map<String, List<String>> teamLeadRoleMap = new HashMap<>();
+        Map<String, List<String>> practiceDirectorRoleMap = new HashMap<>();
+
+        personRepository.findAll().forEach(person -> {
+            person.getRoles().forEach(role -> {
+                if (role.getType().equals(RoleType.ProjectManager)) {
+                    role.getOptions().forEach(email -> {
+                        if (projectManagerRoleMap.containsKey(email)) {
+                            projectManagerRoleMap.get(email).add(person.getId());
+                        } else {
+                            List<String> list = new ArrayList<>();
+                            list.add(person.getId());
+                            projectManagerRoleMap.put(email, list);
+                        }
+                    });
+                } else if (role.getType().equals(RoleType.TeamLead)) {
+                    role.getOptions().forEach(email -> {
+                        if (teamLeadRoleMap.containsKey(email)) {
+                            teamLeadRoleMap.get(email).add(person.getId());
+                        } else {
+                            List<String> list = new ArrayList<>();
+                            list.add(person.getId());
+                            teamLeadRoleMap.put(email, list);
+                        }
+                    });
+                } else if (role.getType().equals(RoleType.PracticeDirector)) {
+                    role.getOptions().forEach(email -> {
+                        if (practiceDirectorRoleMap.containsKey(email)) {
+                            practiceDirectorRoleMap.get(email).add(person.getId());
+                        } else {
+                            List<String> list = new ArrayList<>();
+                            list.add(person.getId());
+                            practiceDirectorRoleMap.put(email, list);
+                        }
+                    });
+                }
+            });
+        });
+
         personRepository.findAll().forEach(person -> {
             List<ObjectiveResponseGroup> sectionone = new ArrayList<>();
 
-            sectionone.addAll(generateResponseGroup(person, goalDefinitionRepository.getAllByJobName(person.getJobName())));
+            sectionone.addAll(generateResponseGroup(projectManagerRoleMap, teamLeadRoleMap, practiceDirectorRoleMap, person, goalDefinitionRepository.getAllByJobName(person.getJobName())));
             List<SubjectiveResponse> sectiontwo = new ArrayList<>();
             List<SubjectiveResponse> sectionthree = new ArrayList<>();
             Appraisal appraisal = Appraisal.builder()
@@ -53,7 +93,7 @@ public class AppraisalCycleService {
         return cycle;
     }
 
-    private List<ObjectiveResponseGroup> generateResponseGroup(Person person, List<GoalDefinition> goalDefinitionList) {
+    private List<ObjectiveResponseGroup> generateResponseGroup(Map<String, List<String>> projectManagerRoleMap, Map<String, List<String>> teamLeadRoleMap, Map<String, List<String>> practiceDirectorRoleMap, Person person, List<GoalDefinition> goalDefinitionList) {
 
         List<ObjectiveResponseGroup> responseList = new ArrayList<>();
 
@@ -64,9 +104,9 @@ public class AppraisalCycleService {
                     .builder()
                     .criteria(item.getCriteria())
                     .weightage(item.getWeightage())
-                    .projectManagerReviews(getReviewerElements(person, RoleType.ProjectManager))
-                    .teamLeadReviews(getReviewerElements(person, RoleType.TeamLead))
-                    .practiceDirectorReviews(getReviewerElements(person, RoleType.PracticeDirector))
+                    .projectManagerReviews(getReviewerElements(projectManagerRoleMap, person))
+                    .teamLeadReviews(getReviewerElements(teamLeadRoleMap, person))
+                    .practiceDirectorReviews(getReviewerElements(practiceDirectorRoleMap, person))
                     .build();
             if (map.containsKey(item.getGroup())) {
                 map.get(item.getGroup()).add(objectiveResponse);
@@ -90,22 +130,19 @@ public class AppraisalCycleService {
 
     }
 
-    private Map<String, ReviewerElements> getReviewerElements(Person person, RoleType roleType) {
+    private Map<String, ReviewerElements> getReviewerElements(Map<String, List<String>> roleMap, Person person) {
         Map<String, ReviewerElements> map = new HashMap<>();
-        person.getRoles().forEach(role -> {
-            if (role.getType().equals(roleType)) {
-                role.getOptions().forEach(email -> {
-                    Person reviewer = personRepository.findPersonByEmail(email);
-                    ReviewerElements reviewerElements = ReviewerElements
-                            .builder()
-                            .comment("")
-                            .name(reviewer.getName())
-                            .rating("")
-                            .isComplete(false)
-                            .build();
-                    map.put(reviewer.getId(), reviewerElements);
-                });
-            }
+
+        roleMap.get(person.getEmail()).forEach(managerId -> {
+            Person reviewer = personRepository.findPersonById(managerId);
+            ReviewerElements reviewerElements = ReviewerElements
+                    .builder()
+                    .comment("")
+                    .name(reviewer.getName())
+                    .rating("")
+                    .isComplete(false)
+                    .build();
+            map.put(reviewer.getId(), reviewerElements);
         });
         return map;
     }
