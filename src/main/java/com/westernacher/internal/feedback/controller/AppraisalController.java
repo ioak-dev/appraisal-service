@@ -53,7 +53,7 @@ public class AppraisalController {
 
         if (manageablePersons.size() == 0) {
             for (Role role : person.getRoles()) {
-                if (role.getType().equals(RoleType.Manager)) {
+                if (role.getType().equals(RoleType.ProjectManager)) {
                     manageablePersons = personRepository.findPersonsByEmail(role.getOptions());
                 }
             }
@@ -106,12 +106,20 @@ public class AppraisalController {
             sourceMap.put(group.getGroup(), criteriaMap);
         });
         reviewResourceList.forEach(item -> {
-            ReviewerElements elements = new ReviewerElements();
-            elements.setRating(item.getRating());
-            elements.setComment(item.getComment());
-            elements.setComplete(false);
-            elements.setName(personRepository.findPersonById(item.getReviewerId()).getName());
-            sourceMap.get(item.getGroup()).get(item.getCriteria()).getReviews().put(item.getReviewerId(), elements);
+            ReviewerElements elements = ReviewerElements
+                    .builder()
+                    .rating(item.getRating())
+                    .comment(item.getComment())
+                    .isComplete(false)
+                    .name(personRepository.findPersonById(item.getReviewerId()).getName())
+                    .build();
+            if (item.getRoleType().equals(RoleType.ProjectManager)) {
+                sourceMap.get(item.getGroup()).get(item.getCriteria()).getProjectManagerReviews().put(item.getReviewerId(), elements);
+            } else if (item.getRoleType().equals(RoleType.TeamLead)) {
+                sourceMap.get(item.getGroup()).get(item.getCriteria()).getTeamLeadReviews().put(item.getReviewerId(), elements);
+            } else if (item.getRoleType().equals(RoleType.PracticeDirector)) {
+                sourceMap.get(item.getGroup()).get(item.getCriteria()).getPracticeDirectorReviews().put(item.getReviewerId(), elements);
+            }
         });
         repository.save(appraisal);
     }
@@ -123,10 +131,20 @@ public class AppraisalController {
         appraisal.getSectiononeResponse().forEach(group -> {
             Map<String, ObjectiveResponse> criteriaMap = new HashMap<>();
             group.getResponse().forEach(criteria -> {
-                if (criteria.getReviews().containsKey(reviewerId))  {
-                    ReviewerElements reviewerElements = criteria.getReviews().get(reviewerId);
+                if (criteria.getProjectManagerReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getProjectManagerReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
-                    criteria.getReviews().put(reviewerId, reviewerElements);
+                    criteria.getProjectManagerReviews().put(reviewerId, reviewerElements);
+                }
+                if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getTeamLeadReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getTeamLeadReviews().put(reviewerId, reviewerElements);
+                }
+                if (criteria.getPracticeDirectorReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getPracticeDirectorReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getPracticeDirectorReviews().put(reviewerId, reviewerElements);
                 }
             });
             sourceMap.put(group.getGroup(), criteriaMap);

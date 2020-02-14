@@ -12,6 +12,9 @@ public class ObjectiveResponse {
     private int weightage;
     private String selfComment;
     private String selfRating;
-    private Map<String, ReviewerElements> reviews;
+    private Map<String, ReviewerElements> projectManagerReviews;
+    private Map<String, ReviewerElements> teamLeadReviews;
+    private Map<String, ReviewerElements> practiceDirectorReviews;
+    private Map<String, ReviewerElements> administratorReviews;
 }
 

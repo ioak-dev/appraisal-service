@@ -33,15 +33,15 @@ public class AppraisalCycleService {
 
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
-        personRepository.findAll().forEach(item -> {
+        personRepository.findAll().forEach(person -> {
             List<ObjectiveResponseGroup> sectionone = new ArrayList<>();
 
-            sectionone.addAll(generateResponseGroup(goalDefinitionRepository.getAllByJobName(item.getJobName())));
+            sectionone.addAll(generateResponseGroup(person, goalDefinitionRepository.getAllByJobName(person.getJobName())));
             List<SubjectiveResponse> sectiontwo = new ArrayList<>();
             List<SubjectiveResponse> sectionthree = new ArrayList<>();
             Appraisal appraisal = Appraisal.builder()
                     .cycleId(cycle.getId())
-                    .userId(item.getId())
+                    .userId(person.getId())
                     .sectiononeResponse(sectionone)
                     .sectiontwoResponse(sectiontwo)
                     .sectionthreeResponse(sectionthree)
@@ -53,7 +53,7 @@ public class AppraisalCycleService {
         return cycle;
     }
 
-    private List<ObjectiveResponseGroup> generateResponseGroup(List<GoalDefinition> goalDefinitionList) {
+    private List<ObjectiveResponseGroup> generateResponseGroup(Person person, List<GoalDefinition> goalDefinitionList) {
 
         List<ObjectiveResponseGroup> responseList = new ArrayList<>();
 
@@ -64,7 +64,9 @@ public class AppraisalCycleService {
                     .builder()
                     .criteria(item.getCriteria())
                     .weightage(item.getWeightage())
-                    .reviews(new HashMap<>())
+                    .projectManagerReviews(getReviewerElements(person, RoleType.ProjectManager))
+                    .teamLeadReviews(getReviewerElements(person, RoleType.TeamLead))
+                    .practiceDirectorReviews(getReviewerElements(person, RoleType.PracticeDirector))
                     .build();
             if (map.containsKey(item.getGroup())) {
                 map.get(item.getGroup()).add(objectiveResponse);
@@ -86,6 +88,26 @@ public class AppraisalCycleService {
 
         return responseList;
 
+    }
+
+    private Map<String, ReviewerElements> getReviewerElements(Person person, RoleType roleType) {
+        Map<String, ReviewerElements> map = new HashMap<>();
+        person.getRoles().forEach(role -> {
+            if (role.getType().equals(roleType)) {
+                role.getOptions().forEach(email -> {
+                    Person reviewer = personRepository.findPersonByEmail(email);
+                    ReviewerElements reviewerElements = ReviewerElements
+                            .builder()
+                            .comment("")
+                            .name(reviewer.getName())
+                            .rating("")
+                            .isComplete(false)
+                            .build();
+                    map.put(reviewer.getId(), reviewerElements);
+                });
+            }
+        });
+        return map;
     }
 
     public void activate(String id) {
