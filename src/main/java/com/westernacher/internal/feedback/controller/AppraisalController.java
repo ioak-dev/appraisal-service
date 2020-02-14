@@ -109,8 +109,27 @@ public class AppraisalController {
             ReviewerElements elements = new ReviewerElements();
             elements.setRating(item.getRating());
             elements.setComment(item.getComment());
+            elements.setComplete(false);
             elements.setName(personRepository.findPersonById(item.getReviewerId()).getName());
             sourceMap.get(item.getGroup()).get(item.getCriteria()).getReviews().put(item.getReviewerId(), elements);
+        });
+        repository.save(appraisal);
+    }
+
+    @RequestMapping(value = "/cycle/{id}/user/{userId}/sectionone/reviewer/{reviewerId}/submit", method = RequestMethod.POST)
+    public void submitSectionOne (@PathVariable("id") String id, @PathVariable("userId") String userId, @PathVariable("reviewerId") String reviewerId) {
+        Appraisal appraisal = repository.findOneByCycleIdAndUserId(id, userId);
+        Map<String, Map<String, ObjectiveResponse>> sourceMap = new HashMap<>();
+        appraisal.getSectiononeResponse().forEach(group -> {
+            Map<String, ObjectiveResponse> criteriaMap = new HashMap<>();
+            group.getResponse().forEach(criteria -> {
+                if (criteria.getReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getReviews().put(reviewerId, reviewerElements);
+                }
+            });
+            sourceMap.put(group.getGroup(), criteriaMap);
         });
         repository.save(appraisal);
     }

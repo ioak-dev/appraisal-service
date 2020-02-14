@@ -64,6 +64,7 @@ public class AppraisalCycleService {
                     .builder()
                     .criteria(item.getCriteria())
                     .weightage(item.getWeightage())
+                    .reviews(new HashMap<>())
                     .build();
             if (map.containsKey(item.getGroup())) {
                 map.get(item.getGroup()).add(objectiveResponse);

@@ -7,4 +7,5 @@ public class ReviewerElements {
     private String comment;
     private String rating;
     private String name;
+    private boolean isComplete;
 }
