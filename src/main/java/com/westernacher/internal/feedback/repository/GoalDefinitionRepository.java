@@ -7,5 +7,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface GoalDefinitionRepository extends MongoRepository<GoalDefinition, String> {
-    List<GoalDefinition> getAllByJobName(JobName jobName);
+    List<GoalDefinition> getAllByJobName(String jobName);
 }

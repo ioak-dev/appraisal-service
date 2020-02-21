@@ -15,13 +15,15 @@ public class Person {
     private String id;
     private String empId;
     private String name;
-    private JobName jobName;
+    private String jobName;
     private String email;
     private String unit;
     private Date joiningDate;
-    private String designation;
+    private String level;
+    private String specialization;
     private Date lastAppraisalDate;
     private int duration;
     private List<Role> roles;
+    private PersonStatus status;
 
 }

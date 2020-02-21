@@ -2,11 +2,15 @@
 package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.Person;
+import com.westernacher.internal.feedback.domain.PersonStatus;
 import com.westernacher.internal.feedback.domain.Role;
 import com.westernacher.internal.feedback.domain.RoleType;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.PersonService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,13 +19,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/person")
+@Slf4j
 public class PersonController {
 
     @Autowired
@@ -84,15 +89,15 @@ public class PersonController {
         service.updateRoles(id, roleList);
     }
 
-    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    @PostMapping(value = "/upload/role", consumes = "multipart/form-data")
     public void uploadMultipart(@RequestParam("file") MultipartFile file) {
         Map<String, Map<RoleType, List<String>>> csvContent = getCSVMap(file);
+
 
         List<Person> persons = repository.findAll();
         persons.stream().forEach(person -> {
             service.removeRoles(person.getId());
         });
-
         csvContent.forEach((k,v) ->{
             Map<RoleType, List<String>> roleMap = v;
             List<Role> roles = new ArrayList<>();
@@ -102,9 +107,14 @@ public class PersonController {
                 role.setOptions(vv);
                 roles.add(role);
             });
+            Person person = repository.findPersonByEmail(k.trim().toLowerCase());
 
-            Person person = repository.findPersonByEmail(k);
-            service.updateRoles(person.getId(), roles);
+            if (person==null) {
+                log.info(k);
+            }else{
+                service.updateRoles(person.getId(), roles);
+            }
+
         });
 
 
@@ -162,6 +172,55 @@ public class PersonController {
         }
         return csvMap;
 
+    }
+
+    @PostMapping(value = "/upload/person", consumes = "multipart/form-data")
+    public ResponseEntity<?> uploadPersonFile(@RequestParam("file") MultipartFile file) {
+
+        repository.deleteAll();
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        if (fileName.endsWith(".csv")) {
+            BufferedReader br;
+            List<String> csvline = new ArrayList<>();
+            try {
+                String line;
+                InputStream is = file.getInputStream();
+                br = new BufferedReader(new InputStreamReader(is));
+                while ((line = br.readLine()) != null) {
+                    csvline.add(line);
+                }
+                csvline.remove(0);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+            csvline.stream().forEach(line -> {
+                String[] values = line.split(",");
+                Person person = new Person();
+                person.setEmpId(values[0]);
+                person.setName(values[1]);
+                DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+                try{
+                    person.setJoiningDate(format.parse(values[2]));
+                }catch (ParseException e) {
+
+                }
+
+                person.setJobName(values[3]);
+                person.setUnit(values[4]);
+                person.setLevel(values[5]);
+                person.setSpecialization(values[6]);
+                person.setStatus(PersonStatus.valueOf(values[7]));
+                person.setEmail(values[8].trim().toLowerCase());
+                try{
+                    person.setLastAppraisalDate(format.parse(values[9]));
+                }catch(ParseException e){}
+
+                person.setDuration(Integer.parseInt(values[10]));
+
+                repository.save(person);
+            });
+        }
+    return null;
     }
 
 }

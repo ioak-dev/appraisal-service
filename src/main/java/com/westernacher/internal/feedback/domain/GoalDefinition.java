@@ -13,9 +13,9 @@ import java.util.List;
 public class GoalDefinition {
     @Id
     private String id;
-    private JobName jobName;
+    private String jobName;
     private String group;
     private String criteria;
-    private int weightage;
+    private float weightage;
     private String description;
 }

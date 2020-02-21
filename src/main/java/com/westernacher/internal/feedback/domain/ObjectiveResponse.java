@@ -9,12 +9,13 @@ import java.util.Map;
 @Builder
 public class ObjectiveResponse {
     private String criteria;
-    private int weightage;
+    private float weightage;
     private String selfComment;
     private String selfRating;
     private Map<String, ReviewerElements> projectManagerReviews;
     private Map<String, ReviewerElements> teamLeadReviews;
     private Map<String, ReviewerElements> practiceDirectorReviews;
     private Map<String, ReviewerElements> administratorReviews;
+
 }
 

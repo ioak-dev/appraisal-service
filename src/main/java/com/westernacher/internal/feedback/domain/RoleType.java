@@ -4,5 +4,6 @@ public enum RoleType {
     Administrator,
     ProjectManager,
     TeamLead,
-    PracticeDirector
+    PracticeDirector,
+    HR
 }
