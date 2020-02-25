@@ -159,6 +159,39 @@ public class AppraisalController {
         repository.save(appraisal);
     }
 
+    @RequestMapping(value = "/appraisal/{appraisalId}/sectionone/reviewer/{reviewerId}/submit", method = RequestMethod.POST)
+    public void submitSectionOneByAppraisalID (@PathVariable("appraisalId") String appraisalId, @PathVariable("reviewerId") String reviewerId) {
+        Appraisal appraisal = repository.findById(appraisalId).orElse(null);
+        Map<String, Map<String, ObjectiveResponse>> sourceMap = new HashMap<>();
+        appraisal.getSectiononeResponse().forEach(group -> {
+            Map<String, ObjectiveResponse> criteriaMap = new HashMap<>();
+            group.getResponse().forEach(criteria -> {
+                if (criteria.getProjectManagerReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getProjectManagerReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getProjectManagerReviews().put(reviewerId, reviewerElements);
+                }
+                if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getTeamLeadReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getTeamLeadReviews().put(reviewerId, reviewerElements);
+                }
+                if (criteria.getPracticeDirectorReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getPracticeDirectorReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getPracticeDirectorReviews().put(reviewerId, reviewerElements);
+                }
+                if (criteria.getHrReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getHrReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getHrReviews().put(reviewerId, reviewerElements);
+                }
+            });
+            sourceMap.put(group.getGroup(), criteriaMap);
+        });
+        repository.save(appraisal);
+    }
+
     @RequestMapping(value = "/cycle/{id}/user/{userId}/sectiontwo", method = RequestMethod.GET)
     public List<SubjectiveResponse> getSectionTwoByCycleAndUser (@PathVariable("id") String id, @PathVariable("userId") String userId) {
         return repository.findOneByCycleIdAndUserId(id, userId).getSectiontwoResponse();
