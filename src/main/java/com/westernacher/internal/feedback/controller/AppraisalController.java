@@ -41,7 +41,27 @@ public class AppraisalController {
 
     @RequestMapping(value = "/cycle/{id}/manageable/{userId}", method = RequestMethod.GET)
     public List<Appraisal> getAllByCycleManageable (@PathVariable("id") String id, @PathVariable("userId") String userId) {
-        List<Appraisal> result = new ArrayList<>();
+
+        List<Appraisal> appraisals = new ArrayList<>();
+
+        List<String> manageableString = new ArrayList<>();
+
+        Person loginedUser = personRepository.findById(userId).orElse(null);
+
+        List<Role> roles = loginedUser.getRoles();
+
+        roles.stream().forEach(role -> {
+            manageableString.addAll(role.getOptions());
+        });
+
+        manageableString.stream().forEach(person->{
+            appraisals.add(repository.findOneByCycleIdAndUserId(id, person));
+        });
+
+        return appraisals;
+
+
+        /*List<Appraisal> result = new ArrayList<>();
         List<Person> manageablePersons = new ArrayList<>();
         List<String> manageablePersonIds = new ArrayList<>();
         Person person = personRepository.findPersonById(userId);
@@ -71,7 +91,7 @@ public class AppraisalController {
             }
         }
 
-        return result;
+        return result;*/
 
     }
 
