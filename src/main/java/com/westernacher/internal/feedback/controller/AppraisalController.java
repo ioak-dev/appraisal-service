@@ -159,7 +159,7 @@ public class AppraisalController {
         repository.save(appraisal);
     }
 
-    @RequestMapping(value = "/appraisal/{appraisalId}/sectionone/reviewer/{reviewerId}/submit", method = RequestMethod.POST)
+    @RequestMapping(value = "/{appraisalId}/sectionone/reviewer/{reviewerId}/submit", method = RequestMethod.POST)
     public void submitSectionOneByAppraisalID (@PathVariable("appraisalId") String appraisalId, @PathVariable("reviewerId") String reviewerId) {
         Appraisal appraisal = repository.findById(appraisalId).orElse(null);
         Map<String, Map<String, ObjectiveResponse>> sourceMap = new HashMap<>();
