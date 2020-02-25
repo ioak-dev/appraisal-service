@@ -10,6 +10,7 @@ import java.util.Map;
 public class ObjectiveResponse {
     private String criteria;
     private float weightage;
+    private String description;
     private String selfComment;
     private String selfRating;
     private Map<String, ReviewerElements> projectManagerReviews;

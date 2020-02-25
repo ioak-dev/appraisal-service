@@ -93,7 +93,10 @@ public class AppraisalCycleService {
         return cycle;
     }
 
-    private List<ObjectiveResponseGroup> generateResponseGroup(Map<String, List<String>> projectManagerRoleMap, Map<String, List<String>> teamLeadRoleMap, Map<String, List<String>> practiceDirectorRoleMap, Person person, List<GoalDefinition> goalDefinitionList) {
+    private List<ObjectiveResponseGroup> generateResponseGroup(Map<String, List<String>> projectManagerRoleMap,
+                                                               Map<String, List<String>> teamLeadRoleMap,
+                                                               Map<String, List<String>> practiceDirectorRoleMap,
+                                                               Person person, List<GoalDefinition> goalDefinitionList) {
 
         List<ObjectiveResponseGroup> responseList = new ArrayList<>();
 
@@ -103,6 +106,7 @@ public class AppraisalCycleService {
             ObjectiveResponse objectiveResponse = ObjectiveResponse
                     .builder()
                     .criteria(item.getCriteria())
+                    .description(item.getDescription())
                     .weightage(item.getWeightage())
                     .projectManagerReviews(getReviewerElements(projectManagerRoleMap, person))
                     .teamLeadReviews(getReviewerElements(teamLeadRoleMap, person))
