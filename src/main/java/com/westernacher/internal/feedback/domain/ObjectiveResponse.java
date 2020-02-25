@@ -16,7 +16,7 @@ public class ObjectiveResponse {
     private Map<String, ReviewerElements> projectManagerReviews;
     private Map<String, ReviewerElements> teamLeadReviews;
     private Map<String, ReviewerElements> practiceDirectorReviews;
-    private Map<String, ReviewerElements> administratorReviews;
+    private Map<String, ReviewerElements> hrReviews;
 
 }
 

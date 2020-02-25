@@ -107,7 +107,7 @@ public class AppraisalCycleService {
     private List<ObjectiveResponseGroup> generateResponseGroup(Map<String, List<String>> projectManagerRoleMap,
                                                                Map<String, List<String>> teamLeadRoleMap,
                                                                Map<String, List<String>> practiceDirectorRoleMap,
-                                                               Map<String, List<String>> administratorRoleMap,
+                                                               Map<String, List<String>> hrRoleMap,
                                                                Person person, List<GoalDefinition> goalDefinitionList) {
 
         List<ObjectiveResponseGroup> responseList = new ArrayList<>();
@@ -123,7 +123,7 @@ public class AppraisalCycleService {
                     .projectManagerReviews(getReviewerElements(projectManagerRoleMap, person))
                     .teamLeadReviews(getReviewerElements(teamLeadRoleMap, person))
                     .practiceDirectorReviews(getReviewerElements(practiceDirectorRoleMap, person))
-                    .administratorReviews(getReviewerElements(administratorRoleMap, person))
+                    .hrReviews(getReviewerElements(hrRoleMap, person))
                     .build();
             if (map.containsKey(item.getGroup())) {
                 map.get(item.getGroup()).add(objectiveResponse);

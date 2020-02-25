@@ -119,6 +119,8 @@ public class AppraisalController {
                 sourceMap.get(item.getGroup()).get(item.getCriteria()).getTeamLeadReviews().put(item.getReviewerId(), elements);
             } else if (item.getRoleType().equals(RoleType.PracticeDirector)) {
                 sourceMap.get(item.getGroup()).get(item.getCriteria()).getPracticeDirectorReviews().put(item.getReviewerId(), elements);
+            } else if (item.getRoleType().equals(RoleType.HR)) {
+                sourceMap.get(item.getGroup()).get(item.getCriteria()).getHrReviews().put(item.getReviewerId(), elements);
             }
         });
         repository.save(appraisal);
@@ -145,6 +147,11 @@ public class AppraisalController {
                     ReviewerElements reviewerElements = criteria.getPracticeDirectorReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getPracticeDirectorReviews().put(reviewerId, reviewerElements);
+                }
+                if (criteria.getHrReviews().containsKey(reviewerId))  {
+                    ReviewerElements reviewerElements = criteria.getHrReviews().get(reviewerId);
+                    reviewerElements.setComplete(true);
+                    criteria.getHrReviews().put(reviewerId, reviewerElements);
                 }
             });
             sourceMap.put(group.getGroup(), criteriaMap);
