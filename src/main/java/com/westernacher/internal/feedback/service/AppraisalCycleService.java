@@ -36,7 +36,7 @@ public class AppraisalCycleService {
         Map<String, List<String>> projectManagerRoleMap = new HashMap<>();
         Map<String, List<String>> teamLeadRoleMap = new HashMap<>();
         Map<String, List<String>> practiceDirectorRoleMap = new HashMap<>();
-        Map<String, List<String>> administratorRoleMap = new HashMap<>();
+        Map<String, List<String>> hrRoleMap = new HashMap<>();
 
         personRepository.findAll().forEach(person -> {
             person.getRoles().forEach(role -> {
@@ -70,14 +70,14 @@ public class AppraisalCycleService {
                             practiceDirectorRoleMap.put(email, list);
                         }
                     });
-                } else if (role.getType().equals(RoleType.Administrator)) {
+                } else if (role.getType().equals(RoleType.HR)) {
                     role.getOptions().forEach(email -> {
-                        if (administratorRoleMap.containsKey(email)) {
-                            administratorRoleMap.get(email).add(person.getId());
+                        if (hrRoleMap.containsKey(email)) {
+                            hrRoleMap.get(email).add(person.getId());
                         } else {
                             List<String> list = new ArrayList<>();
                             list.add(person.getId());
-                            administratorRoleMap.put(email, list);
+                            hrRoleMap.put(email, list);
                         }
                     });
                 }
@@ -87,7 +87,7 @@ public class AppraisalCycleService {
         personRepository.findAll().forEach(person -> {
             List<ObjectiveResponseGroup> sectionone = new ArrayList<>();
 
-            sectionone.addAll(generateResponseGroup(projectManagerRoleMap, teamLeadRoleMap, practiceDirectorRoleMap, administratorRoleMap, person, goalDefinitionRepository.getAllByJobName(person.getJobName())));
+            sectionone.addAll(generateResponseGroup(projectManagerRoleMap, teamLeadRoleMap, practiceDirectorRoleMap, hrRoleMap, person, goalDefinitionRepository.getAllByJobName(person.getJobName())));
             List<SubjectiveResponse> sectiontwo = new ArrayList<>();
             List<SubjectiveResponse> sectionthree = new ArrayList<>();
             Appraisal appraisal = Appraisal.builder()
