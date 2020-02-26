@@ -55,7 +55,7 @@ public class AppraisalController {
         });
 
         manageableString.stream().forEach(person->{
-            appraisals.add(repository.findOneByCycleIdAndUserId(id, person));
+            appraisals.add(repository.findByCycleIdAndUserId(id, personRepository.findPersonByEmail(person).getId()));
         });
 
         return appraisals;
