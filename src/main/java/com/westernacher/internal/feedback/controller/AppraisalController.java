@@ -197,56 +197,49 @@ public class AppraisalController {
             group.getResponse().forEach(criteria -> {
 
                 if (criteria.getProjectManagerReviews().containsKey(reviewerId))  {
+                    criteria.getProjectManagerReviews().forEach((k,v)->{
+                        if (v.isComplete() == false){
+                            projectManagerFlag.set(false);
+                        }
+
+                    });
                     ReviewerElements reviewerElements = criteria.getProjectManagerReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getProjectManagerReviews().put(reviewerId, reviewerElements);
-                    //appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
                 }
                 if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
+                    criteria.getTeamLeadReviews().forEach((k,v)->{
+                        if (v.isComplete() == false){
+                            teamLeadFlag.set(false);
+                        }
+
+                    });
                     ReviewerElements reviewerElements = criteria.getTeamLeadReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getTeamLeadReviews().put(reviewerId, reviewerElements);
-                    //appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
                 }
                 if (criteria.getPracticeDirectorReviews().containsKey(reviewerId))  {
+                    criteria.getPracticeDirectorReviews().forEach((k,v)->{
+                        if (v.isComplete() == false){
+                            practiceDirectorFlag.set(false);
+                        }
+
+                    });
                     ReviewerElements reviewerElements = criteria.getPracticeDirectorReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getPracticeDirectorReviews().put(reviewerId, reviewerElements);
-                    //appraisal.setStatus(AppraisalStatusType.HR);
                 }
                 if (criteria.getHrReviews().containsKey(reviewerId))  {
+                    criteria.getHrReviews().forEach((k,v)->{
+                        if (v.isComplete() == false){
+                            hrFlag.set(false);
+                        }
+
+                    });
                     ReviewerElements reviewerElements = criteria.getHrReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getHrReviews().put(reviewerId, reviewerElements);
-                    //appraisal.setStatus(AppraisalStatusType.COMPLETE);
                 }
-                criteria.getProjectManagerReviews().forEach((k,v)->{
-                    if (v.isComplete() == false){
-                        projectManagerFlag.set(false);
-                    }
-
-                });
-
-                criteria.getTeamLeadReviews().forEach((k,v)->{
-                    if (v.isComplete() == false){
-                        teamLeadFlag.set(false);
-                    }
-
-                });
-
-                criteria.getPracticeDirectorReviews().forEach((k,v)->{
-                    if (v.isComplete() == false){
-                        practiceDirectorFlag.set(false);
-                    }
-
-                });
-
-                criteria.getHrReviews().forEach((k,v)->{
-                    if (v.isComplete() == false){
-                        hrFlag.set(false);
-                    }
-
-                });
             });
             sourceMap.put(group.getGroup(), criteriaMap);
         });
