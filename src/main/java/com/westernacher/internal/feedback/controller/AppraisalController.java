@@ -157,21 +157,25 @@ public class AppraisalController {
                     ReviewerElements reviewerElements = criteria.getProjectManagerReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getProjectManagerReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
                 }
                 if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
                     ReviewerElements reviewerElements = criteria.getTeamLeadReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getTeamLeadReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
                 }
                 if (criteria.getPracticeDirectorReviews().containsKey(reviewerId))  {
                     ReviewerElements reviewerElements = criteria.getPracticeDirectorReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getPracticeDirectorReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.HR);
                 }
                 if (criteria.getHrReviews().containsKey(reviewerId))  {
                     ReviewerElements reviewerElements = criteria.getHrReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getHrReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.COMPLETE);
                 }
             });
             sourceMap.put(group.getGroup(), criteriaMap);
@@ -190,21 +194,25 @@ public class AppraisalController {
                     ReviewerElements reviewerElements = criteria.getProjectManagerReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getProjectManagerReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
                 }
                 if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
                     ReviewerElements reviewerElements = criteria.getTeamLeadReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getTeamLeadReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
                 }
                 if (criteria.getPracticeDirectorReviews().containsKey(reviewerId))  {
                     ReviewerElements reviewerElements = criteria.getPracticeDirectorReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getPracticeDirectorReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.HR);
                 }
                 if (criteria.getHrReviews().containsKey(reviewerId))  {
                     ReviewerElements reviewerElements = criteria.getHrReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getHrReviews().put(reviewerId, reviewerElements);
+                    appraisal.setStatus(AppraisalStatusType.COMPLETE);
                 }
             });
             sourceMap.put(group.getGroup(), criteriaMap);
@@ -352,7 +360,7 @@ public class AppraisalController {
         if (errorResource.getSectionOneError().size()>0) {
             return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.NOT_ACCEPTABLE);
         }else {
-            appraisal.setStatus(AppraisalStatusType.HEAD_REVIEW);
+            appraisal.setStatus(AppraisalStatusType.PROJECT_MANAGER);
             repository.save(appraisal);
             return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.OK);
         }
