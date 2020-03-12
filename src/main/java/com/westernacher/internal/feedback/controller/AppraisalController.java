@@ -131,7 +131,6 @@ public class AppraisalController {
                     .builder()
                     .rating(item.getRating())
                     .comment(item.getComment())
-                    .isComplete(false)
                     .name(personRepository.findPersonById(item.getReviewerId()).getName())
                     .build();
             if (item.getRoleType().equals(RoleType.ProjectManager)) {
@@ -151,92 +150,78 @@ public class AppraisalController {
     public void submitSectionOneByAppraisalID (@PathVariable("appraisalId") String appraisalId, @PathVariable("reviewerId") String reviewerId) {
         Appraisal appraisal = repository.findById(appraisalId).orElse(null);
 
-
-
-
         Map<String, Map<String, ObjectiveResponse>> sourceMap = new HashMap<>();
         appraisal.getSectiononeResponse().forEach(group -> {
             Map<String, ObjectiveResponse> criteriaMap = new HashMap<>();
             group.getResponse().forEach(criteria -> {
 
                 if (criteria.getProjectManagerReviews().containsKey(reviewerId))  {
-                    AtomicBoolean projectManagerFlag = new AtomicBoolean(true);
-
+                    boolean flag = true;
                     ReviewerElements reviewerElements = criteria.getProjectManagerReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getProjectManagerReviews().put(reviewerId, reviewerElements);
 
-                    criteria.getProjectManagerReviews().forEach((k,v)->{
-                        if (v.isComplete() == false){
-                            projectManagerFlag.set(false);
+                    for (Map.Entry<String, ReviewerElements> entry : criteria.getProjectManagerReviews().entrySet()){
+                        if (entry.getValue().isComplete() == false){
+                            flag = false;
                         }
-
-                    });
-                    if (projectManagerFlag.equals(true)) {
+                    }
+                    if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
                     }
                 }
                 if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
-                    AtomicBoolean teamLeadFlag = new AtomicBoolean(true);
+                    boolean flag = true;
 
                     ReviewerElements reviewerElements = criteria.getTeamLeadReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getTeamLeadReviews().put(reviewerId, reviewerElements);
 
-                    criteria.getTeamLeadReviews().forEach((k,v)->{
-                        if (v.isComplete() == false){
-                            teamLeadFlag.set(false);
+                    for (Map.Entry<String, ReviewerElements> entry : criteria.getTeamLeadReviews().entrySet()){
+                        if (entry.getValue().isComplete() == false){
+                            flag = false;
                         }
-
-                    });
-                    if (teamLeadFlag.equals(true)) {
+                    }
+                    if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
                     }
+
                 }
                 if (criteria.getPracticeDirectorReviews().containsKey(reviewerId))  {
-                    AtomicBoolean practiceDirectorFlag = new AtomicBoolean(true);
+                    boolean flag = true;
 
                     ReviewerElements reviewerElements = criteria.getPracticeDirectorReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getPracticeDirectorReviews().put(reviewerId, reviewerElements);
 
-                    criteria.getPracticeDirectorReviews().forEach((k,v)->{
-                        if (v.isComplete() == false){
-                            practiceDirectorFlag.set(false);
+                    for (Map.Entry<String, ReviewerElements> entry : criteria.getPracticeDirectorReviews().entrySet()){
+                        if (entry.getValue().isComplete() == false){
+                            flag = false;
                         }
-
-                    });
-                    if (practiceDirectorFlag.equals(true)) {
+                    }
+                    if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.HR);
                     }
                 }
                 if (criteria.getHrReviews().containsKey(reviewerId))  {
-                    AtomicBoolean hrFlag = new AtomicBoolean(true);
+                    boolean flag = true;
 
                     ReviewerElements reviewerElements = criteria.getHrReviews().get(reviewerId);
                     reviewerElements.setComplete(true);
                     criteria.getHrReviews().put(reviewerId, reviewerElements);
 
-                    criteria.getHrReviews().forEach((k,v)->{
-                        if (v.isComplete() == false){
-                            hrFlag.set(false);
+                    for (Map.Entry<String, ReviewerElements> entry : criteria.getHrReviews().entrySet()){
+                        if (entry.getValue().isComplete() == false){
+                            flag = false;
                         }
-
-                    });
-                    if (hrFlag.equals(true)) {
+                    }
+                    if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.COMPLETE);
                     }
                 }
             });
             sourceMap.put(group.getGroup(), criteriaMap);
         });
-
-
-
-
-
-
-
 
         repository.save(appraisal);
     }
