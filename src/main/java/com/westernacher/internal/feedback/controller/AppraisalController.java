@@ -6,6 +6,7 @@ import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalService;
+import com.westernacher.internal.feedback.service.EmailUtility;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,6 +169,7 @@ public class AppraisalController {
                     }
                     if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
+                        service.sendListOfMail(criteria.getTeamLeadReviews().keySet(), AppraisalStatusType.REPORTING_MANAGER, appraisal.getUserId());
                     }
                 }
                 if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
@@ -184,6 +186,7 @@ public class AppraisalController {
                     }
                     if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
+                        service.sendListOfMail(criteria.getPracticeDirectorReviews().keySet(), AppraisalStatusType.PRACTICE_DIRECTOR, appraisal.getUserId());
                     }
 
                 }
@@ -201,6 +204,7 @@ public class AppraisalController {
                     }
                     if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.HR);
+                        service.sendListOfMail(criteria.getHrReviews().keySet(), AppraisalStatusType.HR, appraisal.getUserId());
                     }
                 }
                 if (criteria.getHrReviews().containsKey(reviewerId))  {
@@ -368,6 +372,7 @@ public class AppraisalController {
         }else {
             appraisal.setStatus(AppraisalStatusType.PROJECT_MANAGER);
             repository.save(appraisal);
+            service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getProjectManagerReviews().keySet(), AppraisalStatusType.PROJECT_MANAGER, appraisal.getUserId());
             return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.OK);
         }
     }
