@@ -114,6 +114,8 @@ public class AppraisalCycleService {
 
         Map<String, List<ObjectiveResponse>> map = new HashMap<>();
 
+        goalDefinitionList.sort(Comparator.comparing(GoalDefinition::getCriteria));
+
         goalDefinitionList.forEach(item -> {
             ObjectiveResponse objectiveResponse = ObjectiveResponse
                     .builder()
