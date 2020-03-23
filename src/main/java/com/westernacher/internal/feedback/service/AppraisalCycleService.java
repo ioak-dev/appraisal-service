@@ -114,7 +114,7 @@ public class AppraisalCycleService {
 
         Map<String, List<ObjectiveResponse>> map = new HashMap<>();
 
-        goalDefinitionList.sort(Comparator.comparing(GoalDefinition::getCriteria));
+        //goalDefinitionList.sort(Comparator.comparing(GoalDefinition::getCriteria));
 
         goalDefinitionList.forEach(item -> {
             ObjectiveResponse objectiveResponse = ObjectiveResponse
@@ -145,7 +145,34 @@ public class AppraisalCycleService {
             responseList.add(objectiveResponseGroup);
         }
 
-        return responseList;
+        List<ObjectiveResponseGroup> sortedResponseList = new ArrayList<>();
+
+        ObjectiveResponseGroup group1 = ObjectiveResponseGroup.builder().build();
+        ObjectiveResponseGroup group2 = ObjectiveResponseGroup.builder().build();
+        ObjectiveResponseGroup group3 = ObjectiveResponseGroup.builder().build();
+        ObjectiveResponseGroup group4 = ObjectiveResponseGroup.builder().build();
+
+        for (ObjectiveResponseGroup group:responseList) {
+            if (group.getGroup().equals("Performance on core competency")) {
+                group1 = group;
+            }
+            if (group.getGroup().equals("Business Generation & Execution")) {
+                group2 = group;
+            }
+            if (group.getGroup().equals("Capability Development")) {
+                group3 = group;
+            }
+            if (group.getGroup().equals("Work Ethic")) {
+                group4 = group;
+            }
+        }
+
+        sortedResponseList.add(group1);
+        sortedResponseList.add(group2);
+        sortedResponseList.add(group3);
+        sortedResponseList.add(group4);
+
+        return sortedResponseList;
 
     }
 
