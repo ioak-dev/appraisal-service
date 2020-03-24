@@ -175,7 +175,7 @@ public class PersonController {
     }
 
     @PostMapping(value = "/upload/person", consumes = "multipart/form-data")
-    public ResponseEntity<?> uploadPersonFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadPersonFile(@ModelAttribute("file") MultipartFile file) {
 
         repository.deleteAll();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
