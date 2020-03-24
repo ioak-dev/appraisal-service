@@ -354,13 +354,15 @@ public class AppraisalController {
 
             objectiveResponseGroups.stream().forEach(objectiveResponseGroup -> {
                 objectiveResponseGroup.getResponse().stream().forEach(objectiveResponse -> {
-                    if (objectiveResponse.getSelfComment()==null) {
-                        sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Comment");
-                    } else if (objectiveResponse.getSelfComment().length()<50) {
-                        sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Comment should be atleast 50 characters");
-                    }
-                    if (objectiveResponse.getSelfRating()==null) {
-                        sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Rating");
+                    if (Math.signum(objectiveResponse.getWeightage()) != 0) {
+                        if (objectiveResponse.getSelfComment()==null) {
+                            sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Comment");
+                        } else if (objectiveResponse.getSelfComment().length()<50) {
+                            sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Comment should be atleast 50 characters");
+                        }
+                        if (objectiveResponse.getSelfRating()==null) {
+                            sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Rating");
+                        }
                     }
                 });
                 errorResource.setSectionOneError(sectionOneError);
