@@ -145,29 +145,29 @@ public class PersonController {
         for(String line:csvline) {
             String[] values = line.split(",");
 
-            if (csvMap.containsKey(values[0])) {
-                Map<RoleType, List<String>> secondValue = csvMap.get(values[0]);
+            if (csvMap.containsKey(values[0].trim().toLowerCase())) {
+                Map<RoleType, List<String>> secondValue = csvMap.get(values[0].trim().toLowerCase());
                 if (secondValue.containsKey(RoleType.valueOf(values[1]))) {
                     List<String> innerList = secondValue.get(RoleType.valueOf(values[1]));
-                    innerList.add(values[2]);
+                    innerList.add(values[2].trim().toLowerCase());
                     secondValue.put(RoleType.valueOf(values[1]), innerList);
                 } else {
                     List<String> innerList2 = new ArrayList<>();
                     if (values.length==3) {
-                        innerList2.add(values[2]);
+                        innerList2.add(values[2].trim().toLowerCase());
                     }
                     secondValue.put(RoleType.valueOf(values[1]), innerList2);
                 }
-                csvMap.put(values[0], secondValue);
+                csvMap.put(values[0].trim().toLowerCase(), secondValue);
             }else{
                 Map<RoleType, List<String>> secondMap2 = new HashMap<>();
                 List<String> innerList2 = new ArrayList<>();
                 if (values.length==3) {
-                    innerList2.add(values[2]);
+                    innerList2.add(values[2].trim().toLowerCase());
                 }
                 secondMap2.put(RoleType.valueOf(values[1]), innerList2);
 
-                csvMap.put(values[0], secondMap2);
+                csvMap.put(values[0].trim().toLowerCase(), secondMap2);
             }
         }
         return csvMap;
