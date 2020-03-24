@@ -147,16 +147,16 @@ public class PersonController {
 
             if (csvMap.containsKey(values[0].trim().toLowerCase())) {
                 Map<RoleType, List<String>> secondValue = csvMap.get(values[0].trim().toLowerCase());
-                if (secondValue.containsKey(RoleType.valueOf(values[1]))) {
-                    List<String> innerList = secondValue.get(RoleType.valueOf(values[1]));
+                if (secondValue.containsKey(RoleType.valueOf(values[1].trim()))) {
+                    List<String> innerList = secondValue.get(RoleType.valueOf(values[1].trim()));
                     innerList.add(values[2].trim().toLowerCase());
-                    secondValue.put(RoleType.valueOf(values[1]), innerList);
+                    secondValue.put(RoleType.valueOf(values[1].trim()), innerList);
                 } else {
                     List<String> innerList2 = new ArrayList<>();
                     if (values.length==3) {
                         innerList2.add(values[2].trim().toLowerCase());
                     }
-                    secondValue.put(RoleType.valueOf(values[1]), innerList2);
+                    secondValue.put(RoleType.valueOf(values[1].trim()), innerList2);
                 }
                 csvMap.put(values[0].trim().toLowerCase(), secondValue);
             }else{
@@ -165,7 +165,7 @@ public class PersonController {
                 if (values.length==3) {
                     innerList2.add(values[2].trim().toLowerCase());
                 }
-                secondMap2.put(RoleType.valueOf(values[1]), innerList2);
+                secondMap2.put(RoleType.valueOf(values[1].trim()), innerList2);
 
                 csvMap.put(values[0].trim().toLowerCase(), secondMap2);
             }
@@ -196,26 +196,26 @@ public class PersonController {
             csvline.stream().forEach(line -> {
                 String[] values = line.split(",");
                 Person person = new Person();
-                person.setEmpId(values[0]);
-                person.setName(values[1]);
+                person.setEmpId(values[0].trim());
+                person.setName(values[1].trim());
                 DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
                 try{
-                    person.setJoiningDate(format.parse(values[2]));
+                    person.setJoiningDate(format.parse(values[2].trim()));
                 }catch (ParseException e) {
 
                 }
 
-                person.setJobName(values[3]);
-                person.setUnit(values[4]);
-                person.setLevel(values[5]);
-                person.setSpecialization(values[6]);
-                person.setStatus(PersonStatus.valueOf(values[7]));
+                person.setJobName(values[3].trim());
+                person.setUnit(values[4].trim());
+                person.setLevel(values[5].trim());
+                person.setSpecialization(values[6].trim());
+                person.setStatus(PersonStatus.valueOf(values[7].trim()));
                 person.setEmail(values[8].trim().toLowerCase());
                 try{
-                    person.setLastAppraisalDate(format.parse(values[9]));
+                    person.setLastAppraisalDate(format.parse(values[9].trim()));
                 }catch(ParseException e){}
 
-                person.setDuration(Integer.parseInt(values[10]));
+                person.setDuration(Integer.parseInt(values[10].trim()));
 
                 repository.save(person);
             });
