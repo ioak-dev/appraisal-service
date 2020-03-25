@@ -169,7 +169,21 @@ public class AppraisalController {
                     }
                     if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
-                        service.sendListOfMail(criteria.getTeamLeadReviews().keySet(), AppraisalStatusType.REPORTING_MANAGER, appraisal.getUserId());
+
+                        if (criteria.getTeamLeadReviews().isEmpty()){
+                            appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
+                            if (criteria.getPracticeDirectorReviews().isEmpty()){
+                                appraisal.setStatus(AppraisalStatusType.HR);
+                            }
+                        }
+
+                        if (appraisal.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)) {
+                            service.sendListOfMail(criteria.getTeamLeadReviews().keySet(), AppraisalStatusType.REPORTING_MANAGER, appraisal.getUserId());
+                        }else if (appraisal.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+                            service.sendListOfMail(criteria.getPracticeDirectorReviews().keySet(), AppraisalStatusType.PRACTICE_DIRECTOR, appraisal.getUserId());
+                        }else if (appraisal.getStatus().equals(AppraisalStatusType.HR)) {
+                            service.sendListOfMail(criteria.getHrReviews().keySet(), AppraisalStatusType.HR, appraisal.getUserId());
+                        }
                     }
                 }
                 if (criteria.getTeamLeadReviews().containsKey(reviewerId))  {
@@ -186,7 +200,16 @@ public class AppraisalController {
                     }
                     if (flag == true) {
                         appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
-                        service.sendListOfMail(criteria.getPracticeDirectorReviews().keySet(), AppraisalStatusType.PRACTICE_DIRECTOR, appraisal.getUserId());
+
+                        if (criteria.getPracticeDirectorReviews().isEmpty()){
+                            appraisal.setStatus(AppraisalStatusType.HR);
+                        }
+
+                        if (appraisal.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+                            service.sendListOfMail(criteria.getPracticeDirectorReviews().keySet(), AppraisalStatusType.PRACTICE_DIRECTOR, appraisal.getUserId());
+                        }else if (appraisal.getStatus().equals(AppraisalStatusType.HR)) {
+                            service.sendListOfMail(criteria.getHrReviews().keySet(), AppraisalStatusType.HR, appraisal.getUserId());
+                        }
                     }
 
                 }
@@ -372,9 +395,27 @@ public class AppraisalController {
         if (errorResource.getSectionOneError().size()>0) {
             return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.NOT_ACCEPTABLE);
         }else {
-            appraisal.setStatus(AppraisalStatusType.PROJECT_MANAGER);
+            if (appraisal.getSectiononeResponse().get(0).getResponse().get(0).getProjectManagerReviews().isEmpty()){
+                appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
+                if (appraisal.getSectiononeResponse().get(0).getResponse().get(0).getTeamLeadReviews().isEmpty()){
+                    appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
+                    if (appraisal.getSectiononeResponse().get(0).getResponse().get(0).getPracticeDirectorReviews().isEmpty()){
+                        appraisal.setStatus(AppraisalStatusType.HR);
+                    }
+                }
+            } else {
+                appraisal.setStatus(AppraisalStatusType.PROJECT_MANAGER);
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getProjectManagerReviews().keySet(), AppraisalStatusType.PROJECT_MANAGER, appraisal.getUserId());
+            }
+            if (appraisal.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)) {
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getTeamLeadReviews().keySet(), AppraisalStatusType.REPORTING_MANAGER, appraisal.getUserId());
+            }else if (appraisal.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getPracticeDirectorReviews().keySet(), AppraisalStatusType.PRACTICE_DIRECTOR, appraisal.getUserId());
+            }else if (appraisal.getStatus().equals(AppraisalStatusType.HR)) {
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getHrReviews().keySet(), AppraisalStatusType.HR, appraisal.getUserId());
+            }
             repository.save(appraisal);
-            service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getProjectManagerReviews().keySet(), AppraisalStatusType.PROJECT_MANAGER, appraisal.getUserId());
+
             return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.OK);
         }
     }
