@@ -13,5 +13,5 @@ public class RatingScale {
     private String id;
     private String rating;
     private String appraisalCriteria;
-    private String reviewCriteria;
+    private String reviewerCriteria;
 }
