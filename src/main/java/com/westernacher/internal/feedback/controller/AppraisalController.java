@@ -10,6 +10,7 @@ import com.westernacher.internal.feedback.service.EmailUtility;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,60 +42,21 @@ public class AppraisalController {
         return repository.findAllByCycleId(id);
     }
 
-    @RequestMapping(value = "/cycle/{id}/manageable/{userId}", method = RequestMethod.GET)
-    public List<Appraisal> getAllByCycleManageable (@PathVariable("id") String id, @PathVariable("userId") String userId) {
+    @RequestMapping(value = "/cycle/{cycleId}/manageable/{userId}", method = RequestMethod.GET)
+    public List<Appraisal> getAllByCycleManageable (@PathVariable("cycleId") String cycleId, @PathVariable("userId") String userId) {
 
-        List<Appraisal> appraisals = new ArrayList<>();
-
-        List<String> manageableString = new ArrayList<>();
-
-        Person loginedUser = personRepository.findById(userId).orElse(null);
-
-        List<Role> roles = loginedUser.getRoles();
-
-        roles.stream().forEach(role -> {
-            manageableString.addAll(role.getOptions());
+        List<String> emailIdList = new ArrayList<>();
+        personRepository.findById(userId).orElse(null).getRoles().stream().forEach(role -> {
+            emailIdList.addAll(role.getOptions());
         });
 
-        manageableString.stream().forEach(person->{
-            appraisals.add(repository.findByCycleIdAndUserId(id, personRepository.findPersonByEmail(person).getId()));
+        List<String> userIdList = new ArrayList<>();
+
+        personRepository.findByEmailIn(emailIdList).stream().forEach(person -> {
+            userIdList.add(person.getId());
         });
 
-        return appraisals;
-
-
-        /*List<Appraisal> result = new ArrayList<>();
-        List<Person> manageablePersons = new ArrayList<>();
-        List<String> manageablePersonIds = new ArrayList<>();
-        Person person = personRepository.findPersonById(userId);
-        for (Role role : person.getRoles()) {
-            if (role.getType().equals(RoleType.Administrator)) {
-                manageablePersons = personRepository.findAll();
-            }
-        }
-
-        if (manageablePersons.size() == 0) {
-            for (Role role : person.getRoles()) {
-                if (role.getType().equals(RoleType.ProjectManager)) {
-                    manageablePersons = personRepository.findPersonsByEmail(role.getOptions());
-                }
-            }
-        }
-
-        for (Person item : manageablePersons) {
-            manageablePersonIds.add(item.getId());
-        }
-
-        List<Appraisal> appraisals = repository.findAllByCycleId(id);
-
-        for (Appraisal appraisal : appraisals) {
-            if (manageablePersonIds.contains(appraisal.getUserId())) {
-                result.add(appraisal);
-            }
-        }
-
-        return result;*/
-
+        return repository.findAllByCycleIdAndUserIdIsIn(cycleId, userIdList);
     }
 
     @RequestMapping(value = "/cycle/{id}/user/{userId}", method = RequestMethod.GET)

@@ -11,6 +11,8 @@ public interface PersonRepository extends MongoRepository<Person, String> {
     Person findPersonByEmail(String email);
     Person findPersonById(String id);
 
+    List<Person> findByEmailIn(List<String> emails);
+
     @Query("{'email': {'$in': ?0}}")
     List<Person> findPersonsByEmail(List<String> emails);
 }
