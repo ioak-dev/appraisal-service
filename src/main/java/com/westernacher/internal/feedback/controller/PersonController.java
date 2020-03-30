@@ -1,19 +1,21 @@
 
 package com.westernacher.internal.feedback.controller;
 
-import com.westernacher.internal.feedback.domain.Person;
-import com.westernacher.internal.feedback.domain.PersonStatus;
-import com.westernacher.internal.feedback.domain.Role;
-import com.westernacher.internal.feedback.domain.RoleType;
+import com.westernacher.internal.feedback.domain.*;
+import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
+import com.westernacher.internal.feedback.service.BackupService;
 import com.westernacher.internal.feedback.service.PersonService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +36,12 @@ public class PersonController {
 
     @Autowired
     private PersonService service;
+
+    @Autowired
+    private AppraisalRepository appraisalRepository;
+
+    @Autowired
+    private BackupService backupService;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Person> getAll () {
@@ -221,6 +229,42 @@ public class PersonController {
             });
         }
     return null;
+    }
+
+    @GetMapping("/download/employeestatus")
+    public void downloadCSV(HttpServletResponse response) throws IOException{
+
+        response.setContentType("text/csv");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=PersonStatus.csv");
+
+        List<Person> personList = repository.findAll();
+        Map<String, Person> personMap = new HashMap<>();
+        personList.stream().forEach(person -> {
+            personMap.put(person.getId(), person);
+        });
+
+        List<Appraisal> appraisalList = appraisalRepository.findAll();
+        List<PersonResource> personResources = new ArrayList<>();
+        appraisalList.stream().forEach(appraisal -> {
+            PersonResource resource = new PersonResource();
+            resource.setEmployeeId(personMap.get(appraisal.getUserId()).getEmpId());
+            resource.setEmployeeName(personMap.get(appraisal.getUserId()).getName());
+            resource.setEmployeeEmail(personMap.get(appraisal.getUserId()).getEmail());
+            resource.setEmployeeStatus(appraisal.getStatus().name());
+            personResources.add(resource);
+        } );
+
+        backupService.writeDataToCsvUsingStringArray(response.getWriter(), personResources);
+    }
+
+    @Data
+    public static class PersonResource {
+
+        private String employeeId;
+        private String employeeName;
+        private String employeeEmail;
+        private String employeeStatus;
     }
 
 }
