@@ -231,8 +231,8 @@ public class PersonController {
     return null;
     }
 
-    @GetMapping("/download/employeestatus")
-    public void downloadCSV(HttpServletResponse response) throws IOException{
+    @GetMapping("/download/employeestatus/{cycleId}")
+    public void downloadCSV(HttpServletResponse response, @PathVariable String cycleId) throws IOException{
 
         response.setContentType("text/csv");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
@@ -244,7 +244,7 @@ public class PersonController {
             personMap.put(person.getId(), person);
         });
 
-        List<Appraisal> appraisalList = appraisalRepository.findAll();
+        List<Appraisal> appraisalList = appraisalRepository.findAllByCycleId(cycleId);
         List<PersonResource> personResources = new ArrayList<>();
         appraisalList.stream().forEach(appraisal -> {
             PersonResource resource = new PersonResource();
