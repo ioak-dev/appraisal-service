@@ -32,7 +32,9 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.opencsv:opencsv:4.0'
 	compile('org.springframework.boot:spring-boot-starter-mail')
+	compile('com.opencsv:opencsv:4.0')
 	compileOnly 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

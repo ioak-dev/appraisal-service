@@ -9,6 +9,7 @@ import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.domain.Person;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
+import com.westernacher.internal.feedback.service.BackupService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.buf.StringUtils;
@@ -34,6 +35,9 @@ public class NotificationController {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private BackupService backupService;
 
     @Value("${spring.mail.username}")
     String from;
@@ -98,6 +102,11 @@ public class NotificationController {
         }catch(Exception e){
             log.info("Error in sending email");
         }
+    }
+
+    @RequestMapping(value = "/backup", method = RequestMethod.GET)
+    public void backup () {
+        backupService.sendAppraisalDatabase();
     }
 
     @Data
