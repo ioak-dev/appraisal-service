@@ -1,5 +1,6 @@
 package com.westernacher.internal.feedback.controller;
 
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 @RestController
 @RequestMapping("/notification")
@@ -42,10 +44,19 @@ public class NotificationController {
     @Value("${spring.mail.username}")
     String from;
 
+    @Value("${spring.mail.host}")
+    String host;
+
+    @Value("${spring.mail.port}")
+    String port;
+
+    @Value("${spring.mail.password}")
+    String password;
+
     @RequestMapping(value = "/send", method = RequestMethod.POST)
     public String send(@Valid @RequestBody MailResource resource) {
         try {
-          send(resource.getTo(), resource.getSubject(), resource.getBody());
+            sendMail(resource.getTo(), resource.getSubject(), resource.getBody());
             return "Email Sent!";
         }catch(Exception ex) {
             return "Error in sending email: "+ex;
@@ -68,6 +79,7 @@ public class NotificationController {
 
             return "Email Sent!";
         }catch(Exception ex) {
+            ex.printStackTrace();
             return "Error in sending email : "+ex;
         }
     }
@@ -81,7 +93,6 @@ public class NotificationController {
             helper.setBcc(InternetAddress.parse(StringUtils.join(toList, ',')));
             helper.setSubject(subject);
             helper.setText(body);
-
             sender.send(message);
         }catch(Exception e){
             log.info("Error in sending email");
@@ -100,7 +111,40 @@ public class NotificationController {
 
             sender.send(message);
         }catch(Exception e){
+            e.printStackTrace();
             log.info("Error in sending email");
+        }
+    }
+
+    private void sendMail(String to, String subject, String body) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", this.host);
+        props.put("mail.smtp.port", this.port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable",true);
+        props.put("mail.smtp.timeout", "10000");
+        props.put("mail.smtp.connectiontimeout", "10000");
+
+        Session session = Session.getDefaultInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(from, password);
+                    }
+                });
+
+        try{
+            MimeMessage message = new MimeMessage(session);
+
+            message.setFrom(new InternetAddress(this.from));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject(subject, "UTF-8");
+            message.setText(body, "UTF-8");
+
+            Transport.send(message);
+            log.info("Mail send successfully to :"+to);
+        }catch(MessagingException e){
+            log.info("Sending From: " + this.from + " Sending To: " + to);
+            log.error("Error occured during sending mail"+e);
         }
     }
 

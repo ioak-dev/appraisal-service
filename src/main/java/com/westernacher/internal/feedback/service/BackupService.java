@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.westernacher.internal.feedback.controller.PersonController;
 import com.westernacher.internal.feedback.domain.Appraisal;
 import com.westernacher.internal.feedback.domain.AppraisalCycle;
-import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.domain.Person;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
@@ -13,24 +12,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.opencsv.CSVWriter;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-
-import javax.mail.MessagingException;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.*;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -53,6 +46,15 @@ public class BackupService {
 
     @Value("${backup.mail.to}")
     String to;
+
+    @Value("${spring.mail.host}")
+    String host;
+
+    @Value("${spring.mail.port}")
+    String port;
+
+    @Value("${spring.mail.password}")
+    String password;
 
     @Scheduled(cron = "${backup.cron.expression}")
     public void sendAppraisalDatabase() {
@@ -77,7 +79,7 @@ public class BackupService {
         }
     }
 
-    @Async
+   /* @Async
     public void send( String to,
                       File personFile, File appraisalFile, File cycleFile) {
         try {
@@ -93,6 +95,61 @@ public class BackupService {
             sender.send(mimeMessage);
         } catch (MessagingException e) {
             e.printStackTrace();
+        }
+    }*/
+
+    @Async
+    public void send( String to,
+                      File personFile, File appraisalFile, File cycleFile) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", this.host);
+        props.put("mail.smtp.port", this.port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable",true);
+        props.put("mail.smtp.timeout", "10000");
+        props.put("mail.smtp.connectiontimeout", "10000");
+
+        Session session = Session.getDefaultInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(from, password);
+                    }
+                });
+
+        try{
+            MimeMessage message = new MimeMessage(session);
+
+            message.setFrom(new InternetAddress(this.from));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject("Appraisal backup : "+new Date().toString(), "UTF-8");
+            message.setText("Please find the attachment back up for Appraisal Application", "UTF-8");
+
+            MimeBodyPart attachment = new MimeBodyPart();
+            attachment.attachFile(personFile);
+
+            MimeBodyPart attachment2 = new MimeBodyPart();
+            attachment2.attachFile(appraisalFile);
+
+            MimeBodyPart attachment3 = new MimeBodyPart();
+            attachment3.attachFile(cycleFile);
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(attachment);
+            multipart.addBodyPart(attachment2);
+            multipart.addBodyPart(attachment3);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+            log.info("Mail send successfully to :"+to);
+        }catch(MessagingException e){
+            log.info("Sending From: " + this.from + " Sending To: " + to);
+            log.error("Error occured during sending mail"+e);
+            e.printStackTrace();
+        }catch (IOException i) {
+            log.info("Sending From: " + this.from + " Sending To: " + to);
+            log.error("Error occured during sending mail"+i);
+            i.printStackTrace();
         }
     }
 
