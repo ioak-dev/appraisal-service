@@ -124,6 +124,8 @@ public class NotificationController {
         props.put("mail.smtp.starttls.enable",true);
         props.put("mail.smtp.timeout", "10000");
         props.put("mail.smtp.connectiontimeout", "10000");
+        props.put("mail.smtp.socketFactory.port", this.port);
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
         Session session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
