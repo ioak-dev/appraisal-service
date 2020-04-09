@@ -206,7 +206,8 @@ public class PersonController {
                 Person person = new Person();
                 person.setEmpId(values[0].trim());
                 person.setName(values[1].trim());
-                DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 try{
                     person.setJoiningDate(format.parse(values[2].trim()));
                 }catch (ParseException e) {
