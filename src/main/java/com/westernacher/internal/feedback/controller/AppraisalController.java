@@ -618,6 +618,11 @@ public class AppraisalController {
         }
         return sectionFiveContent;
     }
+
+    @RequestMapping(value = "/generate/report", method = RequestMethod.GET)
+    public void test(){
+        service.generateReport();
+    }
 }
 
 @Data
