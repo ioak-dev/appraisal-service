@@ -6,16 +6,20 @@ import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalService;
+import com.westernacher.internal.feedback.service.CsvObject;
 import com.westernacher.internal.feedback.service.EmailUtility;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -620,8 +624,18 @@ public class AppraisalController {
     }
 
     @RequestMapping(value = "/generate/report", method = RequestMethod.GET)
-    public void test(){
-        service.generateReport();
+    public List<CsvObject> test(){
+        return service.generateReport();
+    }
+
+    @GetMapping("/download/report")
+    public void downloadCSV(HttpServletResponse response) throws IOException {
+
+        response.setContentType("text/csv");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=Appraisal.csv");
+
+        service.writeDataToCsvUsingStringArray(response.getWriter(), service.generateReport());
     }
 }
 
