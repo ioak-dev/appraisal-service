@@ -56,7 +56,7 @@ public class BackupService {
     @Value("${spring.mail.password}")
     String password;
 
-    //@Scheduled(cron = "${backup.cron.expression}")
+    @Scheduled(cron = "${backup.cron.expression}")
     public void sendAppraisalDatabase() {
         List<Person> personList = personRepository.findAll();
         List<Appraisal> appraisalList = appraisalRepository.findAll();
