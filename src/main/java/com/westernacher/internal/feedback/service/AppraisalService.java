@@ -87,10 +87,13 @@ public class AppraisalService {
                 ObjectMapper mapper = new ObjectMapper();
                 ArrayList myArrayList = (ArrayList) object;
 
-                for (Object object1:myArrayList) {
-                    HashMap<String, Object> map = getHashMapFromJson(mapper.writeValueAsString(object1) );
-                    csvObjects.add(getCsvObject(map));
+                if (myArrayList != null && !myArrayList.isEmpty()) {
+                    for (Object object1:myArrayList) {
+                        HashMap<String, Object> map = getHashMapFromJson(mapper.writeValueAsString(object1) );
+                        csvObjects.add(getCsvObject(map));
+                    }
                 }
+
             } catch (JSONException | JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -145,6 +148,7 @@ public class AppraisalService {
 
         String pdID1 = null;
         String pdID2 = null;
+        char ch='"';
 
 
         for (Map.Entry<String,Object> entry : map.entrySet()) {
@@ -205,15 +209,15 @@ public class AppraisalService {
 
             if (entry.getKey().contains("sectiononeResponse.response.projectManagerReviews") && entry.getKey().contains("comment")) {
                 if (entry.getKey().contains(pmID1)) {
-                    csvObject.setProjectManagerComment1(entry.getValue().toString());
+                    csvObject.setProjectManagerComment1("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }else if (entry.getKey().contains(pmID2)) {
-                    csvObject.setProjectManagerComment2(entry.getValue().toString());
+                    csvObject.setProjectManagerComment2("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }else if (entry.getKey().contains(pmID3)) {
-                    csvObject.setProjectManagerComment3(entry.getValue().toString());
+                    csvObject.setProjectManagerComment3("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }else if (entry.getKey().contains(pmID4)) {
-                    csvObject.setProjectManagerComment4(entry.getValue().toString());
+                    csvObject.setProjectManagerComment4("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }else if (entry.getKey().contains(pmID5)) {
-                    csvObject.setProjectManagerComment5(entry.getValue().toString());
+                    csvObject.setProjectManagerComment5("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }
             }
 
@@ -257,9 +261,9 @@ public class AppraisalService {
 
             if (entry.getKey().contains("sectiononeResponse.response.teamLeadReviews") && entry.getKey().contains("comment")) {
                 if (entry.getKey().contains(tlID1)) {
-                    csvObject.setTeamLeadComment1(entry.getValue().toString());
+                    csvObject.setTeamLeadComment1("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }else if (entry.getKey().contains(tlID2)) {
-                    csvObject.setTeamLeadComment2(entry.getValue().toString());
+                    csvObject.setTeamLeadComment2("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }
             }
 
@@ -291,9 +295,9 @@ public class AppraisalService {
 
             if (entry.getKey().contains("sectiononeResponse.response.practiceDirectorReviews") && entry.getKey().contains("comment")) {
                 if (entry.getKey().contains(pdID1)) {
-                    csvObject.setPracticeDirectorComment1(entry.getValue().toString());
+                    csvObject.setPracticeDirectorComment1("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }else if (entry.getKey().contains(pdID2)) {
-                    csvObject.setPracticeDirectorComment2(entry.getValue().toString());
+                    csvObject.setPracticeDirectorComment2("\""+entry.getValue().toString().replace("\"", "")+"\"");
                 }
             }
 
@@ -320,7 +324,7 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.hrReviews") && entry.getKey().contains("comment")) {
-                csvObject.setHrComment(entry.getValue().toString());
+                csvObject.setHrComment("\""+entry.getValue().toString().replace("\"", "")+"\"");
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.hrReviews") && entry.getKey().contains("rating")) {
@@ -336,7 +340,17 @@ public class AppraisalService {
     }
 
     public static void writeDataToCsvUsingStringArray(PrintWriter writer, List<CsvObject> csvObjects) {
-        String[] CSV_HEADER = { "UserId", "Status", "Project_Manager_1_Name", "Project_Manager_1_Comment", "Project_Manager_1_isComplete", "Project_Manager_1_Rating" };
+        String[] CSV_HEADER = { "UserId", "Status",
+                "Project_Manager_1_Name", "Project_Manager_1_Comment", "Project_Manager_1_isComplete", "Project_Manager_1_Rating",
+                "Project_Manager_2_Name", "Project_Manager_2_Comment", "Project_Manager_2_isComplete", "Project_Manager_2_Rating",
+                "Project_Manager_3_Name", "Project_Manager_3_Comment", "Project_Manager_3_isComplete", "Project_Manager_3_Rating",
+                "Project_Manager_4_Name", "Project_Manager_4_Comment", "Project_Manager_4_isComplete", "Project_Manager_4_Rating",
+                "Project_Manager_5_Name", "Project_Manager_5_Comment", "Project_Manager_5_isComplete", "Project_Manager_5_Rating",
+                "Reporting_Manager_1_Name", "Reporting_Manager_1_Comment", "Reporting_Manager_1_isComplete", "Reporting_Manager_1_Rating",
+                "Reporting_Manager_2_Name", "Reporting_Manager_2_Comment", "Reporting_Manager_2_isComplete", "Reporting_Manager_2_Rating",
+                "Practice_Director_1_Name", "Practice_Director_1_Comment", "Practice_Director_1_isComplete", "Practice_Director_1_Rating",
+                "Practice_Director_2_Name", "Practice_Director_2_Comment", "Practice_Director_2_isComplete", "Practice_Director_2_Rating",
+                "HR_Name", "HR_Comment", "HR_isComplete", "HR_Rating"};
         try (
                 CSVWriter csvWriter = new CSVWriter(writer,
                         CSVWriter.DEFAULT_SEPARATOR,
