@@ -9,6 +9,12 @@ import java.util.List;
 public class CsvObject {
     private String userId;
     private String status;
+    private String name;
+    private String email;
+    private String criteria;
+    private String group;
+    private String weightage;
+    private String selfComment;
 
     private String projectManagerComment1;
     private String projectManagerComplete1;

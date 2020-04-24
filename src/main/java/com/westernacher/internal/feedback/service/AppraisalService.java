@@ -148,8 +148,13 @@ public class AppraisalService {
 
         String pdID1 = null;
         String pdID2 = null;
-        char ch='"';
 
+        Map<String, Person> personMap = new HashMap<>();
+        List<Person> personList = personRepository.findAll();
+
+        personList.stream().forEach(person -> {
+            personMap.put(person.getId(), person);
+        });
 
         for (Map.Entry<String,Object> entry : map.entrySet()) {
             if (entry.getKey().contains("sectiononeResponse.response.projectManagerReviews") && entry.getKey().contains("name")) {
@@ -187,10 +192,28 @@ public class AppraisalService {
 
             if (entry.getKey().contains("root.userId")) {
                 csvObject.setUserId(entry.getValue().toString());
+                csvObject.setName(personMap.get(entry.getValue().toString()).getName());
+                csvObject.setEmail(personMap.get(entry.getValue().toString()).getEmail());
             }
 
             if (entry.getKey().contains("root.status")) {
                 csvObject.setStatus(entry.getValue().toString());
+            }
+
+            if (entry.getKey().contains("sectiononeResponse.group")) {
+                csvObject.setGroup(entry.getValue().toString());
+            }
+
+            if (entry.getKey().contains("sectiononeResponse.response.criteria")) {
+                csvObject.setCriteria(entry.getValue().toString());
+            }
+
+            if (entry.getKey().contains("sectiononeResponse.response.weightage")) {
+                csvObject.setWeightage(entry.getValue().toString());
+            }
+
+            if (entry.getKey().contains("sectiononeResponse.response.selfComment")) {
+                csvObject.setSelfComment(entry.getValue().toString());
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.projectManagerReviews") && entry.getKey().contains("name")) {
@@ -209,15 +232,15 @@ public class AppraisalService {
 
             if (entry.getKey().contains("sectiononeResponse.response.projectManagerReviews") && entry.getKey().contains("comment")) {
                 if (entry.getKey().contains(pmID1)) {
-                    csvObject.setProjectManagerComment1("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setProjectManagerComment1(entry.getValue().toString());
                 }else if (entry.getKey().contains(pmID2)) {
-                    csvObject.setProjectManagerComment2("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setProjectManagerComment2(entry.getValue().toString());
                 }else if (entry.getKey().contains(pmID3)) {
-                    csvObject.setProjectManagerComment3("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setProjectManagerComment3(entry.getValue().toString());
                 }else if (entry.getKey().contains(pmID4)) {
-                    csvObject.setProjectManagerComment4("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setProjectManagerComment4(entry.getValue().toString());
                 }else if (entry.getKey().contains(pmID5)) {
-                    csvObject.setProjectManagerComment5("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setProjectManagerComment5(entry.getValue().toString());
                 }
             }
 
@@ -236,16 +259,22 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.projectManagerReviews") && entry.getKey().contains("complete")) {
+                String complete = "";
+                if (Boolean.valueOf(entry.getValue().toString())) {
+                    complete = "Yes";
+                } else {
+                    complete = "No";
+                }
                 if (entry.getKey().contains(pmID1)) {
-                    csvObject.setProjectManagerComplete1(entry.getValue().toString());
+                    csvObject.setProjectManagerComplete1(complete);
                 }else if (entry.getKey().contains(pmID2)) {
-                    csvObject.setProjectManagerComplete2(entry.getValue().toString());
+                    csvObject.setProjectManagerComplete2(complete);
                 }else if (entry.getKey().contains(pmID3)) {
-                    csvObject.setProjectManagerComplete3(entry.getValue().toString());
+                    csvObject.setProjectManagerComplete3(complete);
                 }else if (entry.getKey().contains(pmID4)) {
-                    csvObject.setProjectManagerComplete4(entry.getValue().toString());
+                    csvObject.setProjectManagerComplete4(complete);
                 }else if (entry.getKey().contains(pmID5)) {
-                    csvObject.setProjectManagerComplete5(entry.getValue().toString());
+                    csvObject.setProjectManagerComplete5(complete);
                 }
             }
 
@@ -261,9 +290,9 @@ public class AppraisalService {
 
             if (entry.getKey().contains("sectiononeResponse.response.teamLeadReviews") && entry.getKey().contains("comment")) {
                 if (entry.getKey().contains(tlID1)) {
-                    csvObject.setTeamLeadComment1("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setTeamLeadComment1(entry.getValue().toString());
                 }else if (entry.getKey().contains(tlID2)) {
-                    csvObject.setTeamLeadComment2("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setTeamLeadComment2(entry.getValue().toString());
                 }
             }
 
@@ -276,10 +305,16 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.teamLeadReviews") && entry.getKey().contains("complete")) {
+                String complete = "";
+                if (Boolean.valueOf(entry.getValue().toString())) {
+                    complete = "Yes";
+                } else {
+                    complete = "No";
+                }
                 if (entry.getKey().contains(tlID1)) {
-                    csvObject.setTeamLeadComplete1(entry.getValue().toString());
+                    csvObject.setTeamLeadComplete1(complete);
                 }else if (entry.getKey().contains(tlID2)) {
-                    csvObject.setTeamLeadComplete2(entry.getValue().toString());
+                    csvObject.setTeamLeadComplete2(complete);
                 }
             }
 
@@ -295,9 +330,9 @@ public class AppraisalService {
 
             if (entry.getKey().contains("sectiononeResponse.response.practiceDirectorReviews") && entry.getKey().contains("comment")) {
                 if (entry.getKey().contains(pdID1)) {
-                    csvObject.setPracticeDirectorComment1("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setPracticeDirectorComment1(entry.getValue().toString());
                 }else if (entry.getKey().contains(pdID2)) {
-                    csvObject.setPracticeDirectorComment2("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                    csvObject.setPracticeDirectorComment2(entry.getValue().toString());
                 }
             }
 
@@ -310,10 +345,16 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.practiceDirectorReviews") && entry.getKey().contains("complete")) {
+                String complete = "";
+                if (Boolean.valueOf(entry.getValue().toString())) {
+                    complete = "Yes";
+                } else {
+                    complete = "No";
+                }
                 if (entry.getKey().contains(pdID1)) {
-                    csvObject.setPracticeDirectorComplete1(entry.getValue().toString());
+                    csvObject.setPracticeDirectorComplete1(complete);
                 }else if (entry.getKey().contains(pdID2)) {
-                    csvObject.setPracticeDirectorComplete2(entry.getValue().toString());
+                    csvObject.setPracticeDirectorComplete2(complete);
                 }
             }
 
@@ -324,7 +365,7 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.hrReviews") && entry.getKey().contains("comment")) {
-                csvObject.setHrComment("\""+entry.getValue().toString().replace("\"", "")+"\"");
+                csvObject.setHrComment(entry.getValue().toString());
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.hrReviews") && entry.getKey().contains("rating")) {
@@ -332,7 +373,13 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.hrReviews") && entry.getKey().contains("complete")) {
-                csvObject.setHrComplete(entry.getValue().toString());
+                String complete = "";
+                if (Boolean.valueOf(entry.getValue().toString())) {
+                    complete = "Yes";
+                } else {
+                    complete = "No";
+                }
+                csvObject.setHrComplete(complete);
             }
 
         }
