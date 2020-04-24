@@ -25,6 +25,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -209,7 +210,8 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.weightage")) {
-                csvObject.setWeightage(entry.getValue().toString());
+                DecimalFormat df = new DecimalFormat("#.##");
+                csvObject.setWeightage(df.format(Double.valueOf(entry.getValue().toString())*100));
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.selfComment")) {
