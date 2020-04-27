@@ -15,6 +15,8 @@ public class CsvObject {
     private String group;
     private String weightage;
     private String selfComment;
+    private String selfRating;
+    private double score;
 
     private String projectManagerComment1;
     private String projectManagerComplete1;

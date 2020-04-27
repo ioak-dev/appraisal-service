@@ -156,6 +156,8 @@ public class AppraisalService {
 
         String pdID1 = null;
         String pdID2 = null;
+        int practiceDirectorRating = 0;
+        double weightageScore = 0.0;
 
 
 
@@ -211,9 +213,15 @@ public class AppraisalService {
                 csvObject.setCriteria(entry.getValue().toString());
             }
 
+            if (entry.getKey().contains("sectiononeResponse.response.selfRating")) {
+                csvObject.setSelfRating(entry.getValue().toString());
+            }
+
             if (entry.getKey().contains("sectiononeResponse.response.weightage")) {
                 DecimalFormat df = new DecimalFormat("#.##");
                 csvObject.setWeightage(df.format(Double.valueOf(entry.getValue().toString())*100));
+                weightageScore = Double.valueOf(df.format(Double.valueOf(entry.getValue().toString())));
+
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.selfComment")) {
@@ -341,6 +349,9 @@ public class AppraisalService {
             }
 
             if (entry.getKey().contains("sectiononeResponse.response.practiceDirectorReviews") && entry.getKey().contains("rating")) {
+                if (entry.getValue().toString()!=null && !entry.getValue().toString().isEmpty()){
+                    practiceDirectorRating =  Integer.parseInt(String.valueOf(entry.getValue().toString().charAt(0)));
+                }
                 if (entry.getKey().contains(pdID1)) {
                     csvObject.setPracticeDirectorRating1(entry.getValue().toString());
                 }else if (entry.getKey().contains(pdID2)) {
@@ -387,6 +398,10 @@ public class AppraisalService {
             }
 
         }
+        if (practiceDirectorRating!=0) {
+            csvObject.setScore((practiceDirectorRating*weightageScore));
+        }
+
         return csvObject;
     }
 
