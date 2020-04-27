@@ -76,34 +76,41 @@ public class AppraisalService {
     public List<CsvObject> generateReport() {
         List<CsvObject> csvObjectList = new ArrayList<>();
         List<Appraisal> appraisals = repository.findAll();
-        appraisals.stream().forEach(appraisal -> {
-            List<CsvObject> csvObjects = new ArrayList<>();
-            Object object = null;
-            try {
-                object = getFlatReportData(appraisal);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                ArrayList myArrayList = (ArrayList) object;
 
-                if (myArrayList != null && !myArrayList.isEmpty()) {
-                    for (Object object1:myArrayList) {
-                        HashMap<String, Object> map = getHashMapFromJson(mapper.writeValueAsString(object1) );
-                        csvObjects.add(getCsvObject(map));
-                    }
-                }
+        Map<String, Person> personMap = new HashMap<>();
+        List<Person> personList = personRepository.findAll();
 
-            } catch (JSONException | JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            csvObjectList.addAll(csvObjects);
+        personList.stream().forEach(person -> {
+            personMap.put(person.getId(), person);
         });
+
+
+        List<CsvObject> csvObjects = new ArrayList<>();
+        Object object = null;
+        try {
+            object = getFlatReportData(appraisals);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayList myArrayList = (ArrayList) object;
+
+            if (myArrayList != null && !myArrayList.isEmpty()) {
+                for (Object object1:myArrayList) {
+                    HashMap<String, Object> map = getHashMapFromJson(mapper.writeValueAsString(object1) );
+                    csvObjects.add(getCsvObject(map, personMap));
+                }
+            }
+
+        } catch (JSONException | JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        csvObjectList.addAll(csvObjects);
         return csvObjectList;
     }
 
-    public Object getFlatReportData(Appraisal appraisal) throws JsonProcessingException {
+    public Object getFlatReportData(List<Appraisal> appraisal) throws JsonProcessingException {
         //String customURL = baseUrl+tenantHolder.getTenantId()+"/model";
         String customURL = "https://gandalf-ioak.herokuapp.com/api/flatten";
 
@@ -136,7 +143,7 @@ public class AppraisalService {
         return map;
     }
 
-    private CsvObject getCsvObject(HashMap<String, Object> map) {
+    private CsvObject getCsvObject(HashMap<String, Object> map, Map<String, Person> personMap) {
         CsvObject csvObject = new CsvObject();
         String pmID1 = null;
         String pmID2 = null;
@@ -150,12 +157,7 @@ public class AppraisalService {
         String pdID1 = null;
         String pdID2 = null;
 
-        Map<String, Person> personMap = new HashMap<>();
-        List<Person> personList = personRepository.findAll();
 
-        personList.stream().forEach(person -> {
-            personMap.put(person.getId(), person);
-        });
 
         for (Map.Entry<String,Object> entry : map.entrySet()) {
             if (entry.getKey().contains("sectiononeResponse.response.projectManagerReviews") && entry.getKey().contains("name")) {
@@ -476,5 +478,5 @@ public class AppraisalService {
 @Data
 class RequestResource {
     Map<String, String> meta;
-    Appraisal data;
+    List<Appraisal> data;
 }
