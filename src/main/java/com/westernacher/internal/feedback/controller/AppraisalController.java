@@ -637,6 +637,82 @@ public class AppraisalController {
 
         service.writeDataToCsvUsingStringArray(response.getWriter(), service.generateReport());
     }
+
+    @RequestMapping(value = "/{id}/submitSelfAppraisal", method = RequestMethod.POST)
+    public ResponseEntity<ErrorResource> submitCustomSelfAppraisalComment(@PathVariable("id") String id) {
+
+        Appraisal appraisal = repository.findById(id).orElse(null);
+        List<ObjectiveResponseGroup> sectiononeResponses = appraisal.getSectiononeResponse();
+
+        Map<String, ObjectiveResponseGroup> sectionOneMap = new HashMap<>();
+
+        sectiononeResponses.stream().forEach(sectiononeResponse->{
+            sectionOneMap.put(sectiononeResponse.getGroup(), sectiononeResponse);
+        });
+
+
+        Map<String, Map<String, ObjectiveResponse>> sourceMap = new HashMap<>();
+
+        appraisal.getSectiononeResponse().forEach(group -> {
+            Map<String, ObjectiveResponse> criteriaMap = new HashMap<>();
+            group.getResponse().forEach(criteria -> {
+                criteriaMap.put(criteria.getCriteria(), criteria);
+            });
+            sourceMap.put(group.getGroup(), criteriaMap);
+        });
+
+
+        List<String> sectionOneError = new ArrayList<>();
+        ErrorResource errorResource = new ErrorResource();
+
+        /*Validation for section One*/
+        if (appraisal!=null) {
+            List<ObjectiveResponseGroup> objectiveResponseGroups = appraisal.getSectiononeResponse();
+
+            objectiveResponseGroups.stream().forEach(objectiveResponseGroup -> {
+                objectiveResponseGroup.getResponse().stream().forEach(objectiveResponse -> {
+                    if (Math.signum(objectiveResponse.getWeightage()) != 0) {
+                        if (objectiveResponse.getSelfComment()==null) {
+                            sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Comment");
+                        } else if (objectiveResponse.getSelfComment().length()<50) {
+                            sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Comment should be atleast 50 characters");
+                        }
+                        if (objectiveResponse.getSelfRating()==null) {
+                            sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Rating");
+                        }
+                    }
+                });
+                errorResource.setSectionOneError(sectionOneError);
+            });
+        }
+
+        if (errorResource.getSectionOneError().size()>0) {
+            return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.NOT_ACCEPTABLE);
+        }else {
+            if (appraisal.getSectiononeResponse().get(0).getResponse().get(0).getProjectManagerReviews().isEmpty()){
+                appraisal.setStatus(AppraisalStatusType.REPORTING_MANAGER);
+                if (appraisal.getSectiononeResponse().get(0).getResponse().get(0).getTeamLeadReviews().isEmpty()){
+                    appraisal.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
+                    if (appraisal.getSectiononeResponse().get(0).getResponse().get(0).getPracticeDirectorReviews().isEmpty()){
+                        appraisal.setStatus(AppraisalStatusType.HR);
+                    }
+                }
+            } else {
+                appraisal.setStatus(AppraisalStatusType.PROJECT_MANAGER);
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getProjectManagerReviews().keySet(), AppraisalStatusType.PROJECT_MANAGER, appraisal.getUserId());
+            }
+            if (appraisal.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)) {
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getTeamLeadReviews().keySet(), AppraisalStatusType.REPORTING_MANAGER, appraisal.getUserId());
+            }else if (appraisal.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getPracticeDirectorReviews().keySet(), AppraisalStatusType.PRACTICE_DIRECTOR, appraisal.getUserId());
+            }else if (appraisal.getStatus().equals(AppraisalStatusType.HR)) {
+                service.sendListOfMail(appraisal.getSectiononeResponse().get(0).getResponse().get(0).getHrReviews().keySet(), AppraisalStatusType.HR, appraisal.getUserId());
+            }
+            repository.save(appraisal);
+
+            return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.OK);
+        }
+    }
 }
 
 @Data
