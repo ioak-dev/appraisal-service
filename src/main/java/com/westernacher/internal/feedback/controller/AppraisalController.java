@@ -638,10 +638,10 @@ public class AppraisalController {
         service.writeDataToCsvUsingStringArray(response.getWriter(), service.generateReport());
     }
 
-    @RequestMapping(value = "/{id}/submitSelfAppraisal", method = RequestMethod.POST)
-    public ResponseEntity<ErrorResource> submitCustomSelfAppraisalComment(@PathVariable("id") String id) {
+    @RequestMapping(value = "submit", method = RequestMethod.POST)
+    public void submitCustomSelfAppraisalComment() {
 
-        Appraisal appraisal = repository.findById(id).orElse(null);
+        /*Appraisal appraisal = repository.findById(id).orElse(null);
         List<ObjectiveResponseGroup> sectiononeResponses = appraisal.getSectiononeResponse();
 
         Map<String, ObjectiveResponseGroup> sectionOneMap = new HashMap<>();
@@ -665,7 +665,7 @@ public class AppraisalController {
         List<String> sectionOneError = new ArrayList<>();
         ErrorResource errorResource = new ErrorResource();
 
-        /*Validation for section One*/
+        *//*Validation for section One*//*
         if (appraisal!=null) {
             List<ObjectiveResponseGroup> objectiveResponseGroups = appraisal.getSectiononeResponse();
 
@@ -711,7 +711,7 @@ public class AppraisalController {
             repository.save(appraisal);
 
             return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.OK);
-        }
+        }*/
     }
 }
 
