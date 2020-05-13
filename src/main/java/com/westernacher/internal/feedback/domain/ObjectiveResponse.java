@@ -12,7 +12,7 @@ public class ObjectiveResponse {
     private float weightage;
     private String description;
     private float customWeightage;
-    private String customCriteria;
+    private String customDescription;
     private String selfComment;
     private String selfRating;
     private Map<String, ReviewerElements> projectManagerReviews;
