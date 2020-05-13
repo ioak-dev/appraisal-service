@@ -96,7 +96,7 @@ public class AppraisalCycleService {
                     .sectiononeResponse(sectionone)
                     .sectiontwoResponse(sectiontwo)
                     .sectionthreeResponse(sectionthree)
-                    .status(AppraisalStatusType.SELF_REVIEW)
+                    .status(AppraisalStatusType.SET_GOALS)
                     .build();
             appraisalRepository.save(appraisal);
         });

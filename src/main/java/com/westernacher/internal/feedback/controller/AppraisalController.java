@@ -386,6 +386,14 @@ public class AppraisalController {
         }
     }
 
+    @RequestMapping(value = "/{id}/submitSelfGoals", method = RequestMethod.POST)
+    public ResponseEntity<?> submitSelfGoals(@PathVariable("id") String id) {
+        Appraisal appraisal = repository.findById(id).orElse(null);
+        appraisal.setStatus(AppraisalStatusType.SELF_REVIEW);
+        repository.save(appraisal);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/{id}/submitReviewerAppraisal", method = RequestMethod.POST)
     public ResponseEntity<ErrorResource> submitReviewerAppraisal(@PathVariable("id") String id) {
 
