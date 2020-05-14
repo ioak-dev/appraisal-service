@@ -12,5 +12,5 @@ public class ReviewResource {
     private String rating;
     private String comment;
     private float customWeightage;
-    private String customCriteria;
+    private String customDescription;
 }
