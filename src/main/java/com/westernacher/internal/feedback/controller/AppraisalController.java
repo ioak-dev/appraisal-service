@@ -386,6 +386,14 @@ public class AppraisalController {
         }
     }
 
+    @RequestMapping(value = "/{id}/submitSelfGoals", method = RequestMethod.POST)
+    public ResponseEntity<?> submitSelfGoals(@PathVariable("id") String id) {
+        Appraisal appraisal = repository.findById(id).orElse(null);
+        appraisal.setStatus(AppraisalStatusType.SELF_REVIEW);
+        repository.save(appraisal);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/{id}/submitReviewerAppraisal", method = RequestMethod.POST)
     public ResponseEntity<ErrorResource> submitReviewerAppraisal(@PathVariable("id") String id) {
 
@@ -636,6 +644,14 @@ public class AppraisalController {
                 "attachment; filename=Appraisal.csv");
 
         service.writeDataToCsvUsingStringArray(response.getWriter(), service.generateReport());
+    }
+
+    @RequestMapping(value = "/cycle/{id}/user/{userId}/sectionone/custom", method = RequestMethod.PUT)
+    public void saveCustomSectionOne (@PathVariable("id") String id, @PathVariable("userId") String userId,
+                                @RequestBody List<ObjectiveResponseGroup> sectionone) {
+        Appraisal appraisal = repository.findOneByCycleIdAndUserId(id, userId);
+        appraisal.setSectiononeResponse(sectionone);
+        repository.save(appraisal);
     }
 }
 
