@@ -9,9 +9,9 @@ import java.util.Map;
 @Builder
 public class ObjectiveResponse {
     private String criteria;
-    private float weightage;
+    private Float weightage;
     private String description;
-    private float customWeightage;
+    private Float customWeightage;
     private String customDescription;
     private String selfComment;
     private String selfRating;
