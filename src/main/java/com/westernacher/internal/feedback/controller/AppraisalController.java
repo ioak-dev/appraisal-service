@@ -676,6 +676,56 @@ public class AppraisalController {
 
             if(cycle != null) {
                 Person user = personRepository.findPersonByEmail(thirdColumn);
+
+                user.getRoles().stream().forEach(role -> {
+
+                    if (role.getType().equals(RoleType.ProjectManager)) {
+                        if (secondColumn.equals("ProjectManager") && role.getOptions().contains(firstColumn)) {
+                            if (fourthColumn.equals("Remove")) {
+                                role.getOptions().remove(firstColumn);
+                            } else if (fourthColumn.equals("Add")) {
+                                role.getOptions().add(firstColumn);
+                            }
+
+                        }
+                    }
+
+                    if (role.getType().equals(RoleType.PracticeDirector)) {
+                        if (secondColumn.equals("PracticeDirector") && role.getOptions().contains(firstColumn)) {
+                            if (fourthColumn.equals("Remove")) {
+                                role.getOptions().remove(firstColumn);
+                            } else if (fourthColumn.equals("Add")) {
+                                role.getOptions().add(firstColumn);
+                            }
+
+                        }
+                    }
+
+                    if (role.getType().equals(RoleType.TeamLead)) {
+                        if (secondColumn.equals("TeamLead") && role.getOptions().contains(firstColumn)) {
+                            if (fourthColumn.equals("Remove")) {
+                                role.getOptions().remove(firstColumn);
+                            } else if (fourthColumn.equals("Add")) {
+                                role.getOptions().add(firstColumn);
+                            }
+
+                        }
+                    }
+
+                    if (role.getType().equals(RoleType.HR)) {
+                        if (secondColumn.equals("HR") && role.getOptions().contains(firstColumn)) {
+                            if (fourthColumn.equals("Remove")) {
+                                role.getOptions().remove(firstColumn);
+                            } else if (fourthColumn.equals("Add")) {
+                                role.getOptions().add(firstColumn);
+                            }
+
+                        }
+                    }
+
+                });
+
+
                 Person manager = personRepository.findPersonByEmail(firstColumn);
                 Appraisal appraisal = repository.findOneByCycleIdAndUserId(cycle.getId(), user.getId());
 
