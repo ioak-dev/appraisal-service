@@ -666,11 +666,11 @@ public class AppraisalController {
 
         for (String[] columns : csvReader.readAll()) {
 
-            String cycleName =  columns[0];             //"cycleID";
-            String firstColumn = columns[1];              //"Arun";
-            String secondColumn = columns[2];            //"Position";
-            String thirdColumn =  columns[3];             //"amarEmail";
-            String fourthColumn = columns[4];            //Add & remove
+            String cycleName =  columns[0];             //CycleName
+            String firstColumn = columns[1];              //ManagerEmail
+            String secondColumn = columns[2];            //Relation
+            String thirdColumn =  columns[3];             //User Email
+            String fourthColumn = columns[4];            //Add & Remove
 
             AppraisalCycle cycle = appraisalCycleRepository.findByName(cycleName);
 
@@ -680,8 +680,8 @@ public class AppraisalController {
                 user.getRoles().stream().forEach(role -> {
 
                     if (role.getType().equals(RoleType.ProjectManager)) {
-                        if (secondColumn.equals("ProjectManager") && role.getOptions().contains(firstColumn)) {
-                            if (fourthColumn.equals("Remove")) {
+                        if (secondColumn.equals("ProjectManager") ) {
+                            if (fourthColumn.equals("Remove") && role.getOptions().contains(firstColumn)) {
                                 role.getOptions().remove(firstColumn);
                             } else if (fourthColumn.equals("Add")) {
                                 role.getOptions().add(firstColumn);
@@ -691,8 +691,8 @@ public class AppraisalController {
                     }
 
                     if (role.getType().equals(RoleType.PracticeDirector)) {
-                        if (secondColumn.equals("PracticeDirector") && role.getOptions().contains(firstColumn)) {
-                            if (fourthColumn.equals("Remove")) {
+                        if (secondColumn.equals("PracticeDirector")) {
+                            if (fourthColumn.equals("Remove") && role.getOptions().contains(firstColumn)) {
                                 role.getOptions().remove(firstColumn);
                             } else if (fourthColumn.equals("Add")) {
                                 role.getOptions().add(firstColumn);
@@ -702,8 +702,8 @@ public class AppraisalController {
                     }
 
                     if (role.getType().equals(RoleType.TeamLead)) {
-                        if (secondColumn.equals("TeamLead") && role.getOptions().contains(firstColumn)) {
-                            if (fourthColumn.equals("Remove")) {
+                        if (secondColumn.equals("TeamLead")) {
+                            if (fourthColumn.equals("Remove") && role.getOptions().contains(firstColumn)) {
                                 role.getOptions().remove(firstColumn);
                             } else if (fourthColumn.equals("Add")) {
                                 role.getOptions().add(firstColumn);
@@ -713,8 +713,8 @@ public class AppraisalController {
                     }
 
                     if (role.getType().equals(RoleType.HR)) {
-                        if (secondColumn.equals("HR") && role.getOptions().contains(firstColumn)) {
-                            if (fourthColumn.equals("Remove")) {
+                        if (secondColumn.equals("HR")) {
+                            if (fourthColumn.equals("Remove") && role.getOptions().contains(firstColumn)) {
                                 role.getOptions().remove(firstColumn);
                             } else if (fourthColumn.equals("Add")) {
                                 role.getOptions().add(firstColumn);
@@ -724,6 +724,7 @@ public class AppraisalController {
                     }
 
                 });
+                personRepository.save(user);
 
 
                 Person manager = personRepository.findPersonByEmail(firstColumn);
