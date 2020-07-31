@@ -676,7 +676,15 @@ public class AppraisalController {
 
             if(cycle != null) {
                 Person user = personRepository.findPersonByEmail(employee_person);
+
+                if(user == null) {
+                    return;
+                }
                 Person personUser = personRepository.findPersonByEmail(manager_person);
+
+                if (personUser == null) {
+                    return;
+                }
                 List<RoleType> roleTypes = new ArrayList<>();
 
                 personUser.getRoles().stream().forEach(role -> {
