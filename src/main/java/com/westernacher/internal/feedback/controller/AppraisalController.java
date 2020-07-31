@@ -666,11 +666,11 @@ public class AppraisalController {
 
         for (String[] columns : csvReader.readAll()) {
 
-            String cycleName =  columns[0];             //CycleName
-            String manager_person = columns[1].toLowerCase();              //ManagerEmail
-            String position = columns[2];            //Relation
-            String employee_person =  columns[3].toLowerCase();             //User Email
-            String action = columns[4];            //Add & Remove
+            String cycleName =  columns[0].trim();             //CycleName
+            String manager_person = columns[1].toLowerCase().trim();              //ManagerEmail
+            String position = columns[2].trim();            //Relation
+            String employee_person =  columns[3].toLowerCase().trim();             //User Email
+            String action = columns[4].trim();            //Add & Remove
 
             AppraisalCycle cycle = appraisalCycleRepository.findByName(cycleName);
 
@@ -764,16 +764,7 @@ public class AppraisalController {
                             if (action.equals("Remove") && res.getProjectManagerReviews().containsKey(manager.getId())) {
                                 res.getProjectManagerReviews().remove(manager.getId());
                             } else if (action.equals("Add") && !res.getProjectManagerReviews().containsKey(manager.getId())) {
-
-                                ReviewerElements element = ReviewerElements
-                                        .builder()
-                                        .comment("")
-                                        .name(manager.getName())
-                                        .rating("")
-                                        .isComplete(false)
-                                        .build();
-
-                                res.getProjectManagerReviews().put(manager.getId(), element);
+                                res.getProjectManagerReviews().put(manager.getId(), getReviewElements(manager.getName()));
                             }
                         }
 
@@ -781,16 +772,7 @@ public class AppraisalController {
                             if (action.equals("Remove") && res.getPracticeDirectorReviews().containsKey(manager.getId())) {
                                 res.getPracticeDirectorReviews().remove(manager.getId());
                             } else if (action.equals("Add") && !res.getPracticeDirectorReviews().containsKey(manager.getId())) {
-
-                                ReviewerElements element = ReviewerElements
-                                        .builder()
-                                        .comment("")
-                                        .name(manager.getName())
-                                        .rating("")
-                                        .isComplete(false)
-                                        .build();
-
-                                res.getPracticeDirectorReviews().put(manager.getId(), element);
+                                res.getPracticeDirectorReviews().put(manager.getId(), getReviewElements(manager.getName()));
                             }
                         }
 
@@ -798,16 +780,7 @@ public class AppraisalController {
                             if (action.equals("Remove") && res.getTeamLeadReviews().containsKey(manager.getId())) {
                                 res.getTeamLeadReviews().remove(manager.getId());
                             } else if (action.equals("Add") && !res.getTeamLeadReviews().containsKey(manager.getId())) {
-
-                                ReviewerElements element = ReviewerElements
-                                        .builder()
-                                        .comment("")
-                                        .name(manager.getName())
-                                        .rating("")
-                                        .isComplete(false)
-                                        .build();
-
-                                res.getTeamLeadReviews().put(manager.getId(), element);
+                                res.getTeamLeadReviews().put(manager.getId(), getReviewElements(manager.getName()));
                             }
                         }
 
@@ -815,16 +788,7 @@ public class AppraisalController {
                             if (action.equals("Remove") && res.getHrReviews().containsKey(manager.getId())) {
                                 res.getHrReviews().remove(manager.getId());
                             } else if (action.equals("Add") && !res.getHrReviews().containsKey(manager.getId())) {
-
-                                ReviewerElements element = ReviewerElements
-                                        .builder()
-                                        .comment("")
-                                        .name(manager.getName())
-                                        .rating("")
-                                        .isComplete(false)
-                                        .build();
-
-                                res.getHrReviews().put(manager.getId(), element);
+                                res.getHrReviews().put(manager.getId(), getReviewElements(manager.getName()));
                             }
                         }
                     });
@@ -833,6 +797,16 @@ public class AppraisalController {
                 repository.save(appraisal);
             }
         }
+    }
+
+    private ReviewerElements getReviewElements(String managerName) {
+        return ReviewerElements
+                .builder()
+                .comment("")
+                .name(managerName)
+                .rating("")
+                .isComplete(false)
+                .build();
     }
 }
 
