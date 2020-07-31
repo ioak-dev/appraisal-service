@@ -667,58 +667,77 @@ public class AppraisalController {
         for (String[] columns : csvReader.readAll()) {
 
             String cycleName =  columns[0];             //CycleName
-            String firstColumn = columns[1].toLowerCase();              //ManagerEmail
-            String secondColumn = columns[2];            //Relation
-            String thirdColumn =  columns[3].toLowerCase();             //User Email
-            String fourthColumn = columns[4];            //Add & Remove
+            String manager_person = columns[1].toLowerCase();              //ManagerEmail
+            String position = columns[2];            //Relation
+            String employee_person =  columns[3].toLowerCase();             //User Email
+            String action = columns[4];            //Add & Remove
 
             AppraisalCycle cycle = appraisalCycleRepository.findByName(cycleName);
 
             if(cycle != null) {
-                Person user = personRepository.findPersonByEmail(thirdColumn);
-                Person personUser = personRepository.findPersonByEmail(firstColumn);
+                Person user = personRepository.findPersonByEmail(employee_person);
+                Person personUser = personRepository.findPersonByEmail(manager_person);
+                List<RoleType> roleTypes = new ArrayList<>();
+
+                personUser.getRoles().stream().forEach(role -> {
+                    roleTypes.add(role.getType());
+                });
+
+                if (!roleTypes.contains(RoleType.valueOf(position)) && action.equals("Add")) {
+                    List<String> options = new ArrayList<>();
+                    options.add(employee_person);
+
+                    Role role = new Role();
+                    role.setType(RoleType.valueOf(position));
+                    role.setOptions(options);
+
+                    List<Role> roles = personUser.getRoles();
+                    roles.add(role);
+                    personUser.setRoles(roles);
+
+                }
 
                 personUser.getRoles().stream().forEach(role -> {
 
                     if (role.getType().equals(RoleType.ProjectManager)) {
-                        if (secondColumn.equals("ProjectManager") ) {
-                            if (fourthColumn.equals("Remove") && role.getOptions().contains(thirdColumn)) {
-                                role.getOptions().remove(thirdColumn);
-                            } else if (fourthColumn.equals("Add")) {
-                                role.getOptions().add(thirdColumn);
+                        if (position.equals("ProjectManager") ) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
                             }
 
                         }
                     }
 
                     if (role.getType().equals(RoleType.PracticeDirector)) {
-                        if (secondColumn.equals("PracticeDirector")) {
-                            if (fourthColumn.equals("Remove") && role.getOptions().contains(thirdColumn)) {
-                                role.getOptions().remove(thirdColumn);
-                            } else if (fourthColumn.equals("Add")) {
-                                role.getOptions().add(thirdColumn);
+                        if (position.equals("PracticeDirector")) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
                             }
 
                         }
                     }
 
                     if (role.getType().equals(RoleType.TeamLead)) {
-                        if (secondColumn.equals("TeamLead")) {
-                            if (fourthColumn.equals("Remove") && role.getOptions().contains(thirdColumn)) {
-                                role.getOptions().remove(thirdColumn);
-                            } else if (fourthColumn.equals("Add")) {
-                                role.getOptions().add(thirdColumn);
+                        if (position.equals("TeamLead")) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
                             }
 
                         }
                     }
 
                     if (role.getType().equals(RoleType.HR)) {
-                        if (secondColumn.equals("HR")) {
-                            if (fourthColumn.equals("Remove") && role.getOptions().contains(thirdColumn)) {
-                                role.getOptions().remove(thirdColumn);
-                            } else if (fourthColumn.equals("Add")) {
-                                role.getOptions().add(thirdColumn);
+                        if (position.equals("HR")) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
                             }
 
                         }
@@ -728,61 +747,73 @@ public class AppraisalController {
                 personRepository.save(personUser);
 
 
-                Person manager = personRepository.findPersonByEmail(firstColumn);
+                Person manager = personRepository.findPersonByEmail(manager_person);
                 Appraisal appraisal = repository.findOneByCycleIdAndUserId(cycle.getId(), user.getId());
 
                 appraisal.getSectiononeResponse().stream().forEach(response-> {
                     response.getResponse().stream().forEach(res->{
-                        if (secondColumn.equals("ProjectManager")) {
-                            if (fourthColumn.equals("Remove") && res.getProjectManagerReviews().containsKey(manager.getId())) {
+                        if (position.equals("ProjectManager")) {
+                            if (action.equals("Remove") && res.getProjectManagerReviews().containsKey(manager.getId())) {
                                 res.getProjectManagerReviews().remove(manager.getId());
-                            } else if (fourthColumn.equals("Add")) {
+                            } else if (action.equals("Add") && !res.getProjectManagerReviews().containsKey(manager.getId())) {
 
                                 ReviewerElements element = ReviewerElements
                                         .builder()
+                                        .comment("")
                                         .name(manager.getName())
+                                        .rating("")
+                                        .isComplete(false)
                                         .build();
 
                                 res.getProjectManagerReviews().put(manager.getId(), element);
                             }
                         }
 
-                        if (secondColumn.equals("PracticeDirector")) {
-                            if (fourthColumn.equals("Remove") && res.getPracticeDirectorReviews().containsKey(manager.getId())) {
+                        if (position.equals("PracticeDirector")) {
+                            if (action.equals("Remove") && res.getPracticeDirectorReviews().containsKey(manager.getId())) {
                                 res.getPracticeDirectorReviews().remove(manager.getId());
-                            } else if (fourthColumn.equals("Add")) {
+                            } else if (action.equals("Add") && !res.getPracticeDirectorReviews().containsKey(manager.getId())) {
 
                                 ReviewerElements element = ReviewerElements
                                         .builder()
+                                        .comment("")
                                         .name(manager.getName())
+                                        .rating("")
+                                        .isComplete(false)
                                         .build();
 
                                 res.getPracticeDirectorReviews().put(manager.getId(), element);
                             }
                         }
 
-                        if (secondColumn.equals("TeamLead")) {
-                            if (fourthColumn.equals("Remove") && res.getTeamLeadReviews().containsKey(manager.getId())) {
+                        if (position.equals("TeamLead")) {
+                            if (action.equals("Remove") && res.getTeamLeadReviews().containsKey(manager.getId())) {
                                 res.getTeamLeadReviews().remove(manager.getId());
-                            } else if (fourthColumn.equals("Add")) {
+                            } else if (action.equals("Add") && !res.getTeamLeadReviews().containsKey(manager.getId())) {
 
                                 ReviewerElements element = ReviewerElements
                                         .builder()
+                                        .comment("")
                                         .name(manager.getName())
+                                        .rating("")
+                                        .isComplete(false)
                                         .build();
 
                                 res.getTeamLeadReviews().put(manager.getId(), element);
                             }
                         }
 
-                        if (secondColumn.equals("HR")) {
-                            if (fourthColumn.equals("Remove") && res.getHrReviews().containsKey(manager.getId())) {
+                        if (position.equals("HR")) {
+                            if (action.equals("Remove") && res.getHrReviews().containsKey(manager.getId())) {
                                 res.getHrReviews().remove(manager.getId());
-                            } else if (fourthColumn.equals("Add")) {
+                            } else if (action.equals("Add") && !res.getHrReviews().containsKey(manager.getId())) {
 
                                 ReviewerElements element = ReviewerElements
                                         .builder()
+                                        .comment("")
                                         .name(manager.getName())
+                                        .rating("")
+                                        .isComplete(false)
                                         .build();
 
                                 res.getHrReviews().put(manager.getId(), element);
