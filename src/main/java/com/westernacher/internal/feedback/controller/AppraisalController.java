@@ -1,5 +1,7 @@
 package com.westernacher.internal.feedback.controller;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.westernacher.internal.feedback.controller.representation.ReviewResource;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
@@ -16,10 +18,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -652,6 +657,156 @@ public class AppraisalController {
         Appraisal appraisal = repository.findOneByCycleIdAndUserId(id, userId);
         appraisal.setSectiononeResponse(sectionone);
         repository.save(appraisal);
+    }
+
+    @RequestMapping(value = "/update/role", method = RequestMethod.POST)
+    public void updateRoleInAppraisal (@RequestParam("file") MultipartFile file) throws IOException {
+        Reader reader = new InputStreamReader(file.getInputStream());
+        CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+
+        for (String[] columns : csvReader.readAll()) {
+
+            String cycleName =  columns[0].trim();             //CycleName
+            String manager_person = columns[1].toLowerCase().trim();              //ManagerEmail
+            String position = columns[2].trim();            //Relation
+            String employee_person =  columns[3].toLowerCase().trim();             //User Email
+            String action = columns[4].trim();            //Add & Remove
+
+            AppraisalCycle cycle = appraisalCycleRepository.findByName(cycleName);
+
+            if(cycle != null) {
+                Person user = personRepository.findPersonByEmail(employee_person);
+
+                if(user == null) {
+                    return;
+                }
+                Person personUser = personRepository.findPersonByEmail(manager_person);
+
+                if (personUser == null) {
+                    return;
+                }
+                List<RoleType> roleTypes = new ArrayList<>();
+
+                personUser.getRoles().stream().forEach(role -> {
+                    roleTypes.add(role.getType());
+                });
+
+                if (!roleTypes.contains(RoleType.valueOf(position)) && action.equals("Add")) {
+                    List<String> options = new ArrayList<>();
+                    options.add(employee_person);
+
+                    Role role = new Role();
+                    role.setType(RoleType.valueOf(position));
+                    role.setOptions(options);
+
+                    List<Role> roles = personUser.getRoles();
+                    roles.add(role);
+                    personUser.setRoles(roles);
+
+                }
+
+                personUser.getRoles().stream().forEach(role -> {
+
+                    if (role.getType().equals(RoleType.ProjectManager)) {
+                        if (position.equals("ProjectManager") ) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
+                            }
+
+                        }
+                    }
+
+                    if (role.getType().equals(RoleType.PracticeDirector)) {
+                        if (position.equals("PracticeDirector")) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
+                            }
+
+                        }
+                    }
+
+                    if (role.getType().equals(RoleType.TeamLead)) {
+                        if (position.equals("TeamLead")) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
+                            }
+
+                        }
+                    }
+
+                    if (role.getType().equals(RoleType.HR)) {
+                        if (position.equals("HR")) {
+                            if (action.equals("Remove") && role.getOptions().contains(employee_person)) {
+                                role.getOptions().remove(employee_person);
+                            } else if (action.equals("Add") && !role.getOptions().contains(employee_person)) {
+                                role.getOptions().add(employee_person);
+                            }
+
+                        }
+                    }
+
+                });
+                personRepository.save(personUser);
+
+
+                Person manager = personRepository.findPersonByEmail(manager_person);
+                Appraisal appraisal = repository.findOneByCycleIdAndUserId(cycle.getId(), user.getId());
+
+                appraisal.getSectiononeResponse().stream().forEach(response-> {
+                    response.getResponse().stream().forEach(res->{
+                        if (position.equals("ProjectManager")) {
+                            if (action.equals("Remove") && res.getProjectManagerReviews().containsKey(manager.getId())) {
+                                res.getProjectManagerReviews().remove(manager.getId());
+                            } else if (action.equals("Add") && !res.getProjectManagerReviews().containsKey(manager.getId())) {
+                                res.getProjectManagerReviews().put(manager.getId(), getReviewElements(manager.getName()));
+                            }
+                        }
+
+                        if (position.equals("PracticeDirector")) {
+                            if (action.equals("Remove") && res.getPracticeDirectorReviews().containsKey(manager.getId())) {
+                                res.getPracticeDirectorReviews().remove(manager.getId());
+                            } else if (action.equals("Add") && !res.getPracticeDirectorReviews().containsKey(manager.getId())) {
+                                res.getPracticeDirectorReviews().put(manager.getId(), getReviewElements(manager.getName()));
+                            }
+                        }
+
+                        if (position.equals("TeamLead")) {
+                            if (action.equals("Remove") && res.getTeamLeadReviews().containsKey(manager.getId())) {
+                                res.getTeamLeadReviews().remove(manager.getId());
+                            } else if (action.equals("Add") && !res.getTeamLeadReviews().containsKey(manager.getId())) {
+                                res.getTeamLeadReviews().put(manager.getId(), getReviewElements(manager.getName()));
+                            }
+                        }
+
+                        if (position.equals("HR")) {
+                            if (action.equals("Remove") && res.getHrReviews().containsKey(manager.getId())) {
+                                res.getHrReviews().remove(manager.getId());
+                            } else if (action.equals("Add") && !res.getHrReviews().containsKey(manager.getId())) {
+                                res.getHrReviews().put(manager.getId(), getReviewElements(manager.getName()));
+                            }
+                        }
+                    });
+                });
+
+                repository.save(appraisal);
+            }
+        }
+    }
+
+    private ReviewerElements getReviewElements(String managerName) {
+        return ReviewerElements
+                .builder()
+                .comment("")
+                .name(managerName)
+                .rating("")
+                .isComplete(false)
+                .build();
     }
 }
 
