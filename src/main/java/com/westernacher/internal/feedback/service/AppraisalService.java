@@ -73,9 +73,9 @@ public class AppraisalService {
             Map.Entry<String,JsonNode> field = fieldsIterator.next();
             System.out.println("Key:"field.getKey() + "\tValue:" + field.getValue());
         }*/
-    public List<CsvObject> generateReport() {
+    public List<CsvObject> generateReport(String cycleId) {
         List<CsvObject> csvObjectList = new ArrayList<>();
-        List<Appraisal> appraisals = repository.findAll();
+        List<Appraisal> appraisals = repository.findAllByCycleId(cycleId);
 
         Map<String, Person> personMap = new HashMap<>();
         List<Person> personList = personRepository.findAll();

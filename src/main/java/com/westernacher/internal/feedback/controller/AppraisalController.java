@@ -637,18 +637,18 @@ public class AppraisalController {
     }
 
     @RequestMapping(value = "/generate/report", method = RequestMethod.GET)
-    public List<CsvObject> test(){
-        return service.generateReport();
+    public List<CsvObject> test(@RequestParam String cycleId){
+        return service.generateReport(cycleId);
     }
 
     @GetMapping("/download/report")
-    public void downloadCSV(HttpServletResponse response) throws IOException {
+    public void downloadCSV(HttpServletResponse response, @RequestParam String cycleId) throws IOException {
 
         response.setContentType("text/csv");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=Appraisal.csv");
 
-        service.writeDataToCsvUsingStringArray(response.getWriter(), service.generateReport());
+        service.writeDataToCsvUsingStringArray(response.getWriter(), service.generateReport(cycleId));
     }
 
     @RequestMapping(value = "/cycle/{id}/user/{userId}/sectionone/custom", method = RequestMethod.PUT)
