@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/goalDefinition")
+@RequestMapping("/goal")
 public class GoalController {
 
     @Autowired
@@ -20,8 +20,6 @@ public class GoalController {
     public List<Goal> getAll () {
         return repository.findAll();
     }
-
-
 
     @RequestMapping(method = RequestMethod.POST)
     public void saveGoalDefinition (@RequestBody List<Goal> goalDefinitions) {
