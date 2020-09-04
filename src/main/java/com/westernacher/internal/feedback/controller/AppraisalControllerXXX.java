@@ -1,35 +1,20 @@
 package com.westernacher.internal.feedback.controller;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.westernacher.internal.feedback.controller.representation.ReviewResource;
-import com.westernacher.internal.feedback.domain.*;
+
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.Implementation.AppraisalService;
-import com.westernacher.internal.feedback.service.Implementation.CsvObject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/appraisal")
 @Slf4j
-public class AppraisalController {
+public class AppraisalControllerXXX {
 
     @Autowired
     private AppraisalRepository repository;
