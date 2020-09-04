@@ -9,13 +9,13 @@ import java.util.List;
 
 @Data
 @Builder
-@Document(collection = "appraisal")
+@Document(collection = "appraisal.review")
 public class Appraisal {
     @Id
     private String id;
     private String cycleId;
     private String userId;
-    private List<ObjectiveResponseGroup> sectiononeResponse;
+    //private List<ObjectiveResponseGroup> sectiononeResponse;
     private List<SubjectiveResponse> sectiontwoResponse;
     private List<SubjectiveResponse> sectionthreeResponse;
     private String sectionfourResponse;

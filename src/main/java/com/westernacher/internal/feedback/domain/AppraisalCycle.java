@@ -8,14 +8,13 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Document(collection = "appraisal_cycle")
+@Document(collection = "appraisal.cycle")
 public class AppraisalCycle {
 
     @Id
     private String id;
     private String name;
     private String evaluationPeriod;
-    private List<CriteriaGroup> sectiononeCriteria;
     private AppraisalCycleStatusType status;
     private Date startDate;
     private Date selfAppraisalDeadline;

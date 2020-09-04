@@ -7,13 +7,11 @@ import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
-import com.westernacher.internal.feedback.service.AppraisalService;
-import com.westernacher.internal.feedback.service.CsvObject;
-import com.westernacher.internal.feedback.service.EmailUtility;
+import com.westernacher.internal.feedback.service.Implementation.AppraisalService;
+import com.westernacher.internal.feedback.service.Implementation.CsvObject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @RestController
@@ -46,7 +43,7 @@ public class AppraisalController {
     @Autowired
     private AppraisalService service;
 
-    @RequestMapping(value = "/cycle/{id}", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/cycle/{id}", method = RequestMethod.GET)
     public List<Appraisal> getAllByCycle (@PathVariable("id") String id) {
         return repository.findAllByCycleId(id);
     }
@@ -342,7 +339,7 @@ public class AppraisalController {
         List<String> sectionOneError = new ArrayList<>();
         ErrorResource errorResource = new ErrorResource();
 
-        /*Validation for section One*/
+        *//*Validation for section One*//*
         if (appraisal!=null) {
             List<ObjectiveResponseGroup> objectiveResponseGroups = appraisal.getSectiononeResponse();
 
@@ -408,13 +405,13 @@ public class AppraisalController {
         List<String> sectionOneError = new ArrayList<>();
         ErrorResource errorResource = new ErrorResource();
 
-        /*Validation for section One*/
+        *//*Validation for section One*//*
         if (appraisal!=null) {
             List<ObjectiveResponseGroup> objectiveResponseGroups = appraisal.getSectiononeResponse();
 
             objectiveResponseGroups.stream().forEach(objectiveResponseGroup -> {
                 objectiveResponseGroup.getResponse().stream().forEach(objectiveResponse -> {
-                    /* 20202020 */
+                    *//* 20202020 *//*
 //                    if (objectiveResponse.getReviewerRating()==null) {
 //                        sectionOneError.add(objectiveResponseGroup.getGroup()+" > "+objectiveResponse.getCriteria()+" > Rating");
 //                    }
@@ -441,7 +438,7 @@ public class AppraisalController {
         List<String> sectionOneError = new ArrayList<>();
         ErrorResource errorResource = new ErrorResource();
 
-        /*Validation for section One*/
+        *//*Validation for section One*//*
         if (appraisal!=null) {
             List<ObjectiveResponseGroup> objectiveResponseGroups = appraisal.getSectiononeResponse();
 
@@ -557,7 +554,7 @@ public class AppraisalController {
         objectiveResponseContent.append(objectiveResponse.getSelfComment());
         objectiveResponseContent.append(",");
         objectiveResponseContent.append(objectiveResponse.getSelfRating());
-        /* 20202020 */
+        *//* 20202020 *//*
 //        objectiveResponseContent.append(",");
 //        objectiveResponseContent.append(objectiveResponse.getReviewerComment());
 //        objectiveResponseContent.append(",");
@@ -696,7 +693,7 @@ public class AppraisalController {
                     options.add(employee_person);
 
                     Role role = new Role();
-                    role.setType(RoleType.valueOf(position));
+                    role.setRoleType(RoleType.valueOf(position));
                     role.setOptions(options);
 
                     List<Role> roles = personUser.getRoles();
@@ -807,7 +804,7 @@ public class AppraisalController {
                 .rating("")
                 .isComplete(false)
                 .build();
-    }
+    }*/
 }
 
 @Data

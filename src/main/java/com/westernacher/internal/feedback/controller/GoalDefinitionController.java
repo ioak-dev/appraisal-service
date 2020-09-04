@@ -24,7 +24,7 @@ public class GoalDefinitionController {
 
     @RequestMapping(value="/{userId}", method = RequestMethod.GET)
     public List<GoalDefinition> getAll (@PathVariable("userId") String userId) {
-        Person person = personRepository.findPersonById(userId);
+        Person person = personRepository.findById(userId).orElse(null);
         return repository.getAllByJobName(person.getJobName());
     }
 

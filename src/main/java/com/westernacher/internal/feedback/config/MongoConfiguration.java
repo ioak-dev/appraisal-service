@@ -1,4 +1,4 @@
-package com.westernacher.internal.feedback;
+package com.westernacher.internal.feedback.config;
 
 import com.google.common.base.Strings;
 import com.mongodb.MongoClientURI;

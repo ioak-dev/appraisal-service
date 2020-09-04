@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class ReviewerElements {
+public class    ReviewerElements {
     private String comment;
     private String rating;
     private String name;

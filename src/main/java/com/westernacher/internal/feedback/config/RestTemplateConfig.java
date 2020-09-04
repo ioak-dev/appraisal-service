@@ -1,4 +1,4 @@
-package com.westernacher.internal.feedback;
+package com.westernacher.internal.feedback.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

@@ -2,7 +2,7 @@ package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalCycle;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
-import com.westernacher.internal.feedback.service.AppraisalCycleService;
+import com.westernacher.internal.feedback.service.Implementation.DefaultAppraisalCycleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +16,7 @@ public class AppraisalCycleController {
     @Autowired
     private AppraisalCycleRepository repository;
     @Autowired
-    private AppraisalCycleService service;
+    private DefaultAppraisalCycleService service;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<AppraisalCycle> getAll () {
@@ -33,10 +33,10 @@ public class AppraisalCycleController {
         return service.create(appraisalCycle);
     }
 
-    @RequestMapping(value = "/{id}/activate", method = RequestMethod.POST)
+   /* @RequestMapping(value = "/{id}/activate", method = RequestMethod.POST)
     public void activate (@PathVariable("id") String id) {
         service.activate(id);
-    }
+    }*/
 
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

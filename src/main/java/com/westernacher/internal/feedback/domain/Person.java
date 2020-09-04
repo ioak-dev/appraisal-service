@@ -23,7 +23,6 @@ public class Person {
     private String specialization;
     private Date lastAppraisalDate;
     private int duration;
-    private List<Role> roles;
     private PersonStatus status;
 
 }

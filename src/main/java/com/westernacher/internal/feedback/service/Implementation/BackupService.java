@@ -1,4 +1,4 @@
-package com.westernacher.internal.feedback.service;
+package com.westernacher.internal.feedback.service.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.westernacher.internal.feedback.controller.PersonController;
@@ -56,7 +56,7 @@ public class BackupService {
     @Value("${spring.mail.password}")
     String password;
 
-    @Scheduled(cron = "${backup.cron.expression}")
+    /*@Scheduled(cron = "${backup.cron.expression}")
     public void sendAppraisalDatabase() {
         List<Person> personList = personRepository.findAll();
         List<Appraisal> appraisalList = appraisalRepository.findAll();
@@ -79,7 +79,7 @@ public class BackupService {
         }
     }
 
-   /* @Async
+   *//* @Async
     public void send( String to,
                       File personFile, File appraisalFile, File cycleFile) {
         try {
@@ -96,7 +96,7 @@ public class BackupService {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-    }*/
+    }*//*
 
     @Async
     public void send( String to,
@@ -179,6 +179,6 @@ public class BackupService {
         }catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

@@ -4,7 +4,7 @@ import com.westernacher.internal.feedback.controller.representation.ServiceReque
 import com.westernacher.internal.feedback.domain.ServiceRequest;
 import com.westernacher.internal.feedback.domain.ServiceRequestStatusType;
 import com.westernacher.internal.feedback.repository.ServiceRequestRepository;
-import com.westernacher.internal.feedback.service.ServiceRequestService;
+import com.westernacher.internal.feedback.service.Implementation.ServiceRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

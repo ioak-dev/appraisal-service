@@ -1,4 +1,4 @@
-package com.westernacher.internal.feedback;
+package com.westernacher.internal.feedback.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
