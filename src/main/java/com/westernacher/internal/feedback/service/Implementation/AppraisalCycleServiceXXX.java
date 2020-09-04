@@ -1,15 +1,12 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
-import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
-import com.westernacher.internal.feedback.repository.GoalDefinitionRepository;
+import com.westernacher.internal.feedback.repository.GoalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Slf4j
 @Service
@@ -19,7 +16,7 @@ public class AppraisalCycleServiceXXX {
     private AppraisalCycleRepository repository;
 
     @Autowired
-    private GoalDefinitionRepository goalDefinitionRepository;
+    private GoalRepository goalDefinitionRepository;
 
     @Autowired
     private AppraisalRepository appraisalRepository;

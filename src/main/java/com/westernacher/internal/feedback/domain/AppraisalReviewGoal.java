@@ -16,6 +16,7 @@ public class AppraisalReviewGoal {
     @Id
     private String id;
     private String employeeId;
+    private String appraisalId;
     private String reviewerId;
     private RoleType reviewerType;
     private String goalDefinitionId;

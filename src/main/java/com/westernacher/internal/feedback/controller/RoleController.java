@@ -25,8 +25,8 @@ public class RoleController {
     private RoleService service;
 
     @GetMapping
-    public ResponseEntity<List<Role>> getRoles (@RequestParam String userId) {
-        return ResponseEntity.ok(repository.findByReviewerId(userId));
+    public ResponseEntity<List<Role>> getRoles (@RequestParam String reviewerId) {
+        return ResponseEntity.ok(repository.findByReviewerId(reviewerId));
     }
 
     @GetMapping("/{id}")

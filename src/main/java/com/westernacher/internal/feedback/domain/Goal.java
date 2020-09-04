@@ -9,8 +9,8 @@ import java.util.List;
 
 @Data
 @Builder
-@Document(collection = "goal_definition")
-public class GoalDefinition {
+@Document(collection = "goal")
+public class Goal {
     @Id
     private String id;
     private String jobName;
