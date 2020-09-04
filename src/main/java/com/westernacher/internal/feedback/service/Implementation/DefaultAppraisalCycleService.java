@@ -87,9 +87,10 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
                     selfAppraisalReviewGoal.setReviewerId(person.getId());
                     selfAppraisalReviewGoal.setReviewerType(RoleType.Self);  // it is not correct
-                    selfAppraisalReviewGoal.setGoalDefinitionId(goalDefinition.getId());
+                    selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
                     selfAppraisalReviewGoal.setComment("");
                     selfAppraisalReviewGoal.setRating("");
+                    selfAppraisalReviewGoal.setComplete(false);
                     reviewGoalRepository.save(selfAppraisalReviewGoal);
 
                 });
@@ -101,9 +102,10 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                         appraisalReviewGoal.setAppraisalId(savedReview.getId());
                         appraisalReviewGoal.setReviewerId(role.getReviewerId());
                         appraisalReviewGoal.setReviewerType(role.getRoleType());
-                        appraisalReviewGoal.setGoalDefinitionId(goalDefinition.getId());
+                        appraisalReviewGoal.setGoalId(goalDefinition.getId());
                         appraisalReviewGoal.setComment("");
                         appraisalReviewGoal.setRating("");
+                        appraisalReviewGoal.setComplete(false);
                         reviewGoalRepository.save(appraisalReviewGoal);
                     });
                 });

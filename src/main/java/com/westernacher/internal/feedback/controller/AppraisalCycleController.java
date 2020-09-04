@@ -2,6 +2,7 @@ package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalCycle;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
+import com.westernacher.internal.feedback.service.AppraisalCycleService;
 import com.westernacher.internal.feedback.service.Implementation.DefaultAppraisalCycleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,30 +17,24 @@ public class AppraisalCycleController {
     @Autowired
     private AppraisalCycleRepository repository;
     @Autowired
-    private DefaultAppraisalCycleService service;
+    private AppraisalCycleService service;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public List<AppraisalCycle> getAll () {
         return repository.findAll();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @GetMapping("/{id}")
     public AppraisalCycle get (@PathVariable("id") String id) {
         return repository.findById(id).orElse(null);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public AppraisalCycle create (@Valid @RequestBody AppraisalCycle appraisalCycle) {
         return service.create(appraisalCycle);
     }
 
-   /* @RequestMapping(value = "/{id}/activate", method = RequestMethod.POST)
-    public void activate (@PathVariable("id") String id) {
-        service.activate(id);
-    }*/
-
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping("/{id}")
     public void delete (@PathVariable("id") String id) {
         repository.deleteById(id);
     }

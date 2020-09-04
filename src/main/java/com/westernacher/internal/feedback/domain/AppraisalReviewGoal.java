@@ -19,7 +19,8 @@ public class AppraisalReviewGoal {
     private String appraisalId;
     private String reviewerId;
     private RoleType reviewerType;
-    private String goalDefinitionId;
+    private String goalId;
     private String comment;
     private String rating;
+    private boolean isComplete;
 }

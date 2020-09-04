@@ -21,7 +21,7 @@ public class GoalController {
         return repository.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public void saveGoalDefinition (@RequestBody List<Goal> goalDefinitions) {
         repository.saveAll(goalDefinitions);
     }
