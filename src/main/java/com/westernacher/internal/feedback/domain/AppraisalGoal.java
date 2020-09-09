@@ -7,21 +7,18 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "appraisal.review")
-public class AppraisalReview {
+@Document(collection = "appraisal.goal")
+public class AppraisalGoal {
     @Id
     private String id;
+    private String jobName;
+    private String group;
+    private String criteria;
+    private float weightage;
+    private String description;
     private String cycleId;
-    private String employeeId;
-    private List<SubjectiveResponse> sectiontwoResponse;
-    private List<SubjectiveResponse> sectionthreeResponse;
-    private String sectionfourResponse;
-    private String sectionfiveResponse;
-    private AppraisalStatusType status;
 }

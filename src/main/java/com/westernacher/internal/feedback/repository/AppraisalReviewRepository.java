@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface AppraisalReviewRepository extends MongoRepository<AppraisalReview, String> {
 
+    List<AppraisalReview> findAllByCycleId(String cycleId);
+
 }

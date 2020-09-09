@@ -17,7 +17,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     private AppraisalCycleRepository repository;
 
     @Autowired
-    private GoalRepository goalDefinitionRepository;
+    private GoalRepository goalRepository;
 
     @Autowired
     private PersonRepository personRepository;
@@ -31,42 +31,67 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     @Autowired
     private AppraisalReviewRepository appraisalReviewRepository;
 
+    @Autowired
+    private AppraisalGoalRepository appraisalGoalRepository;
+
+    @Autowired
+    private AppraisalRoleRepository appraisalRoleRepository;
+
     public AppraisalCycle create(AppraisalCycle appraisalCycle) {
 
-
-
-        // map : empId : List of Roles
-        //map jobname : list of goal defination
         appraisalCycle.setStatus(AppraisalCycleStatusType.ACTIVE);
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
-        Map<String, List<Goal>> goalDefinitionMap = new HashMap<>();
-        List<Goal> goalDefinitions = goalDefinitionRepository.findAll();
+        List<Goal> goals = goalRepository.findAll();
+        goals.stream().forEach(goal -> {
+            AppraisalGoal appraisalGoal = new AppraisalGoal();
+            appraisalGoal.setJobName(goal.getJobName());
+            appraisalGoal.setGroup(goal.getGroup());
+            appraisalGoal.setCriteria(goal.getCriteria());
+            appraisalGoal.setWeightage(goal.getWeightage());
+            appraisalGoal.setDescription(goal.getDescription());
+            appraisalGoal.setCycleId(cycle.getId());
+            appraisalGoalRepository.save(appraisalGoal);
+        });
 
-        for (Goal goalDefinition : goalDefinitions) {
+        List<Role> roleListt = roleRepository.findAll();
+        roleListt.stream().forEach(role -> {
+            AppraisalRole appraisalRole = new AppraisalRole();
+            appraisalRole.setReviewerId(role.getReviewerId());
+            appraisalRole.setRoleType(role.getRoleType());
+            appraisalRole.setEmployeeId(role.getEmployeeId());
+            appraisalRole.setCycleId(cycle.getId());
+            appraisalRoleRepository.save(appraisalRole);
+
+        });
+
+        Map<String, List<AppraisalGoal>> goalDefinitionMap = new HashMap<>();
+        List<AppraisalGoal> goalDefinitions = appraisalGoalRepository.findAllByCycleId(cycle.getId());
+
+        for (AppraisalGoal goalDefinition : goalDefinitions) {
             if (goalDefinitionMap.containsKey(goalDefinition.getJobName())) {
-                List<Goal> goalDefinitionList = goalDefinitionMap.get(goalDefinition.getJobName());
+                List<AppraisalGoal> goalDefinitionList = goalDefinitionMap.get(goalDefinition.getJobName());
                 goalDefinitionList.add(goalDefinition);
                 goalDefinitionMap.put(goalDefinition.getJobName(), goalDefinitionList);
 
             } else {
-                List<Goal> goalDefinitionList = new ArrayList<>();
+                List<AppraisalGoal> goalDefinitionList = new ArrayList<>();
                 goalDefinitionList.add(goalDefinition);
                 goalDefinitionMap.put(goalDefinition.getJobName(), goalDefinitionList);
             }
         }
 
-        Map<String, List<Role>> roleMap = new HashMap<>();
-        List<Role> roles = roleRepository.findAll();
+        Map<String, List<AppraisalRole>> roleMap = new HashMap<>();
+        List<AppraisalRole> roles = appraisalRoleRepository.findAllByCycleId(cycle.getId());
 
-        for (Role role : roles) {
+        for (AppraisalRole role : roles) {
             if (roleMap.containsKey(role.getEmployeeId())) {
-                List<Role> roleList = roleMap.get(role.getEmployeeId());
+                List<AppraisalRole> roleList = roleMap.get(role.getEmployeeId());
                 roleList.add(role);
                 roleMap.put(role.getEmployeeId(), roleList);
 
             } else {
-                List<Role> roleList = new ArrayList<>();
+                List<AppraisalRole> roleList = new ArrayList<>();
                 roleList.add(role);
                 roleMap.put(role.getEmployeeId(), roleList);
             }
@@ -78,7 +103,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             if (roleMap.containsKey(person.getId())) {
                 AppraisalReview appraisalReview = new AppraisalReview();
                 appraisalReview.setCycleId(cycle.getId());
-                appraisalReview.setUserId(person.getId());
+                appraisalReview.setEmployeeId(person.getId());
                 appraisalReview.setStatus(AppraisalStatusType.SELF_APPRAISAL);
                 AppraisalReview savedReview = appraisalReviewRepository.save(appraisalReview);
                 goalDefinitionMap.get(person.getJobName()).stream().forEach(goalDefinition -> {
