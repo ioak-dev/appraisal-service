@@ -25,13 +25,12 @@ public class RoleController {
     private RoleService service;
 
     @GetMapping
-    public ResponseEntity<List<Role>> getRoles (@RequestParam String reviewerId) {
-        return ResponseEntity.ok(repository.findByReviewerId(reviewerId));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Role> get (@PathVariable("id") String id) {
-        return ResponseEntity.ok(repository.findById(id).orElse(null));
+    public ResponseEntity<List<Role>> getRoles (@RequestParam(required = false) String reviewerId) {
+        if (reviewerId == null) {
+            return ResponseEntity.ok(repository.findAll());
+        } else {
+            return ResponseEntity.ok(repository.findByReviewerId(reviewerId));
+        }
     }
 
     @PutMapping
