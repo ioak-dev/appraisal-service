@@ -41,7 +41,7 @@ public class DefaultRoleService implements RoleService {
 
         if (existingRole !=null) {
             existingRole.setReviewerId(role.getReviewerId());
-            existingRole.setRoleType(role.getRoleType());
+            existingRole.setReviewerType(role.getReviewerType());
             existingRole.setEmployeeId(role.getEmployeeId());
             return repository.save(existingRole);
         }
@@ -89,7 +89,7 @@ public class DefaultRoleService implements RoleService {
             String[] values = line.split(",");
             Role role = new Role();
             role.setReviewerId(personMap.get(values[0].trim().toLowerCase()));
-            role.setRoleType(RoleType.valueOf(values[1].trim()));
+            role.setReviewerType(RoleType.valueOf(values[1].trim()));
             role.setEmployeeId(personMap.get(values[2].trim().toLowerCase()));
             roles.add(role);
         }
