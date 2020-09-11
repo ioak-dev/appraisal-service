@@ -24,11 +24,6 @@ public class AppraisalReviewController {
     @Autowired
     private AppraisalReviewGoalRepository reviewGoalRepository;
 
-    /*@GetMapping
-    public ResponseEntity<?> getAllReview () {
-        return ResponseEntity.ok(repository.findAll());
-    }*/
-
     @GetMapping
     public ResponseEntity<?> getAllReviewByCycleId (@RequestParam String cycleId) {
         return ResponseEntity.ok(repository.findAllByCycleId(cycleId));

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,11 @@ public class AppraisalReviewGoalController {
 
     @GetMapping
     public ResponseEntity<?> getReviewGoals (@RequestParam String appraisalId) {
-        return ResponseEntity.ok(repository.findAllByAppraisalId(appraisalId));
+        List<AppraisalReviewGoal> appraisalReviewGoals = repository.findAllByAppraisalId(appraisalId);
+        appraisalReviewGoals.sort(
+                Comparator.comparing((AppraisalReviewGoal ARG) -> ARG.getReviewerType().ordinal())
+        );
+        return ResponseEntity.ok(appraisalReviewGoals);
     }
 
     @PutMapping
