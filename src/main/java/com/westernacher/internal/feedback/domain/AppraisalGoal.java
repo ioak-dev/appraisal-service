@@ -21,4 +21,5 @@ public class AppraisalGoal {
     private float weightage;
     private String description;
     private String cycleId;
+    private int order;
 }

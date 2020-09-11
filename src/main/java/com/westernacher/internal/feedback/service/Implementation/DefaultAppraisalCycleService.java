@@ -51,6 +51,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalGoal.setWeightage(goal.getWeightage());
             appraisalGoal.setDescription(goal.getDescription());
             appraisalGoal.setCycleId(cycle.getId());
+            appraisalGoal.setOrder(goal.getOrder());
             appraisalGoalRepository.save(appraisalGoal);
         });
 
