@@ -42,6 +42,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         appraisalCycle.setStatus(AppraisalCycleStatusType.ACTIVE);
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
+        List<AppraisalGoal> appraisalGoalList = new ArrayList<>();
         List<Goal> goals = goalRepository.findAll();
         goals.stream().forEach(goal -> {
             AppraisalGoal appraisalGoal = new AppraisalGoal();
@@ -52,9 +53,11 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalGoal.setDescription(goal.getDescription());
             appraisalGoal.setCycleId(cycle.getId());
             appraisalGoal.setOrder(goal.getOrder());
-            appraisalGoalRepository.save(appraisalGoal);
+            appraisalGoalList.add(appraisalGoal);
         });
+        appraisalGoalRepository.saveAll(appraisalGoalList);
 
+        List<AppraisalRole> appraisalRoleList = new ArrayList<>();
         List<Role> roleListt = roleRepository.findAll();
         roleListt.stream().forEach(role -> {
             AppraisalRole appraisalRole = new AppraisalRole();
@@ -62,9 +65,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalRole.setReviewerType(role.getReviewerType());
             appraisalRole.setEmployeeId(role.getEmployeeId());
             appraisalRole.setCycleId(cycle.getId());
-            appraisalRoleRepository.save(appraisalRole);
-
+            appraisalRoleList.add(appraisalRole);
         });
+        appraisalRoleRepository.saveAll(appraisalRoleList);
 
         Map<String, List<AppraisalGoal>> goalDefinitionMap = new HashMap<>();
         List<AppraisalGoal> goalDefinitions = appraisalGoalRepository.findAllByCycleId(cycle.getId());
@@ -107,6 +110,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                 appraisalReview.setEmployeeId(person.getId());
                 appraisalReview.setStatus(AppraisalStatusType.SELF_APPRAISAL);
                 AppraisalReview savedReview = appraisalReviewRepository.save(appraisalReview);
+
+                List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
                 goalDefinitionMap.get(person.getJobName()).stream().forEach(goalDefinition -> {
                     AppraisalReviewGoal selfAppraisalReviewGoal = new AppraisalReviewGoal();
                     selfAppraisalReviewGoal.setEmployeeId(person.getId());
@@ -117,10 +122,11 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     selfAppraisalReviewGoal.setComment("");
                     selfAppraisalReviewGoal.setRating("");
                     selfAppraisalReviewGoal.setComplete(false);
-                    reviewGoalRepository.save(selfAppraisalReviewGoal);
-
+                    appraisalReviewGoalList.add(selfAppraisalReviewGoal);
                 });
+                reviewGoalRepository.saveAll(appraisalReviewGoalList);
 
+                List<AppraisalReviewGoal> appraisalReviewGoals = new ArrayList<>();
                 roleMap.get(person.getId()).forEach(role -> {
                     goalDefinitionMap.get(person.getJobName()).stream().forEach(goalDefinition -> {
                         AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
@@ -132,9 +138,10 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                         appraisalReviewGoal.setComment("");
                         appraisalReviewGoal.setRating("");
                         appraisalReviewGoal.setComplete(false);
-                        reviewGoalRepository.save(appraisalReviewGoal);
+                        appraisalReviewGoals.add(appraisalReviewGoal);
                     });
                 });
+                reviewGoalRepository.saveAll(appraisalReviewGoals);
             }
         });
 
