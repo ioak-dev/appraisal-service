@@ -4,19 +4,15 @@ import com.westernacher.internal.feedback.domain.Person;
 import com.westernacher.internal.feedback.domain.PersonStatus;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.PersonService;
+import com.westernacher.internal.feedback.util.CSVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -25,6 +21,9 @@ public class DefaultPersonService implements PersonService {
 
     @Autowired
     private PersonRepository repository;
+
+    @Autowired
+    private CSVService csvService;
 
     @Override
     public Person createAndUpdate (Person person) {
@@ -50,43 +49,30 @@ public class DefaultPersonService implements PersonService {
         repository.deleteAll();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         if (fileName.endsWith(".csv")) {
-            BufferedReader br;
-            List<String> csvline = new ArrayList<>();
-            try {
-                String line;
-                InputStream is = file.getInputStream();
-                br = new BufferedReader(new InputStreamReader(is));
-                while ((line = br.readLine()) != null) {
-                    csvline.add(line);
-                }
-                csvline.remove(0);
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
-            csvline.stream().forEach(line -> {
-                String[] values = line.split(",");
+            List<String[]> csvRows = csvService.readCSVRows(file);
+            csvRows.stream().forEach(line -> {
                 Person person = new Person();
-                person.setEmpId(values[0].trim());
-                person.setName(values[1].trim());
+                person.setEmpId(line[0].trim());
+                person.setName(line[1].trim());
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 try{
-                    person.setJoiningDate(format.parse(values[2].trim()));
+                    person.setJoiningDate(format.parse(line[2].trim()));
                 }catch (ParseException e) {
 
                 }
 
-                person.setJobName(values[3].trim());
-                person.setUnit(values[4].trim());
-                person.setLevel(values[5].trim());
-                person.setSpecialization(values[6].trim());
-                person.setStatus(PersonStatus.valueOf(values[7].trim()));
-                person.setEmail(values[8].trim().toLowerCase());
+                person.setJobName(line[3].trim());
+                person.setUnit(line[4].trim());
+                person.setLevel(line[5].trim());
+                person.setSpecialization(line[6].trim());
+                person.setStatus(PersonStatus.valueOf(line[7].trim()));
+                person.setEmail(line[8].trim().toLowerCase());
                 try{
-                    person.setLastAppraisalDate(format.parse(values[9].trim()));
+                    person.setLastAppraisalDate(format.parse(line[9].trim()));
                 }catch(ParseException e){}
 
-                person.setDuration(Integer.parseInt(values[10].trim()));
+                person.setDuration(Integer.parseInt(line[10].trim()));
 
                 repository.save(person);
             });

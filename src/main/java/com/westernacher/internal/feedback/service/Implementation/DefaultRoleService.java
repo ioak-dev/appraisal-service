@@ -7,14 +7,11 @@ import com.westernacher.internal.feedback.domain.RoleType;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.repository.RoleRepository;
 import com.westernacher.internal.feedback.service.RoleService;
+import com.westernacher.internal.feedback.util.CSVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +25,9 @@ public class DefaultRoleService implements RoleService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private CSVService csvService;
 
     public List<Role> updateAll(List<Role> roles) {
         return repository.saveAll(roles);
@@ -49,31 +49,10 @@ public class DefaultRoleService implements RoleService {
     }
 
     public void uploadCsvFile(MultipartFile file) {
-        updateAll(getRoles(getRows(file)));
+        updateAll(getRoles(csvService.readCSVRows(file)));
     }
 
-
-    private List<String> getRows(MultipartFile file) {
-        BufferedReader br;
-        List<String> csvline = new ArrayList<>();
-        try {
-
-            String line;
-            InputStream is = file.getInputStream();
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                csvline.add(line);
-            }
-
-            csvline.remove(0);
-
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-        return csvline;
-    }
-
-    private List<Role> getRoles(List<String> rows) {
+    private List<Role> getRoles(List<String[]> rows) {
 
         Map<String, String> personMap = new HashMap<>();
 
@@ -85,12 +64,11 @@ public class DefaultRoleService implements RoleService {
 
         List<Role> roles =  new ArrayList<>();
 
-        for(String line : rows) {
-            String[] values = line.split(",");
+        for(String[] line : rows) {
             Role role = new Role();
-            role.setReviewerId(personMap.get(values[0].trim().toLowerCase()));
-            role.setReviewerType(RoleType.valueOf(values[1].trim()));
-            role.setEmployeeId(personMap.get(values[2].trim().toLowerCase()));
+            role.setReviewerId(personMap.get(line[0].trim().toLowerCase()));
+            role.setReviewerType(RoleType.valueOf(line[1].trim()));
+            role.setEmployeeId(personMap.get(line[2].trim().toLowerCase()));
             roles.add(role);
         }
         return roles;

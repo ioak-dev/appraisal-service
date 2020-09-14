@@ -6,6 +6,7 @@ import com.opencsv.CSVReaderBuilder;
 import com.westernacher.internal.feedback.domain.Goal;
 import com.westernacher.internal.feedback.repository.GoalRepository;
 import com.westernacher.internal.feedback.service.GoalService;
+import com.westernacher.internal.feedback.util.CSVService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,14 +25,15 @@ public class DefaultGoalService implements GoalService {
     @Autowired
     private GoalRepository repository;
 
+    @Autowired
+    private CSVService csvService;
+
 
     @Override
     public List<Goal> uploadGoalCsvFile(MultipartFile file) {
 
         try {
-            Reader reader = new InputStreamReader(file.getInputStream());
-            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
-            List<String[]> csvRows = csvReader.readAll();
+            List<String[]> csvRows = csvService.readCSVRows(file);
             List<Goal> goals = new ArrayList<>();
             int rowNumber = 0;
             for (String[] columns : csvRows) {
@@ -51,7 +53,7 @@ public class DefaultGoalService implements GoalService {
                 }
             }
             return repository.saveAll(goals);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
