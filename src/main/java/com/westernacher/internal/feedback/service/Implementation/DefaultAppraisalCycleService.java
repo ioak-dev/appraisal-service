@@ -117,7 +117,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     selfAppraisalReviewGoal.setEmployeeId(person.getId());
                     selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
                     selfAppraisalReviewGoal.setReviewerId(person.getId());
-                    selfAppraisalReviewGoal.setReviewerType(RoleType.Self);  // it is not correct
+                    selfAppraisalReviewGoal.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);  // it is not correct
                     selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
                     selfAppraisalReviewGoal.setComment("");
                     selfAppraisalReviewGoal.setRating("");

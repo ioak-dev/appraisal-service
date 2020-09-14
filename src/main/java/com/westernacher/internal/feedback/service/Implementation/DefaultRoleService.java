@@ -1,6 +1,7 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
 
+import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.domain.Person;
 import com.westernacher.internal.feedback.domain.Role;
 import com.westernacher.internal.feedback.domain.RoleType;
@@ -67,7 +68,7 @@ public class DefaultRoleService implements RoleService {
         for(String[] line : rows) {
             Role role = new Role();
             role.setReviewerId(personMap.get(line[0].trim().toLowerCase()));
-            role.setReviewerType(RoleType.valueOf(line[1].trim()));
+            role.setReviewerType(AppraisalStatusType.valueOf(line[1].trim()));
             role.setEmployeeId(personMap.get(line[2].trim().toLowerCase()));
             roles.add(role);
         }

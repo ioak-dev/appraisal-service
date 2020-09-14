@@ -16,7 +16,7 @@ public class AppraisalRole {
     @Id
     private String id;
     private String reviewerId;
-    private RoleType reviewerType;
+    private AppraisalStatusType reviewerType;
     private String employeeId;
     private String cycleId;
 }
