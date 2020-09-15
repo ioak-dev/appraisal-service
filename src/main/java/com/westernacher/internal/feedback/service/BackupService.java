@@ -83,7 +83,7 @@ public class BackupService {
             mapper.writeValue(goalFile, goalDefinitionList);
             mapper.writeValue(ratingScaleFile, ratingScaleList);
 
-            send(to, personFile, appraisalFile, cycleFile);
+            send(to, personFile, appraisalFile, cycleFile, goalFile, ratingScaleFile);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,7 +110,7 @@ public class BackupService {
 
     @Async
     public void send( String to,
-                      File personFile, File appraisalFile, File cycleFile) {
+                      File personFile, File appraisalFile, File cycleFile, File goalFile, File ratingScaleFile) {
         Properties props = new Properties();
         props.put("mail.smtp.host", this.host);
         props.put("mail.smtp.port", this.port);
@@ -145,10 +145,18 @@ public class BackupService {
             MimeBodyPart attachment3 = new MimeBodyPart();
             attachment3.attachFile(cycleFile);
 
+            MimeBodyPart attachment4 = new MimeBodyPart();
+            attachment2.attachFile(goalFile);
+
+            MimeBodyPart attachment5 = new MimeBodyPart();
+            attachment3.attachFile(ratingScaleFile);
+
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(attachment);
             multipart.addBodyPart(attachment2);
             multipart.addBodyPart(attachment3);
+            multipart.addBodyPart(attachment4);
+            multipart.addBodyPart(attachment5);
 
             message.setContent(multipart);
 
