@@ -146,10 +146,10 @@ public class BackupService {
             attachment3.attachFile(cycleFile);
 
             MimeBodyPart attachment4 = new MimeBodyPart();
-            attachment2.attachFile(goalFile);
+            attachment4.attachFile(goalFile);
 
             MimeBodyPart attachment5 = new MimeBodyPart();
-            attachment3.attachFile(ratingScaleFile);
+            attachment5.attachFile(ratingScaleFile);
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(attachment);
