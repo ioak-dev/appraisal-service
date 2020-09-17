@@ -31,11 +31,12 @@ public class DefaultPersonService implements PersonService {
         if(existingPerson != null) {
             existingPerson.setEmpId(person.getEmpId());
             existingPerson.setName(person.getName());
-            existingPerson.setJobName(person.getJobName() != null ? person.getJobName():null);
+            existingPerson.setJob(person.getJob() != null ? person.getJob():null);
             existingPerson.setUnit(person.getUnit() != null?person.getUnit():null);
             existingPerson.setJoiningDate(person.getJoiningDate());
             existingPerson.setLevel(person.getLevel() != null ? person.getLevel():null);
             existingPerson.setSpecialization(person.getSpecialization() != null ? person.getSpecialization():null);
+            existingPerson.setCu(person.getCu() != null ? person.getCu():null);
             existingPerson.setLastAppraisalDate(person.getLastAppraisalDate());
             existingPerson.setDuration(person.getDuration());
             existingPerson.setStatus(person.getStatus());
@@ -61,18 +62,18 @@ public class DefaultPersonService implements PersonService {
                 }catch (ParseException e) {
 
                 }
-
-                person.setJobName(line[3].trim());
-                person.setUnit(line[4].trim());
-                person.setLevel(line[5].trim());
-                person.setSpecialization(line[6].trim());
-                person.setStatus(PersonStatus.valueOf(line[7].trim()));
-                person.setEmail(line[8].trim().toLowerCase());
+                person.setCu(line[3].trim());
+                person.setJob(line[4].trim());
+                person.setUnit(line[5].trim());
+                person.setLevel(line[6].trim());
+                person.setSpecialization(line[7].trim());
+                person.setStatus(PersonStatus.valueOf(line[8].trim()));
+                person.setEmail(line[9].trim().toLowerCase());
                 try{
-                    person.setLastAppraisalDate(format.parse(line[9].trim()));
+                    person.setLastAppraisalDate(format.parse(line[10].trim()));
                 }catch(ParseException e){}
 
-                person.setDuration(Integer.parseInt(line[10].trim()));
+                person.setDuration(Integer.parseInt(line[11].trim()));
 
                 repository.save(person);
             });

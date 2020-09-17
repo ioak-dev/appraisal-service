@@ -44,8 +44,9 @@ public class DefaultGoalService implements GoalService {
                     goal.setCriteria(new String(columns[1].getBytes(), "UTF-8"));
                     goal.setDescription(new String(columns[2].getBytes(), "UTF-8"));
                     goal.setWeightage(Float.parseFloat(columns[3]));
-                    goal.setJobName(columns[4]);
-                    goal.setOrder(Integer.parseInt(columns[5]));
+                    goal.setCu(columns[4]);
+                    goal.setJobName(columns[5]);
+                    goal.setOrder(Integer.parseInt(columns[6]));
                     goals.add(goal);
                 }catch(Exception e) {
                     log.info("Please correct the row number: "+rowNumber);

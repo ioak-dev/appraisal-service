@@ -23,4 +23,5 @@ public class Goal {
     private float weightage;
     private String description;
     private int order;
+    private String cu;
 }

@@ -22,4 +22,5 @@ public class AppraisalGoal {
     private String description;
     private String cycleId;
     private int order;
+    private String cu;
 }
