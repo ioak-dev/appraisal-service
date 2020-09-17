@@ -72,10 +72,10 @@ public class AppraisalReviewGoalController {
             if (appraisalReviewGoal.getComment() == null) {
                 sectionOneError.add("Null Comment");
                 submit = false;
-            } else if (appraisalReviewGoal.getComment().length()  < 5) {
+            } /*else if (appraisalReviewGoal.getComment().length()  < 5) {
                 sectionOneError.add("Comment length is not less than five");
                 submit = false;
-            }
+            }*/
 
             if (appraisalReviewGoal.getRating() == null) {
                 sectionOneError.add("Rating is null");
