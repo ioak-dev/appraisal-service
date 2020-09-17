@@ -3,6 +3,7 @@ package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalReview;
 import com.westernacher.internal.feedback.domain.AppraisalReviewGoal;
+import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.repository.AppraisalReviewGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import static com.westernacher.internal.feedback.domain.AppraisalStatusType.PROJECT_MANAGER;
 
 @RestController
 @RequestMapping("/appraisal/review/goal")
@@ -90,10 +93,20 @@ public class AppraisalReviewGoalController {
         }
 
         if (submit = true) {
-            //AppraisalReview appraisalReview = re
-
-            //if ()
-            return ResponseEntity.ok(repository.saveAll(newReviewGoals));
+            AppraisalReview appraisalReview = reviewRepository.findById(appraisalReviewId).orElse(null);
+            if (appraisalReview !=null) {
+                if (appraisalReview.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL)) {
+                    appraisalReview.setStatus(AppraisalStatusType.PROJECT_MANAGER);
+                } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PROJECT_MANAGER)) {
+                    appraisalReview.setStatus(AppraisalStatusType.REPORTING_MANAGER);
+                } else if (appraisalReview.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)) {
+                    appraisalReview.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
+                } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+                    appraisalReview.setStatus(AppraisalStatusType.HR);
+                }
+                reviewRepository.save(appraisalReview);
+                return ResponseEntity.ok(repository.saveAll(newReviewGoals));
+            }
         }
         return null;
     }
