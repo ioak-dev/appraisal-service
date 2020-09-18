@@ -17,7 +17,7 @@ import java.util.List;
 public class Goal {
     @Id
     private String id;
-    private String jobName;
+    private String job;
     private String group;
     private String criteria;
     private float weightage;

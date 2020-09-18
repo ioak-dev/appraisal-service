@@ -46,7 +46,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         List<Goal> goals = goalRepository.findAll();
         goals.stream().forEach(goal -> {
             AppraisalGoal appraisalGoal = new AppraisalGoal();
-            appraisalGoal.setJobName(goal.getJobName());
+            appraisalGoal.setJob(goal.getJob());
             appraisalGoal.setGroup(goal.getGroup());
             appraisalGoal.setCriteria(goal.getCriteria());
             appraisalGoal.setWeightage(goal.getWeightage());
@@ -75,15 +75,15 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         List<AppraisalGoal> goalDefinitions = appraisalGoalRepository.findAllByCycleId(cycle.getId());
 
         for (AppraisalGoal goalDefinition : goalDefinitions) {
-            if (goalDefinitionMap.containsKey(goalDefinition.getJobName())) {
-                List<AppraisalGoal> goalDefinitionList = goalDefinitionMap.get(goalDefinition.getJobName());
+            if (goalDefinitionMap.containsKey(goalDefinition.getJob())) {
+                List<AppraisalGoal> goalDefinitionList = goalDefinitionMap.get(goalDefinition.getJob());
                 goalDefinitionList.add(goalDefinition);
-                goalDefinitionMap.put(goalDefinition.getJobName(), goalDefinitionList);
+                goalDefinitionMap.put(goalDefinition.getJob(), goalDefinitionList);
 
             } else {
                 List<AppraisalGoal> goalDefinitionList = new ArrayList<>();
                 goalDefinitionList.add(goalDefinition);
-                goalDefinitionMap.put(goalDefinition.getJobName(), goalDefinitionList);
+                goalDefinitionMap.put(goalDefinition.getJob(), goalDefinitionList);
             }
 
             if (countryUnitMap.containsKey(goalDefinition.getCu())) {

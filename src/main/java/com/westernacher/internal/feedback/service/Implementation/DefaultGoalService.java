@@ -1,8 +1,6 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import com.westernacher.internal.feedback.domain.Goal;
 import com.westernacher.internal.feedback.repository.GoalRepository;
 import com.westernacher.internal.feedback.service.GoalService;
@@ -12,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +40,7 @@ public class DefaultGoalService implements GoalService {
                     goal.setDescription(new String(columns[2].getBytes(), "UTF-8"));
                     goal.setWeightage(Float.parseFloat(columns[3]));
                     goal.setCu(columns[4]);
-                    goal.setJobName(columns[5]);
+                    goal.setJob(columns[5]);
                     goal.setOrder(Integer.parseInt(columns[6]));
                     goals.add(goal);
                 }catch(Exception e) {
