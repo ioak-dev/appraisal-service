@@ -94,7 +94,7 @@ public class AppraisalReviewGoalController {
                 submit = false;
             }
 
-            if (submit == false)  {
+            if (!submit)  {
                 errorResource.setSectionOneError(sectionOneError);
                 return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.NOT_ACCEPTABLE);
             } else {
@@ -108,7 +108,7 @@ public class AppraisalReviewGoalController {
             appraisalReviewId = appraisalReviewGoal.getAppraisalId();
         }
 
-        if (submit = true) {
+        if (submit) {
             AppraisalReview appraisalReview = reviewRepository.findById(appraisalReviewId).orElse(null);
             if (appraisalReview !=null) {
                 if (appraisalReview.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL)) {
