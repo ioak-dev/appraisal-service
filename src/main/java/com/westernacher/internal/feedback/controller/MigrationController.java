@@ -4,6 +4,7 @@ import com.westernacher.internal.feedback.domain.Appraisal;
 import com.westernacher.internal.feedback.domain.Goal;
 import com.westernacher.internal.feedback.repository.GoalRepository;
 import com.westernacher.internal.feedback.service.GoalService;
+import com.westernacher.internal.feedback.service.Implementation.MigrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,13 @@ import java.util.List;
 @RequestMapping("/migrate")
 public class MigrationController {
 
+    @Autowired
+    private MigrationService service;
+
     @PostMapping
     public ResponseEntity<?> migrateAppraisal (@RequestBody List<Appraisal> appraisals) {
 
-        return ResponseEntity.ok(appraisals);
+        return ResponseEntity.ok(service.migrate(appraisals));
     }
 }
 
