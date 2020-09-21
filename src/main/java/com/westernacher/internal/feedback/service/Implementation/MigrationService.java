@@ -1,5 +1,6 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
+import com.westernacher.internal.feedback.controller.representation.MigrationAppraisalPerson;
 import com.westernacher.internal.feedback.controller.representation.MigrationAppraisalResponse;
 import com.westernacher.internal.feedback.domain.Appraisal;
 import com.westernacher.internal.feedback.domain.AppraisalGoal;
@@ -8,11 +9,12 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
 public class MigrationService {
-    public MigrationAppraisalResponse migrate(List<Appraisal> appraisalList) {
+    public MigrationAppraisalResponse migrate(List<Appraisal> appraisalList, Map<String, MigrationAppraisalPerson> personMap, Map<String, String> goalOrder) {
         MigrationAppraisalResponse response = new MigrationAppraisalResponse();
         migrateAppraisal(response, appraisalList.get(0));
         return response;

@@ -1,5 +1,6 @@
 package com.westernacher.internal.feedback.controller;
 
+import com.westernacher.internal.feedback.controller.representation.MigrationAppraisalPayload;
 import com.westernacher.internal.feedback.domain.Appraisal;
 import com.westernacher.internal.feedback.domain.Goal;
 import com.westernacher.internal.feedback.repository.GoalRepository;
@@ -24,9 +25,9 @@ public class MigrationController {
     private MigrationService service;
 
     @PostMapping
-    public ResponseEntity<?> migrateAppraisal (@RequestBody List<Appraisal> appraisals) {
-
-        return ResponseEntity.ok(service.migrate(appraisals));
+    public ResponseEntity<?> migrateAppraisal (@RequestBody MigrationAppraisalPayload payload) {
+        // payload.getPersons() => personMap
+        return ResponseEntity.ok(service.migrate(payload.getAppraisals(), personMap, payload.getGoalOrder()));
     }
 }
 
