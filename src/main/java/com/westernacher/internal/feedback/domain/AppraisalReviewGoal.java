@@ -23,4 +23,5 @@ public class AppraisalReviewGoal {
     private String comment;
     private String rating;
     private boolean isComplete;
+    private double score;
 }

@@ -1,9 +1,11 @@
 
 package com.westernacher.internal.feedback.controller;
 
+import com.westernacher.internal.feedback.domain.AppraisalGoal;
 import com.westernacher.internal.feedback.domain.AppraisalReview;
 import com.westernacher.internal.feedback.domain.AppraisalReviewGoal;
 import com.westernacher.internal.feedback.domain.AppraisalStatusType;
+import com.westernacher.internal.feedback.repository.AppraisalGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,9 @@ public class AppraisalReviewGoalController {
 
     @Autowired
     private AppraisalReviewRepository reviewRepository;
+
+    @Autowired
+    private AppraisalGoalRepository appraisalGoalRepository;
 
     @GetMapping
     public ResponseEntity<?> getReviewGoals (@RequestParam String appraisalId) {
@@ -66,8 +71,15 @@ public class AppraisalReviewGoalController {
         String appraisalReviewId = null;
         List<String> sectionOneError = new ArrayList<>();
         ErrorResource errorResource = new ErrorResource();
+        double totalScore = 0.0d;
+
+        String reviewerId = null;
+        String employeeId = null;
+        String cycleId = null;
 
         for (AppraisalReviewGoal appraisalReviewGoal : reviewGoals) {
+            reviewerId = appraisalReviewGoal.getReviewerId();
+            employeeId = appraisalReviewGoal.getEmployeeId();
 
             if (appraisalReviewGoal.getComment() == null) {
                 sectionOneError.add("Null Comment");
@@ -87,6 +99,10 @@ public class AppraisalReviewGoalController {
                 return new ResponseEntity<ErrorResource>(errorResource, HttpStatus.NOT_ACCEPTABLE);
             } else {
                 appraisalReviewGoal.setComplete(true);
+                int rating = appraisalReviewGoal.getRating().charAt(0);
+                AppraisalGoal appraisalGoal = appraisalGoalRepository.findById(appraisalReviewGoal.getGoalId()).orElse(null);
+                appraisalReviewGoal.setScore((rating*appraisalGoal.getWeightage())/100);
+                totalScore = totalScore + (rating*appraisalGoal.getWeightage())/100;
                 newReviewGoals.add(appraisalReviewGoal);
             }
             appraisalReviewId = appraisalReviewGoal.getAppraisalId();

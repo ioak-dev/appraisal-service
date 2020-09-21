@@ -66,6 +66,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalRole.setReviewerType(role.getReviewerType());
             appraisalRole.setEmployeeId(role.getEmployeeId());
             appraisalRole.setCycleId(cycle.getId());
+            appraisalRole.setComplete(false);
+            appraisalRole.setTotalScore(0.0d);
             appraisalRoleList.add(appraisalRole);
         });
         appraisalRoleRepository.saveAll(appraisalRoleList);
@@ -137,6 +139,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     selfAppraisalReviewGoal.setComment("");
                     selfAppraisalReviewGoal.setRating("");
                     selfAppraisalReviewGoal.setComplete(false);
+                    selfAppraisalReviewGoal.setScore(0.0d);
                     appraisalReviewGoalList.add(selfAppraisalReviewGoal);
                 });
                 //reviewGoalRepository.saveAll(appraisalReviewGoalList);
@@ -152,6 +155,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     selfAppraisalReviewGoal.setComment("");
                     selfAppraisalReviewGoal.setRating("");
                     selfAppraisalReviewGoal.setComplete(false);
+                    selfAppraisalReviewGoal.setScore(0.0d);
                     appraisalReviewGoalList.add(selfAppraisalReviewGoal);
                 });
                 //reviewGoalRepository.saveAll(appraisalReviewGoalListForCU);
@@ -168,6 +172,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                         appraisalReviewGoal.setComment("");
                         appraisalReviewGoal.setRating("");
                         appraisalReviewGoal.setComplete(false);
+                        appraisalReviewGoal.setScore(0.0d);
                         appraisalReviewGoalList.add(appraisalReviewGoal);
                     });
                 });
@@ -185,6 +190,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                         appraisalReviewGoal.setComment("");
                         appraisalReviewGoal.setRating("");
                         appraisalReviewGoal.setComplete(false);
+                        appraisalReviewGoal.setScore(0.0d);
                         appraisalReviewGoalList.add(appraisalReviewGoal);
                     });
                 });

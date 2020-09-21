@@ -25,9 +25,10 @@ public class MigrationController {
     private MigrationService service;
 
     @PostMapping
-    public ResponseEntity<?> migrateAppraisal (@RequestBody MigrationAppraisalPayload payload) {
+    public ResponseEntity<?> migrateAppraisal (@RequestParam String cycleId,
+                                               @RequestBody MigrationAppraisalPayload payload) {
         // payload.getPersons() => personMap
-        return ResponseEntity.ok(service.migrate(payload.getAppraisals(), personMap, payload.getGoalOrder()));
+        return ResponseEntity.ok(service.migrate(payload.getAppraisals(), service.getPersonMap(payload.getPersons()), payload.getGoalOrder()));
     }
 }
 
