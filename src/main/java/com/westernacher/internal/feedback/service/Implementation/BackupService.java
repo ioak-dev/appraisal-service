@@ -2,12 +2,8 @@ package com.westernacher.internal.feedback.service.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.westernacher.internal.feedback.controller.PersonController;
-import com.westernacher.internal.feedback.domain.Appraisal;
-import com.westernacher.internal.feedback.domain.AppraisalCycle;
-import com.westernacher.internal.feedback.domain.Person;
-import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
-import com.westernacher.internal.feedback.repository.AppraisalRepository;
-import com.westernacher.internal.feedback.repository.PersonRepository;
+import com.westernacher.internal.feedback.domain.*;
+import com.westernacher.internal.feedback.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +35,14 @@ public class BackupService {
     private PersonRepository personRepository;
 
     @Autowired
+    private GoalDefinitionRepository goalDefinitionRepository;
+
+    @Autowired
+    private RatingScaleRepository ratingScaleRepository;
+
+
+
+    @Autowired
     private JavaMailSender sender;
 
     @Value("${spring.mail.username}")
@@ -61,19 +65,25 @@ public class BackupService {
         List<Person> personList = personRepository.findAll();
         List<Appraisal> appraisalList = appraisalRepository.findAll();
         List<AppraisalCycle> cycleList = cycleRepository.findAll();
+        List<GoalDefinition> goalDefinitionList = goalDefinitionRepository.findAll();
+        List<RatingScale> ratingScaleList = ratingScaleRepository.findAll();
 
         try {
             File personFile = File.createTempFile("person", ".json");
             File appraisalFile = File.createTempFile("appraisal", ".json");
             File cycleFile = File.createTempFile("cycle", ".json");
+            File goalFile = File.createTempFile("goaldefination", ".json");
+            File ratingScaleFile = File.createTempFile("ratingscale", ".josn");
 
             ObjectMapper mapper = new ObjectMapper();
 
             mapper.writeValue(personFile, personList);
             mapper.writeValue(appraisalFile, appraisalList);
             mapper.writeValue(cycleFile, cycleList);
+            mapper.writeValue(goalFile, goalDefinitionList);
+            mapper.writeValue(ratingScaleFile, ratingScaleList);
 
-            send(to, personFile, appraisalFile, cycleFile);
+            send(to, personFile, appraisalFile, cycleFile, goalFile, ratingScaleFile);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,7 +110,7 @@ public class BackupService {
 
     @Async
     public void send( String to,
-                      File personFile, File appraisalFile, File cycleFile) {
+                      File personFile, File appraisalFile, File cycleFile, File goalFile, File ratingScaleFile) {
         Properties props = new Properties();
         props.put("mail.smtp.host", this.host);
         props.put("mail.smtp.port", this.port);
@@ -135,10 +145,18 @@ public class BackupService {
             MimeBodyPart attachment3 = new MimeBodyPart();
             attachment3.attachFile(cycleFile);
 
+            MimeBodyPart attachment4 = new MimeBodyPart();
+            attachment4.attachFile(goalFile);
+
+            MimeBodyPart attachment5 = new MimeBodyPart();
+            attachment5.attachFile(ratingScaleFile);
+
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(attachment);
             multipart.addBodyPart(attachment2);
             multipart.addBodyPart(attachment3);
+            multipart.addBodyPart(attachment4);
+            multipart.addBodyPart(attachment5);
 
             message.setContent(multipart);
 
