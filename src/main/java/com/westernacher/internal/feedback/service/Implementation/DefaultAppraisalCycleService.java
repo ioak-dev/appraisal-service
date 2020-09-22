@@ -45,8 +45,16 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         /*Persist appraisal goal from goal*/
         appraisalGoalRepository.saveAll(getAppraisalGoalFromGoal(goalRepository.findAll(), cycle.getId()));
 
+        List<Person> personList = personRepository.findAllByCu(cycle.getCu());
+
+        List<String> personIdList = new ArrayList<>();
+
+        personList.stream().forEach(person -> {
+            personIdList.add(person.getId());
+        });
+
         /*persist appraisal role from role*/
-        appraisalRoleRepository.saveAll(getAppraisalRoleFromRole(roleRepository.findAll(), cycle.getId()));
+        appraisalRoleRepository.saveAll(getAppraisalRoleFromRole(roleRepository.findAllByEmployeeIdIn(personIdList), cycle.getId()));
 
         List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(cycle.getId());
 
@@ -60,7 +68,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         Map<String, List<AppraisalRole>> roleMap = getEmployeeAndAppraisalRoleMap(appraisalRoleRepository.findAllByCycleId(cycle.getId()));
 
         /*Create appraisal review goal for person's role and job*/
-        personRepository.findAll().forEach(person -> {
+        personList.forEach(person -> {
             if (roleMap.containsKey(person.getId())) {
                 createAppraisalreviewGoal(roleMap, goalMap, countryUnitMap, person, cycle.getId());
             }

@@ -9,6 +9,9 @@ import java.util.List;
 public interface RoleRepository extends MongoRepository<Role, String> {
 
     List<Role> findByEmployeeId(String employeeId);
+
     List<Role> findByReviewerId(String reviewerId);
+
+    List<Role> findAllByEmployeeIdIn(List<String> employeeIdList);
 
 }
