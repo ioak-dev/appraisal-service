@@ -2,8 +2,11 @@ package com.westernacher.internal.feedback.service.Implementation;
 
 import com.westernacher.internal.feedback.controller.representation.MigrationAppraisalResponse;
 import com.westernacher.internal.feedback.domain.*;
+import com.westernacher.internal.feedback.repository.*;
+import com.westernacher.internal.feedback.service.MigrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -12,8 +15,24 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class MigrationService {
+public class DefaultMigrationService implements MigrationService {
 
+    @Autowired
+    private AppraisalReviewRepository appraisalReviewRepository;
+
+    @Autowired
+    private AppraisalGoalRepository appraisalGoalRepository;
+
+    @Autowired
+    private AppraisalRoleRepository appraisalRoleRepository;
+
+    @Autowired
+    private AppraisalReviewGoalRepository appraisalReviewGoalRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    @Override
     public Map<String, MigrationAppraisalPerson> getPersonMap(List<MigrationAppraisalPerson> migrationAppraisalPeople) {
         Map<String, MigrationAppraisalPerson> personMap = new HashMap<>();
         for (MigrationAppraisalPerson person:migrationAppraisalPeople) {
@@ -22,6 +41,7 @@ public class MigrationService {
         return personMap;
     }
 
+    @Override
     public MigrationAppraisalResponse migrate(String cycleId, List<MigrationAppraisal> appraisalList, Map<String, MigrationAppraisalPerson> personMap, Map<String, Integer> goalOrder) {
         MigrationAppraisalResponse response = new MigrationAppraisalResponse();
         personMap.values().forEach(person -> {
@@ -31,6 +51,29 @@ public class MigrationService {
             migrateAppraisal(cycleId, response, personMap, goalOrder, appraisal);
         });
         return response;
+    }
+
+    @Override
+    public void migrateToNewDb(MigrationOutput output) {
+        if (output.getAppraisalReviews() != null && !output.getAppraisalReviews().isEmpty()) {
+            appraisalReviewRepository.saveAll(output.getAppraisalReviews());
+        }
+
+        if (output.getAppraisalGoals() != null && !output.getAppraisalGoals().isEmpty()) {
+            appraisalGoalRepository.saveAll(output.getAppraisalGoals());
+        }
+
+        if (output.getAppraisalRoles() != null && !output.getAppraisalRoles().isEmpty()) {
+            appraisalRoleRepository.saveAll(output.getAppraisalRoles());
+        }
+
+        if (output.getAppraisalReviewGoals() != null && !output.getAppraisalReviewGoals().isEmpty()) {
+            appraisalReviewGoalRepository.saveAll(output.getAppraisalReviewGoals());
+        }
+
+        if (output.getPersons() != null && !output.getPersons().isEmpty()) {
+            personRepository.saveAll(output.getPersons());
+        }
     }
 
     private void migratePerson(MigrationAppraisalResponse response, MigrationAppraisalPerson migrationAppraisalPerson) {

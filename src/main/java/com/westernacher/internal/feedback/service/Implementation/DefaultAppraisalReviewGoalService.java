@@ -72,7 +72,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
 
         for (AppraisalReviewGoal appraisalReviewGoal : reviewGoals) {
             appraisalReviewGoal.setComplete(true);
-            int rating = appraisalReviewGoal.getRating().charAt(0);
+            int rating = Integer.parseInt(appraisalReviewGoal.getRating().substring(0,1));
             AppraisalGoal appraisalGoal = appraisalGoalRepository.findById(appraisalReviewGoal.getGoalId()).orElse(null);
             appraisalReviewGoal.setScore((rating * appraisalGoal.getWeightage()) / 100);
             totalScore = totalScore + (rating * appraisalGoal.getWeightage()) / 100;

@@ -42,48 +42,27 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         appraisalCycle.setStatus(AppraisalCycleStatusType.ACTIVE);
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
-        /*Persist goal to appraisal goal*/
+        /*Persist appraisal goal from goal*/
         appraisalGoalRepository.saveAll(getAppraisalGoalFromGoal(goalRepository.findAll(), cycle.getId()));
 
         /*persist appraisal role from role*/
         appraisalRoleRepository.saveAll(getAppraisalRoleFromRole(roleRepository.findAll(), cycle.getId()));
 
-        Map<String, List<AppraisalGoal>> goalDefinitionMap = new HashMap<>();
-        Map<String, List<AppraisalGoal>> countryUnitMap = new HashMap<>();
-        List<AppraisalGoal> goalDefinitions = appraisalGoalRepository.findAllByCycleId(cycle.getId());
+        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(cycle.getId());
 
-        for (AppraisalGoal goalDefinition : goalDefinitions) {
-            if (goalDefinitionMap.containsKey(goalDefinition.getJob())) {
-                List<AppraisalGoal> goalDefinitionList = goalDefinitionMap.get(goalDefinition.getJob());
-                goalDefinitionList.add(goalDefinition);
-                goalDefinitionMap.put(goalDefinition.getJob(), goalDefinitionList);
+        /*Map of jobs with respective goals*/
+        Map<String, List<AppraisalGoal>> goalMap = getJobAndGoalMap(appraisalGoals);
 
-            } else {
-                List<AppraisalGoal> goalDefinitionList = new ArrayList<>();
-                goalDefinitionList.add(goalDefinition);
-                goalDefinitionMap.put(goalDefinition.getJob(), goalDefinitionList);
-            }
+        /*Map of country unit and their respective goals*/
+        Map<String, List<AppraisalGoal>> countryUnitMap = getCountryUnitAndGoalMap(appraisalGoals);
 
-            if (countryUnitMap.containsKey(goalDefinition.getCu())) {
-                List<AppraisalGoal> countryUnitList = countryUnitMap.get(goalDefinition.getCu());
-                countryUnitList.add(goalDefinition);
-                countryUnitMap.put(goalDefinition.getCu(), countryUnitList);
+        /*Map of only employees and their respective roles*/
+        Map<String, List<AppraisalRole>> roleMap = getEmployeeAndAppraisalRoleMap(appraisalRoleRepository.findAllByCycleId(cycle.getId()));
 
-            } else {
-                List<AppraisalGoal> countryUnitList = new ArrayList<>();
-                countryUnitList.add(goalDefinition);
-                if (goalDefinition.getCu().trim().length() >=1 ) {
-                    countryUnitMap.put(goalDefinition.getCu(), countryUnitList);
-                }
-            }
-        }
-
-        Map<String, List<AppraisalRole>> roleMap = getAppraisalRoleMap(appraisalRoleRepository.findAllByCycleId(cycle.getId()));
-
-        /*Create appraisal review goal for each role and job*/
+        /*Create appraisal review goal for person's role and job*/
         personRepository.findAll().forEach(person -> {
             if (roleMap.containsKey(person.getId())) {
-                createAppraisalreviewGoal(roleMap, goalDefinitionMap, countryUnitMap, person, cycle.getId());
+                createAppraisalreviewGoal(roleMap, goalMap, countryUnitMap, person, cycle.getId());
             }
         });
 
@@ -135,7 +114,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         return appraisalRoleList;
     }
 
-    private Map<String, List<AppraisalRole>> getAppraisalRoleMap(List<AppraisalRole> roles) {
+    private Map<String, List<AppraisalRole>> getEmployeeAndAppraisalRoleMap(List<AppraisalRole> roles) {
         Map<String, List<AppraisalRole>> roleMap = new HashMap<>();
 
         for (AppraisalRole role : roles) {
@@ -224,4 +203,43 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         });
         reviewGoalRepository.saveAll(appraisalReviewGoalList);
     }
+
+    private Map<String, List<AppraisalGoal>> getJobAndGoalMap(List<AppraisalGoal> appraisalGoals) {
+        Map<String, List<AppraisalGoal>> goalMap = new HashMap<>();
+
+        for (AppraisalGoal goalDefinition : appraisalGoals) {
+            if (goalMap.containsKey(goalDefinition.getJob())) {
+                List<AppraisalGoal> goalDefinitionList = goalMap.get(goalDefinition.getJob());
+                goalDefinitionList.add(goalDefinition);
+                goalMap.put(goalDefinition.getJob(), goalDefinitionList);
+
+            } else {
+                List<AppraisalGoal> goalDefinitionList = new ArrayList<>();
+                goalDefinitionList.add(goalDefinition);
+                goalMap.put(goalDefinition.getJob(), goalDefinitionList);
+            }
+        }
+        return goalMap;
+    }
+
+    private Map<String, List<AppraisalGoal>> getCountryUnitAndGoalMap(List<AppraisalGoal> appraisalGoals) {
+        Map<String, List<AppraisalGoal>> countryUnitMap = new HashMap<>();
+
+        for (AppraisalGoal goalDefinition : appraisalGoals) {
+            if (countryUnitMap.containsKey(goalDefinition.getCu())) {
+                List<AppraisalGoal> countryUnitList = countryUnitMap.get(goalDefinition.getCu());
+                countryUnitList.add(goalDefinition);
+                countryUnitMap.put(goalDefinition.getCu(), countryUnitList);
+
+            } else {
+                List<AppraisalGoal> countryUnitList = new ArrayList<>();
+                countryUnitList.add(goalDefinition);
+                if (goalDefinition.getCu().trim().length() >=1 ) {
+                    countryUnitMap.put(goalDefinition.getCu(), countryUnitList);
+                }
+            }
+        }
+        return countryUnitMap;
+    }
+
 }
