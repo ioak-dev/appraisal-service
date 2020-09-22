@@ -8,6 +8,7 @@ import java.util.List;
 public interface PersonRepository extends MongoRepository<Person, String> {
 
     List<Person> findAllByUnit(String unit);
+
     Person findPersonByEmail(String email);
 
     List<Person> findAllByCu(String cu);
