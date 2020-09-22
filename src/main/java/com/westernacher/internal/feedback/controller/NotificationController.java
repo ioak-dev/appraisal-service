@@ -10,7 +10,7 @@ import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.domain.Person;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
-import com.westernacher.internal.feedback.service.BackupService;
+import com.westernacher.internal.feedback.service.Implementation.BackupService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.buf.StringUtils;
@@ -152,7 +152,7 @@ public class NotificationController {
 
     @RequestMapping(value = "/backup", method = RequestMethod.GET)
     public void backup () {
-        backupService.sendAppraisalDatabase();
+        //backupService.sendAppraisalDatabase();
     }
 
     @Data

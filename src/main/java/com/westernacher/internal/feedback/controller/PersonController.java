@@ -4,26 +4,14 @@ package com.westernacher.internal.feedback.controller;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
-import com.westernacher.internal.feedback.service.BackupService;
+import com.westernacher.internal.feedback.service.Implementation.BackupService;
 import com.westernacher.internal.feedback.service.PersonService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -43,7 +31,48 @@ public class PersonController {
     @Autowired
     private BackupService backupService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
+    public List<Person> get () {
+        return repository.findAll();
+    }
+
+    @PutMapping
+    public Person createAndUpdate (@RequestBody Person person) {
+        return service.createAndUpdate(person);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Person> get (@PathVariable("id") String id) {
+        return ResponseEntity.ok(repository.findById(id).orElse(null));
+    }
+
+    @GetMapping("/unit/{unit}")
+    public ResponseEntity<List<Person>> getByUnit (@PathVariable("unit") String unit) {
+        return ResponseEntity.ok(repository.findAllByUnit(unit));
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Person> getPersonByEmail (@PathVariable("email") String email) {
+        return ResponseEntity.ok(repository.findPersonByEmail(email.toLowerCase()));
+    }
+
+    @DeleteMapping
+    public void deleteAll () {
+        repository.deleteAll();
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete (@PathVariable("id") String id) {
+        repository.deleteById(id);
+    }
+
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    public void uploadPersonFile(@ModelAttribute("file") MultipartFile file) {
+        service.uploadPersonFile(file);
+    }
+}
+
+    /*@RequestMapping(method = RequestMethod.GET)
     public List<Person> getAll () {
         return repository.findAll();
     }
@@ -266,6 +295,6 @@ public class PersonController {
         private String employeeName;
         private String employeeEmail;
         private String employeeStatus;
-    }
+    }*/
 
-}
+

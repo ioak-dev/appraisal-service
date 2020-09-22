@@ -1,17 +1,17 @@
 package com.westernacher.internal.feedback.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Document(collection = "appraisal.review")
-public class Appraisal {
-    @Id
+public class MigrationAppraisal {
     private String id;
     private String cycleId;
     private String userId;

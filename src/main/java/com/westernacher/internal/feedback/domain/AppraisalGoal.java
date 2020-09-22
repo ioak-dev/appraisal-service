@@ -1,21 +1,26 @@
 package com.westernacher.internal.feedback.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @Data
 @Builder
-@Document(collection = "goal_definition")
-public class GoalDefinition {
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "appraisal.goal")
+public class AppraisalGoal {
     @Id
     private String id;
-    private String jobName;
+    private String job;
     private String group;
     private String criteria;
     private float weightage;
     private String description;
+    private String cycleId;
+    private int order;
+    private String cu;
 }

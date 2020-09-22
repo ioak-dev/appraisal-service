@@ -5,19 +5,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 @Data
-@Document(collection = "appraisal_cycle")
+@Document(collection = "appraisal.cycle")
 public class AppraisalCycle {
 
     @Id
     private String id;
     private String name;
     private String evaluationPeriod;
-    private List<CriteriaGroup> sectiononeCriteria;
     private AppraisalCycleStatusType status;
+    private String cu;
+    private Map<AppraisalStatusType, Date> deadline;
     private Date startDate;
-    private Date selfAppraisalDeadline;
 
 }

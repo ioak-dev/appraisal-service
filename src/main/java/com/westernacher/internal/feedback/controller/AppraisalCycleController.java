@@ -18,28 +18,22 @@ public class AppraisalCycleController {
     @Autowired
     private AppraisalCycleService service;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public List<AppraisalCycle> getAll () {
         return repository.findAll();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @GetMapping("/{id}")
     public AppraisalCycle get (@PathVariable("id") String id) {
         return repository.findById(id).orElse(null);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public AppraisalCycle create (@Valid @RequestBody AppraisalCycle appraisalCycle) {
         return service.create(appraisalCycle);
     }
 
-    @RequestMapping(value = "/{id}/activate", method = RequestMethod.POST)
-    public void activate (@PathVariable("id") String id) {
-        service.activate(id);
-    }
-
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping("/{id}")
     public void delete (@PathVariable("id") String id) {
         repository.deleteById(id);
     }

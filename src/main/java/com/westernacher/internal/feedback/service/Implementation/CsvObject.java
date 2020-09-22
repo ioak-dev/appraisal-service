@@ -1,11 +1,15 @@
-package com.westernacher.internal.feedback.service;
+package com.westernacher.internal.feedback.service.Implementation;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Getter
+@Setter
 public class CsvObject {
     private String userId;
     private String status;
