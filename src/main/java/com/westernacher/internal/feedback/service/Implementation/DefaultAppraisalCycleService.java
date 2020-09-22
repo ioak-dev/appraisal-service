@@ -42,35 +42,11 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         appraisalCycle.setStatus(AppraisalCycleStatusType.ACTIVE);
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
-        List<AppraisalGoal> appraisalGoalList = new ArrayList<>();
-        List<Goal> goals = goalRepository.findAll();
-        goals.stream().forEach(goal -> {
-            AppraisalGoal appraisalGoal = new AppraisalGoal();
-            appraisalGoal.setJob(goal.getJob());
-            appraisalGoal.setGroup(goal.getGroup());
-            appraisalGoal.setCriteria(goal.getCriteria());
-            appraisalGoal.setWeightage(goal.getWeightage());
-            appraisalGoal.setDescription(goal.getDescription());
-            appraisalGoal.setCycleId(cycle.getId());
-            appraisalGoal.setOrder(goal.getOrder());
-            appraisalGoal.setCu(goal.getCu());
-            appraisalGoalList.add(appraisalGoal);
-        });
-        appraisalGoalRepository.saveAll(appraisalGoalList);
+        /*Persist goal to appraisal goal*/
+        appraisalGoalRepository.saveAll(getAppraisalGoalFromGoal(goalRepository.findAll(), cycle.getId()));
 
-        List<AppraisalRole> appraisalRoleList = new ArrayList<>();
-        List<Role> roleListt = roleRepository.findAll();
-        roleListt.stream().forEach(role -> {
-            AppraisalRole appraisalRole = new AppraisalRole();
-            appraisalRole.setReviewerId(role.getReviewerId());
-            appraisalRole.setReviewerType(role.getReviewerType());
-            appraisalRole.setEmployeeId(role.getEmployeeId());
-            appraisalRole.setCycleId(cycle.getId());
-            appraisalRole.setComplete(false);
-            appraisalRole.setTotalScore(0.0d);
-            appraisalRoleList.add(appraisalRole);
-        });
-        appraisalRoleRepository.saveAll(appraisalRoleList);
+        /*persist appraisal role from role*/
+        appraisalRoleRepository.saveAll(getAppraisalRoleFromRole(roleRepository.findAll(), cycle.getId()));
 
         Map<String, List<AppraisalGoal>> goalDefinitionMap = new HashMap<>();
         Map<String, List<AppraisalGoal>> countryUnitMap = new HashMap<>();
@@ -102,8 +78,65 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             }
         }
 
+        Map<String, List<AppraisalRole>> roleMap = getAppraisalRoleMap(appraisalRoleRepository.findAllByCycleId(cycle.getId()));
+
+        /*Create appraisal review goal for each role and job*/
+        personRepository.findAll().forEach(person -> {
+            if (roleMap.containsKey(person.getId())) {
+                createAppraisalreviewGoal(roleMap, goalDefinitionMap, countryUnitMap, person, cycle.getId());
+            }
+        });
+
+        return cycle;
+    }
+
+    private List<AppraisalGoal> getAppraisalGoalFromGoal(List<Goal> goals, String cycleId) {
+        List<AppraisalGoal> appraisalGoalList = new ArrayList<>();
+        goals.stream().forEach(goal -> {
+            AppraisalGoal appraisalGoal = new AppraisalGoal();
+            appraisalGoal.setJob(goal.getJob());
+            appraisalGoal.setGroup(goal.getGroup());
+            appraisalGoal.setCriteria(goal.getCriteria());
+            appraisalGoal.setWeightage(goal.getWeightage());
+            appraisalGoal.setDescription(goal.getDescription());
+            appraisalGoal.setCycleId(cycleId);
+            appraisalGoal.setOrder(goal.getOrder());
+            appraisalGoal.setCu(goal.getCu());
+            appraisalGoalList.add(appraisalGoal);
+        });
+        return appraisalGoalList;
+    }
+
+    private List<AppraisalRole> getAppraisalRoleFromRole(List<Role> roles, String cycleId) {
+        List<AppraisalRole> appraisalRoleList = new ArrayList<>();
+        Set<String> employeeList = new HashSet<>();
+        roles.stream().forEach(role -> {
+            AppraisalRole appraisalRole = new AppraisalRole();
+            appraisalRole.setReviewerId(role.getReviewerId());
+            appraisalRole.setReviewerType(role.getReviewerType());
+            appraisalRole.setEmployeeId(role.getEmployeeId());
+            appraisalRole.setCycleId(cycleId);
+            appraisalRole.setComplete(false);
+            appraisalRole.setTotalScore(0.0d);
+            employeeList.add(role.getEmployeeId());
+            appraisalRoleList.add(appraisalRole);
+        });
+        employeeList.stream().forEach(employee-> {
+            AppraisalRole appraisalRole = new AppraisalRole();
+            appraisalRole.setReviewerId(employee);
+            appraisalRole.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);
+            appraisalRole.setEmployeeId(employee);
+            appraisalRole.setCycleId(cycleId);
+            appraisalRole.setComplete(false);
+            appraisalRole.setTotalScore(0.0d);
+            appraisalRoleList.add(appraisalRole);
+        });
+
+        return appraisalRoleList;
+    }
+
+    private Map<String, List<AppraisalRole>> getAppraisalRoleMap(List<AppraisalRole> roles) {
         Map<String, List<AppraisalRole>> roleMap = new HashMap<>();
-        List<AppraisalRole> roles = appraisalRoleRepository.findAllByCycleId(cycle.getId());
 
         for (AppraisalRole role : roles) {
             if (roleMap.containsKey(role.getEmployeeId())) {
@@ -117,86 +150,78 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                 roleMap.put(role.getEmployeeId(), roleList);
             }
         }
+        return roleMap;
+    }
 
-        personRepository.findAll().forEach(person -> { //personId : empId
+    private void createAppraisalreviewGoal(Map<String, List<AppraisalRole>> roleMap, Map<String, List<AppraisalGoal>> goalDefinitionMap,
+                                           Map<String, List<AppraisalGoal>> countryUnitMap, Person person, String cycleId) {
 
-            //get goals for the person depend on jobtype : take local storage
-            if (roleMap.containsKey(person.getId())) {
-                AppraisalReview appraisalReview = new AppraisalReview();
-                appraisalReview.setCycleId(cycle.getId());
-                appraisalReview.setEmployeeId(person.getId());
-                appraisalReview.setStatus(AppraisalStatusType.SELF_APPRAISAL);
-                AppraisalReview savedReview = appraisalReviewRepository.save(appraisalReview);
+        AppraisalReview appraisalReview = new AppraisalReview();
+        appraisalReview.setCycleId(cycleId);
+        appraisalReview.setEmployeeId(person.getId());
+        appraisalReview.setStatus(AppraisalStatusType.SELF_APPRAISAL);
+        AppraisalReview savedReview = appraisalReviewRepository.save(appraisalReview);
 
-                List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
-                goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
-                    AppraisalReviewGoal selfAppraisalReviewGoal = new AppraisalReviewGoal();
-                    selfAppraisalReviewGoal.setEmployeeId(person.getId());
-                    selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
-                    selfAppraisalReviewGoal.setReviewerId(person.getId());
-                    selfAppraisalReviewGoal.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);  // it is not correct
-                    selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
-                    selfAppraisalReviewGoal.setComment("");
-                    selfAppraisalReviewGoal.setRating("");
-                    selfAppraisalReviewGoal.setComplete(false);
-                    selfAppraisalReviewGoal.setScore(0.0d);
-                    appraisalReviewGoalList.add(selfAppraisalReviewGoal);
-                });
-                //reviewGoalRepository.saveAll(appraisalReviewGoalList);
-
-                //List<AppraisalReviewGoal> appraisalReviewGoalListForCU = new ArrayList<>();
-                countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
-                    AppraisalReviewGoal selfAppraisalReviewGoal = new AppraisalReviewGoal();
-                    selfAppraisalReviewGoal.setEmployeeId(person.getId());
-                    selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
-                    selfAppraisalReviewGoal.setReviewerId(person.getId());
-                    selfAppraisalReviewGoal.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);  // it is not correct
-                    selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
-                    selfAppraisalReviewGoal.setComment("");
-                    selfAppraisalReviewGoal.setRating("");
-                    selfAppraisalReviewGoal.setComplete(false);
-                    selfAppraisalReviewGoal.setScore(0.0d);
-                    appraisalReviewGoalList.add(selfAppraisalReviewGoal);
-                });
-                //reviewGoalRepository.saveAll(appraisalReviewGoalListForCU);
-
-                //List<AppraisalReviewGoal> appraisalReviewGoals = new ArrayList<>();
-                roleMap.get(person.getId()).forEach(role -> {
-                    goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
-                        AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
-                        appraisalReviewGoal.setEmployeeId(person.getId());
-                        appraisalReviewGoal.setAppraisalId(savedReview.getId());
-                        appraisalReviewGoal.setReviewerId(role.getReviewerId());
-                        appraisalReviewGoal.setReviewerType(role.getReviewerType());
-                        appraisalReviewGoal.setGoalId(goalDefinition.getId());
-                        appraisalReviewGoal.setComment("");
-                        appraisalReviewGoal.setRating("");
-                        appraisalReviewGoal.setComplete(false);
-                        appraisalReviewGoal.setScore(0.0d);
-                        appraisalReviewGoalList.add(appraisalReviewGoal);
-                    });
-                });
-                //reviewGoalRepository.saveAll(appraisalReviewGoals);
-
-                //List<AppraisalReviewGoal> appraisalReviewGoalsForCU = new ArrayList<>();
-                roleMap.get(person.getId()).forEach(role -> {
-                    countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
-                        AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
-                        appraisalReviewGoal.setEmployeeId(person.getId());
-                        appraisalReviewGoal.setAppraisalId(savedReview.getId());
-                        appraisalReviewGoal.setReviewerId(role.getReviewerId());
-                        appraisalReviewGoal.setReviewerType(role.getReviewerType());
-                        appraisalReviewGoal.setGoalId(goalDefinition.getId());
-                        appraisalReviewGoal.setComment("");
-                        appraisalReviewGoal.setRating("");
-                        appraisalReviewGoal.setComplete(false);
-                        appraisalReviewGoal.setScore(0.0d);
-                        appraisalReviewGoalList.add(appraisalReviewGoal);
-                    });
-                });
-                reviewGoalRepository.saveAll(appraisalReviewGoalList);
-            }
+        List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
+        /*goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
+            AppraisalReviewGoal selfAppraisalReviewGoal = new AppraisalReviewGoal();
+            selfAppraisalReviewGoal.setEmployeeId(person.getId());
+            selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
+            selfAppraisalReviewGoal.setReviewerId(person.getId());
+            selfAppraisalReviewGoal.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);
+            selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
+            selfAppraisalReviewGoal.setComment("");
+            selfAppraisalReviewGoal.setRating("");
+            selfAppraisalReviewGoal.setComplete(false);
+            selfAppraisalReviewGoal.setScore(0.0d);
+            appraisalReviewGoalList.add(selfAppraisalReviewGoal);
         });
-        return cycle;
+
+        countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
+            AppraisalReviewGoal selfAppraisalReviewGoal = new AppraisalReviewGoal();
+            selfAppraisalReviewGoal.setEmployeeId(person.getId());
+            selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
+            selfAppraisalReviewGoal.setReviewerId(person.getId());
+            selfAppraisalReviewGoal.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);  // it is not correct
+            selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
+            selfAppraisalReviewGoal.setComment("");
+            selfAppraisalReviewGoal.setRating("");
+            selfAppraisalReviewGoal.setComplete(false);
+            selfAppraisalReviewGoal.setScore(0.0d);
+            appraisalReviewGoalList.add(selfAppraisalReviewGoal);
+        });*/
+
+        roleMap.get(person.getId()).forEach(role -> {
+            goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
+                AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+                appraisalReviewGoal.setEmployeeId(person.getId());
+                appraisalReviewGoal.setAppraisalId(savedReview.getId());
+                appraisalReviewGoal.setReviewerId(role.getReviewerId());
+                appraisalReviewGoal.setReviewerType(role.getReviewerType());
+                appraisalReviewGoal.setGoalId(goalDefinition.getId());
+                appraisalReviewGoal.setComment("");
+                appraisalReviewGoal.setRating("");
+                appraisalReviewGoal.setComplete(false);
+                appraisalReviewGoal.setScore(0.0d);
+                appraisalReviewGoalList.add(appraisalReviewGoal);
+            });
+        });
+
+        roleMap.get(person.getId()).forEach(role -> {
+            countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
+                AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+                appraisalReviewGoal.setEmployeeId(person.getId());
+                appraisalReviewGoal.setAppraisalId(savedReview.getId());
+                appraisalReviewGoal.setReviewerId(role.getReviewerId());
+                appraisalReviewGoal.setReviewerType(role.getReviewerType());
+                appraisalReviewGoal.setGoalId(goalDefinition.getId());
+                appraisalReviewGoal.setComment("");
+                appraisalReviewGoal.setRating("");
+                appraisalReviewGoal.setComplete(false);
+                appraisalReviewGoal.setScore(0.0d);
+                appraisalReviewGoalList.add(appraisalReviewGoal);
+            });
+        });
+        reviewGoalRepository.saveAll(appraisalReviewGoalList);
     }
 }
