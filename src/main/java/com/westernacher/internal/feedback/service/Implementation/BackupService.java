@@ -35,9 +35,6 @@ public class BackupService {
     private PersonRepository personRepository;
 
     @Autowired
-    private GoalDefinitionRepository goalDefinitionRepository;
-
-    @Autowired
     private RatingScaleRepository ratingScaleRepository;
 
 
