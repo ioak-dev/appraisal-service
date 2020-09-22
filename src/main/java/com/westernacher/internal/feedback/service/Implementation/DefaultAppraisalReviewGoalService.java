@@ -70,16 +70,21 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
         String reviewerId = reviewGoals.get(0).getReviewerId();
         String employeeId = reviewGoals.get(0).getEmployeeId();
 
+        /*Setting appraisalReviewGoal score and iscomplete attribute*/
         for (AppraisalReviewGoal appraisalReviewGoal : reviewGoals) {
+            if (appraisalReviewGoal.getRating() != null && appraisalReviewGoal.getRating().length() > 0) {
+                AppraisalGoal appraisalGoal = appraisalGoalRepository.findById(appraisalReviewGoal.getGoalId()).orElse(null);
+                double weightage = appraisalGoal.getWeightage();
+                int rating = Integer.parseInt(appraisalReviewGoal.getRating().substring(0,1));
+                appraisalReviewGoal.setScore(weightage * rating);
+                totalScore = totalScore + (weightage * rating);
+            }
             appraisalReviewGoal.setComplete(true);
-            int rating = Integer.parseInt(appraisalReviewGoal.getRating().substring(0,1));
-            AppraisalGoal appraisalGoal = appraisalGoalRepository.findById(appraisalReviewGoal.getGoalId()).orElse(null);
-            appraisalReviewGoal.setScore((rating * appraisalGoal.getWeightage()) / 100);
-            totalScore = totalScore + (rating * appraisalGoal.getWeightage()) / 100;
             newReviewGoals.add(appraisalReviewGoal);
         }
 
 
+        /*Setting appraisal role totalscore and iscomplete*/
         AppraisalReview appraisalReview = reviewRepository.findById(appraisalReviewId).orElse(null);
         AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(reviewerId,
                 employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
@@ -88,6 +93,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
         appraisalRole.setComplete(true);
         appraisalRoleRepository.save(appraisalRole);
 
+        /*Changing appraisal review status to next role*/
         if (appraisalReview != null) {
             if (appraisalReview.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL)) {
                 appraisalReview.setStatus(AppraisalStatusType.PROJECT_MANAGER);
