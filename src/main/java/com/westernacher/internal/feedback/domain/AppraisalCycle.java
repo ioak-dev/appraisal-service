@@ -18,6 +18,8 @@ public class AppraisalCycle {
     private AppraisalCycleStatusType status;
     private String cu;
     private Map<AppraisalStatusType, Date> deadline;
+    private boolean showReviewToSelf;
+    private int minCommentLength;
     private Date startDate;
 
 }
