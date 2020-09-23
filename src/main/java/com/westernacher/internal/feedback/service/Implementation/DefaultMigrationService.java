@@ -186,8 +186,7 @@ public class DefaultMigrationService implements MigrationService {
         appraisalGoal.setWeightage(criteria.getWeightage());
         appraisalGoal.setCycleId(cycleId);
         appraisalGoal.setJob(personMap.get(appraisal.getUserId()).getJobName());
-        appraisalGoal.setOrder(goalOrder.get(criteria.getCriteria()));
-        appraisalGoal.setCu("WIN");
+        appraisalGoal.setOrder(goalOrder.get(criteria.getCriteria().trim()));
 
         response.addAppraisalGoal(appraisalGoal);
         return appraisalGoal;

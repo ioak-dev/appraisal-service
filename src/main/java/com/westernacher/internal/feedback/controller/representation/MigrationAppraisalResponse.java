@@ -69,13 +69,14 @@ public class MigrationAppraisalResponse {
     }
 
     public AppraisalGoal getAppraisalGoalBy(String job, String criteria) {
-        AtomicReference<AppraisalGoal> matchingGoal = null;
-        appraisalGoals.forEach(item -> {
-            if (item.getJob().equals(job) && item.getCriteria().equals(criteria)) {
-                matchingGoal.set(item);
-            }
-        });
+        AppraisalGoal matchingGoal = null;
+        for (AppraisalGoal appraisalGoal : appraisalGoals) {
 
-        return matchingGoal == null ? null : matchingGoal.get();
+            if (appraisalGoal.getJob().equals(job) && appraisalGoal.getCriteria().equals(criteria)) {
+                matchingGoal = appraisalGoal;
+            }
+        }
+
+        return matchingGoal;
     }
 }
