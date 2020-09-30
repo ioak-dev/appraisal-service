@@ -117,7 +117,32 @@ public class DefaultMigrationService implements MigrationService {
                 populateAppraisalReviewGoals(AppraisalStatusType.HR, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getHrReviews());
             });
         });
-        populateAppraisalRoles(cycleId,response, appraisal);
+        
+        StringBuilder sectionTwoText = new StringBuilder();
+        appraisal.getSectiontwoResponse().forEach(item -> {
+            sectionTwoText.append(item.getTopic());
+            sectionTwoText.append(": ");
+            sectionTwoText.append(item.getComment());
+            sectionTwoText.append("; ");
+        });
+        AppraisalGoal appraisalGoalSectionTwo = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Additional activities/tasks performed");
+        populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionTwo, appraisalReview.getId(), sectionTwoText.toString());
+        
+        StringBuilder sectionThreeText = new StringBuilder();
+        appraisal.getSectionthreeResponse().forEach(item -> {
+            sectionThreeText.append(item.getTopic());
+            sectionThreeText.append(": ");
+            sectionThreeText.append(item.getComment());
+            sectionThreeText.append("; ");
+        });
+        AppraisalGoal appraisalGoalSectionThree = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Future aspirations");
+        populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionThree, appraisalReview.getId(), sectionThreeText.toString());
+
+        String sectionFourText = appraisal.getSectionfourResponse();
+        AppraisalGoal appraisalGoalSectionFour = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Additional feedback from you");
+        populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionFour, appraisalReview.getId(), sectionFourText);
+
+        populateAppraisalRoles(cycleId, response, appraisal);
     }
 
     private void populateAppraisalReviewGoals(AppraisalStatusType appraisalStatusType, MigrationAppraisalResponse response, String employeeId, AppraisalGoal appraisalGoal, String appraisalReviewId, Map<String, ReviewerElements> reviews) {
@@ -140,6 +165,21 @@ public class DefaultMigrationService implements MigrationService {
             }
             response.addAppraisalReviewGoal(appraisalReviewGoal);
         }
+    }
+
+    private void populateAppraisalReviewGoal(AppraisalStatusType appraisalStatusType, MigrationAppraisalResponse response, String employeeId, AppraisalGoal appraisalGoal, String appraisalReviewId, String comment) {
+        AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+        appraisalReviewGoal.setId(new ObjectId().toString());
+        appraisalReviewGoal.setAppraisalId(appraisalReviewId);
+        appraisalReviewGoal.setEmployeeId(employeeId);
+        appraisalReviewGoal.setReviewerId(employeeId);
+        appraisalReviewGoal.setReviewerType(appraisalStatusType);
+        appraisalReviewGoal.setComment(comment);
+        // appraisalReviewGoal.setRating();
+        appraisalReviewGoal.setGoalId(appraisalGoal.getId());
+        appraisalReviewGoal.setComplete(true);
+        appraisalReviewGoal.setScore(0);
+        response.addAppraisalReviewGoal(appraisalReviewGoal);
     }
 
     private void populateAppraisalRoles(String cycleId, MigrationAppraisalResponse response, MigrationAppraisal appraisal) {
@@ -187,6 +227,25 @@ public class DefaultMigrationService implements MigrationService {
         appraisalGoal.setCycleId(cycleId);
         appraisalGoal.setJob(personMap.get(appraisal.getUserId()).getJobName());
         appraisalGoal.setOrder(goalOrder.get(criteria.getCriteria().trim()));
+
+        response.addAppraisalGoal(appraisalGoal);
+        return appraisalGoal;
+    }
+
+    private AppraisalGoal getAppraisalGoalCu(String cycleId, MigrationAppraisalResponse response, Map<String, MigrationAppraisalPerson> personMap, int goalOrder, MigrationAppraisal appraisal, String group, String criteria) {
+        AppraisalGoal appraisalGoal = response.getAppraisalGoalByCu("WIN", criteria);
+        if (appraisalGoal != null) {
+            return appraisalGoal;
+        }
+        appraisalGoal = new AppraisalGoal();
+        appraisalGoal.setId(new ObjectId().toString());
+        appraisalGoal.setGroup(group);
+        appraisalGoal.setCriteria(criteria);
+        appraisalGoal.setDescription("lorem ipsum dolor sit");
+        appraisalGoal.setWeightage(0);
+        appraisalGoal.setCycleId(cycleId);
+        appraisalGoal.setCu("WIN");
+        appraisalGoal.setOrder(goalOrder);
 
         response.addAppraisalGoal(appraisalGoal);
         return appraisalGoal;
