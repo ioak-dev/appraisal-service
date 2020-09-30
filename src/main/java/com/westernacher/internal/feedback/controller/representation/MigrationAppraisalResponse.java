@@ -72,7 +72,19 @@ public class MigrationAppraisalResponse {
         AppraisalGoal matchingGoal = null;
         for (AppraisalGoal appraisalGoal : appraisalGoals) {
 
-            if (appraisalGoal.getJob().equals(job) && appraisalGoal.getCriteria().equals(criteria)) {
+            if (appraisalGoal.getJob() != null && appraisalGoal.getJob().equals(job) && appraisalGoal.getCriteria().equals(criteria)) {
+                matchingGoal = appraisalGoal;
+            }
+        }
+
+        return matchingGoal;
+    }
+
+    public AppraisalGoal getAppraisalGoalByCu(String cu, String criteria) {
+        AppraisalGoal matchingGoal = null;
+        for (AppraisalGoal appraisalGoal : appraisalGoals) {
+
+            if (appraisalGoal.getCu() != null && appraisalGoal.getCu().equals(cu) && appraisalGoal.getCriteria().equals(criteria)) {
                 matchingGoal = appraisalGoal;
             }
         }
