@@ -6,6 +6,8 @@ import com.westernacher.internal.feedback.repository.*;
 import com.westernacher.internal.feedback.service.MigrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -117,7 +119,7 @@ public class DefaultMigrationService implements MigrationService {
                 populateAppraisalReviewGoals(AppraisalStatusType.HR, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getHrReviews());
             });
         });
-        
+
         StringBuilder sectionTwoText = new StringBuilder();
         appraisal.getSectiontwoResponse().forEach(item -> {
             sectionTwoText.append(item.getTopic());
@@ -127,7 +129,7 @@ public class DefaultMigrationService implements MigrationService {
         });
         AppraisalGoal appraisalGoalSectionTwo = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Additional activities/tasks performed");
         populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionTwo, appraisalReview.getId(), sectionTwoText.toString());
-        
+
         StringBuilder sectionThreeText = new StringBuilder();
         appraisal.getSectionthreeResponse().forEach(item -> {
             sectionThreeText.append(item.getTopic());
@@ -138,7 +140,15 @@ public class DefaultMigrationService implements MigrationService {
         AppraisalGoal appraisalGoalSectionThree = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Future aspirations");
         populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionThree, appraisalReview.getId(), sectionThreeText.toString());
 
-        String sectionFourText = appraisal.getSectionfourResponse();
+        //JSONObject jsonObject = new JSONObject();
+        String sectionFourText ="";
+        try {
+            JSONObject jsonObject = new JSONObject(appraisal.getSectionfourResponse());
+            sectionFourText = jsonObject.getString("sectionfour");
+        }catch (JSONException err){
+            err.printStackTrace();
+        }
+
         AppraisalGoal appraisalGoalSectionFour = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Additional feedback from you");
         populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionFour, appraisalReview.getId(), sectionFourText);
 
