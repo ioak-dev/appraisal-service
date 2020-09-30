@@ -1,7 +1,7 @@
 
 package com.westernacher.internal.feedback.controller;
 
-import com.westernacher.internal.feedback.repository.AppraisalGoalRepository;
+import com.westernacher.internal.feedback.domain.AppraisalRole;
 import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/appraisal/role")
@@ -21,6 +25,17 @@ public class AppraisalRoleController {
 
     @GetMapping
     public ResponseEntity<?> getAppraisalRoles (@RequestParam String cycleId) {
-        return ResponseEntity.ok(repository.findAllByCycleId(cycleId));
+
+        List<AppraisalRole> appraisalRoleList= repository.findAllByCycleId(cycleId);
+
+        Comparator<AppraisalRole> appraisalRoleComparator = Comparator
+                .comparing(AppraisalRole::getEmployeeId)
+                .thenComparing(AppraisalRole::getReviewerType)
+                .thenComparing(AppraisalRole::isComplete);
+
+        List<AppraisalRole> sortedEmployees = appraisalRoleList.stream()
+                .sorted(appraisalRoleComparator)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(sortedEmployees);
     }
 }
