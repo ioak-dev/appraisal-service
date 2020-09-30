@@ -24,7 +24,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
     private AppraisalReviewGoalRepository repository;
 
     @Autowired
-    private AppraisalReviewRepository reviewRepository;
+    private AppraisalReviewRepository appraisalReviewRepository;
 
     @Autowired
     private AppraisalGoalRepository appraisalGoalRepository;
@@ -67,44 +67,64 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
         double totalScore = 0.0d;
 
         String appraisalReviewId = reviewGoals.get(0).getAppraisalId();
-        String reviewerId = reviewGoals.get(0).getReviewerId();
         String employeeId = reviewGoals.get(0).getEmployeeId();
+        AppraisalStatusType type = null;
+        String cycleId = "";
+        String reviewerId = "";
+        List<AppraisalRole> appraisalRoles = new ArrayList<>();
 
         /*Setting appraisalReviewGoal score and iscomplete attribute*/
+        /*if i am submitting list of AppraisalReviewGoal then appraisalId
+        (AppraisalReview ID), reviewerType, employeeId will be same for all record*/
+
         for (AppraisalReviewGoal appraisalReviewGoal : reviewGoals) {
             if (appraisalReviewGoal.getRating() != null && appraisalReviewGoal.getRating().length() > 0) {
                 AppraisalGoal appraisalGoal = appraisalGoalRepository.findById(appraisalReviewGoal.getGoalId()).orElse(null);
                 double weightage = appraisalGoal.getWeightage();
-                int rating = Integer.parseInt(appraisalReviewGoal.getRating().substring(0,1));
+                int rating = Integer.parseInt(appraisalReviewGoal.getRating().trim().substring(0,1));
                 appraisalReviewGoal.setScore(weightage * rating);
                 totalScore = totalScore + (weightage * rating);
             }
             appraisalReviewGoal.setComplete(true);
             newReviewGoals.add(appraisalReviewGoal);
+
+            /*Setting appraisal role totalscore and iscomplete*/
+            AppraisalReview appraisalReview = appraisalReviewRepository.findById(appraisalReviewGoal.getAppraisalId()).orElse(null);
+            AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
+                    employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
+
+            appraisalRole.setTotalScore(totalScore);
+            appraisalRole.setComplete(true);
+            appraisalRoles.add(appraisalRoleRepository.save(appraisalRole));
+            type = appraisalReview.getStatus();
+            cycleId = appraisalReview.getCycleId();
+            reviewerId = appraisalReviewGoal.getReviewerId();
         }
 
-
-        /*Setting appraisal role totalscore and iscomplete*/
-        AppraisalReview appraisalReview = reviewRepository.findById(appraisalReviewId).orElse(null);
-        AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(reviewerId,
-                employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
-
-        appraisalRole.setTotalScore(totalScore);
-        appraisalRole.setComplete(true);
-        appraisalRoleRepository.save(appraisalRole);
+        List<AppraisalRole> appraisalRolesDB = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(
+                employeeId, cycleId, type
+        );
+        boolean changeStatus = true;
+        //get appraisal and check for all comple value then change status
+        for (AppraisalRole appraisalRole : appraisalRolesDB) {
+            if (!appraisalRole.isComplete()) {
+                changeStatus = false;
+            }
+        }
+        AppraisalReview appraisalReview = appraisalReviewRepository.findById(appraisalReviewId).orElse(null);
 
         /*Changing appraisal review status to next role*/
         if (appraisalReview != null) {
-            if (appraisalReview.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL)) {
+            if (appraisalReview.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL) && changeStatus == true) {
                 appraisalReview.setStatus(AppraisalStatusType.PROJECT_MANAGER);
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PROJECT_MANAGER)) {
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PROJECT_MANAGER)&& changeStatus == true) {
                 appraisalReview.setStatus(AppraisalStatusType.REPORTING_MANAGER);
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)) {
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)&& changeStatus == true) {
                 appraisalReview.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)&& changeStatus == true) {
                 appraisalReview.setStatus(AppraisalStatusType.HR);
             }
-            reviewRepository.save(appraisalReview);
+            appraisalReviewRepository.save(appraisalReview);
         }
         return repository.saveAll(newReviewGoals);
     }
