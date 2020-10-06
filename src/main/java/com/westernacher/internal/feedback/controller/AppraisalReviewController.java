@@ -1,7 +1,6 @@
 
 package com.westernacher.internal.feedback.controller;
 
-import com.westernacher.internal.feedback.domain.AppraisalReview;
 import com.westernacher.internal.feedback.domain.AppraisalReviewGoal;
 import com.westernacher.internal.feedback.repository.AppraisalReviewGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewRepository;

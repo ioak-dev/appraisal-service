@@ -115,14 +115,14 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
 
         /*Changing appraisal review status to next role*/
         if (appraisalReview != null) {
-            if (appraisalReview.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL) && changeStatus == true) {
-                appraisalReview.setStatus(AppraisalStatusType.PROJECT_MANAGER);
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PROJECT_MANAGER)&& changeStatus == true) {
-                appraisalReview.setStatus(AppraisalStatusType.REPORTING_MANAGER);
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)&& changeStatus == true) {
-                appraisalReview.setStatus(AppraisalStatusType.PRACTICE_DIRECTOR);
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)&& changeStatus == true) {
-                appraisalReview.setStatus(AppraisalStatusType.HR);
+            if (appraisalReview.getStatus().equals(AppraisalStatusType.Self) && changeStatus == true) {
+                appraisalReview.setStatus(AppraisalStatusType.Level_1);
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_1)&& changeStatus == true) {
+                appraisalReview.setStatus(AppraisalStatusType.Level_2);
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_2)&& changeStatus == true) {
+                appraisalReview.setStatus(AppraisalStatusType.Level_3);
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_3)&& changeStatus == true) {
+                appraisalReview.setStatus(AppraisalStatusType.Level_4);
             }
             appraisalReviewRepository.save(appraisalReview);
         }

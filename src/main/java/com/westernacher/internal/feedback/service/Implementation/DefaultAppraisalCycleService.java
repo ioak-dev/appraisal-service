@@ -111,7 +111,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         employeeList.stream().forEach(employee-> {
             AppraisalRole appraisalRole = new AppraisalRole();
             appraisalRole.setReviewerId(employee);
-            appraisalRole.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);
+            appraisalRole.setReviewerType(AppraisalStatusType.Self);
             appraisalRole.setEmployeeId(employee);
             appraisalRole.setCycleId(cycleId);
             appraisalRole.setComplete(false);
@@ -146,7 +146,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         AppraisalReview appraisalReview = new AppraisalReview();
         appraisalReview.setCycleId(cycleId);
         appraisalReview.setEmployeeId(person.getId());
-        appraisalReview.setStatus(AppraisalStatusType.SELF_APPRAISAL);
+        appraisalReview.setStatus(AppraisalStatusType.Self);
         AppraisalReview savedReview = appraisalReviewRepository.save(appraisalReview);
 
         List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();

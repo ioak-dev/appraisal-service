@@ -43,7 +43,7 @@ public class AppraisalService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Async
+    /*@Async
     public void sendListOfMail(Set<String> idList, AppraisalStatusType position, String personId) {
         for (String userId:idList) {
             try {
@@ -58,7 +58,7 @@ public class AppraisalService {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     /*public void parse(String json)  {
         JsonFactory factory = new JsonFactory();
@@ -72,7 +72,7 @@ public class AppraisalService {
             Map.Entry<String,JsonNode> field = fieldsIterator.next();
             System.out.println("Key:"field.getKey() + "\tValue:" + field.getValue());
         }*/
-    public List<CsvObject> generateReport(String cycleId) {
+    /*public List<CsvObject> generateReport(String cycleId) {
         List<CsvObject> csvObjectList = new ArrayList<>();
         List<Appraisal> appraisals = repository.findAllByCycleId(cycleId);
 
@@ -107,9 +107,9 @@ public class AppraisalService {
         }
         csvObjectList.addAll(csvObjects);
         return csvObjectList;
-    }
+    }*/
 
-    public Object getFlatReportData(List<Appraisal> appraisal) throws JsonProcessingException {
+    /*public Object getFlatReportData(List<Appraisal> appraisal) throws JsonProcessingException {
         //String customURL = baseUrl+tenantHolder.getTenantId()+"/model";
         String customURL = "https://gandalf-ioak.herokuapp.com/api/flatten";
 
@@ -130,9 +130,9 @@ public class AppraisalService {
         }catch (RestClientException exception) {
             return null;
         }
-    }
+    }*/
 
-    public HashMap<String, Object> getHashMapFromJson(String json) throws JSONException {
+    /*public HashMap<String, Object> getHashMapFromJson(String json) throws JSONException {
         HashMap<String, Object> map = new HashMap<String, Object>();
         JSONObject jsonObject = new JSONObject(json);
         for (Iterator<String> it = jsonObject.keys(); it.hasNext();) {
@@ -289,7 +289,7 @@ public class AppraisalService {
                 }
             }
 
-            /*Team lead construction*/
+            *//*Team lead construction*//*
 
             if (entry.getKey().contains("sectiononeResponse.response.teamLeadReviews") && entry.getKey().contains("name")) {
                 if (entry.getKey().contains(tlID1)) {
@@ -329,7 +329,7 @@ public class AppraisalService {
                 }
             }
 
-            /*practice director construction*/
+            *//*practice director construction*//*
 
             if (entry.getKey().contains("sectiononeResponse.response.practiceDirectorReviews") && entry.getKey().contains("name")) {
                 if (entry.getKey().contains(pdID1)) {
@@ -372,7 +372,7 @@ public class AppraisalService {
                 }
             }
 
-            /*HR Construction*/
+            *//*HR Construction*//*
 
             if (entry.getKey().contains("sectiononeResponse.response.hrReviews") && entry.getKey().contains("name")) {
                 csvObject.setHrName(entry.getValue().toString());
@@ -402,9 +402,9 @@ public class AppraisalService {
         }
 
         return csvObject;
-    }
+    }*/
 
-    public static void writeDataToCsvUsingStringArray(PrintWriter writer, List<CsvObject> csvObjects) {
+    /*public static void writeDataToCsvUsingStringArray(PrintWriter writer, List<CsvObject> csvObjects) {
         String[] CSV_HEADER = { "UserId", "Status",
                 "Project_Manager_1_Name", "Project_Manager_1_Comment", "Project_Manager_1_isComplete", "Project_Manager_1_Rating",
                 "Project_Manager_2_Name", "Project_Manager_2_Comment", "Project_Manager_2_isComplete", "Project_Manager_2_Rating",
@@ -486,7 +486,7 @@ public class AppraisalService {
         }catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
 
 @Data
