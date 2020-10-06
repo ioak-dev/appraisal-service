@@ -37,6 +37,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     @Autowired
     private AppraisalRoleRepository appraisalRoleRepository;
 
+    @Autowired
+    private AppraisalReviewMasterRepository appraisalReviewMasterRepository;
+
     public AppraisalCycle create(AppraisalCycle appraisalCycle) {
 
         appraisalCycle.setStatus(AppraisalCycleStatusType.ACTIVE);
@@ -150,66 +153,54 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         AppraisalReview savedReview = appraisalReviewRepository.save(appraisalReview);
 
         List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
-        /*goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
-            AppraisalReviewGoal selfAppraisalReviewGoal = new AppraisalReviewGoal();
-            selfAppraisalReviewGoal.setEmployeeId(person.getId());
-            selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
-            selfAppraisalReviewGoal.setReviewerId(person.getId());
-            selfAppraisalReviewGoal.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);
-            selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
-            selfAppraisalReviewGoal.setComment("");
-            selfAppraisalReviewGoal.setRating("");
-            selfAppraisalReviewGoal.setComplete(false);
-            selfAppraisalReviewGoal.setScore(0.0d);
-            appraisalReviewGoalList.add(selfAppraisalReviewGoal);
-        });
-
-        countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
-            AppraisalReviewGoal selfAppraisalReviewGoal = new AppraisalReviewGoal();
-            selfAppraisalReviewGoal.setEmployeeId(person.getId());
-            selfAppraisalReviewGoal.setAppraisalId(savedReview.getId());
-            selfAppraisalReviewGoal.setReviewerId(person.getId());
-            selfAppraisalReviewGoal.setReviewerType(AppraisalStatusType.SELF_APPRAISAL);  // it is not correct
-            selfAppraisalReviewGoal.setGoalId(goalDefinition.getId());
-            selfAppraisalReviewGoal.setComment("");
-            selfAppraisalReviewGoal.setRating("");
-            selfAppraisalReviewGoal.setComplete(false);
-            selfAppraisalReviewGoal.setScore(0.0d);
-            appraisalReviewGoalList.add(selfAppraisalReviewGoal);
-        });*/
+        List<AppraisalReviewMaster> appraisalReviewMasters = new ArrayList<>();
 
         roleMap.get(person.getId()).forEach(role -> {
-            goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
-                AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
-                appraisalReviewGoal.setEmployeeId(person.getId());
-                appraisalReviewGoal.setAppraisalId(savedReview.getId());
-                appraisalReviewGoal.setReviewerId(role.getReviewerId());
-                appraisalReviewGoal.setReviewerType(role.getReviewerType());
-                appraisalReviewGoal.setGoalId(goalDefinition.getId());
-                appraisalReviewGoal.setComment("");
-                appraisalReviewGoal.setRating("");
-                appraisalReviewGoal.setComplete(false);
-                appraisalReviewGoal.setScore(0.0d);
-                appraisalReviewGoalList.add(appraisalReviewGoal);
-            });
+           if (role.getReviewerType() != AppraisalStatusType.Master) {
+               goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
+                   AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+                   appraisalReviewGoal.setEmployeeId(person.getId());
+                   appraisalReviewGoal.setAppraisalId(savedReview.getId());
+                   appraisalReviewGoal.setReviewerId(role.getReviewerId());
+                   appraisalReviewGoal.setReviewerType(role.getReviewerType());
+                   appraisalReviewGoal.setGoalId(goalDefinition.getId());
+                   appraisalReviewGoal.setComment("");
+                   appraisalReviewGoal.setRating("");
+                   appraisalReviewGoal.setComplete(false);
+                   appraisalReviewGoal.setScore(0.0d);
+                   appraisalReviewGoalList.add(appraisalReviewGoal);
+               });
+           } else if (role.getReviewerType() == AppraisalStatusType.Master) {
+               AppraisalReviewMaster appraisalReviewMaster = new AppraisalReviewMaster();
+               appraisalReviewMaster.setAppraisalId(savedReview.getId());
+               appraisalReviewMaster.setEmployeeId(person.getId());
+               appraisalReviewMaster.setReviewerId(role.getReviewerId());
+               appraisalReviewMaster.setComment("");
+               appraisalReviewMaster.setRating("");
+               appraisalReviewMaster.setComplete(false);
+               appraisalReviewMasters.add(appraisalReviewMaster);
+           }
         });
 
         roleMap.get(person.getId()).forEach(role -> {
-            countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
-                AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
-                appraisalReviewGoal.setEmployeeId(person.getId());
-                appraisalReviewGoal.setAppraisalId(savedReview.getId());
-                appraisalReviewGoal.setReviewerId(role.getReviewerId());
-                appraisalReviewGoal.setReviewerType(role.getReviewerType());
-                appraisalReviewGoal.setGoalId(goalDefinition.getId());
-                appraisalReviewGoal.setComment("");
-                appraisalReviewGoal.setRating("");
-                appraisalReviewGoal.setComplete(false);
-                appraisalReviewGoal.setScore(0.0d);
-                appraisalReviewGoalList.add(appraisalReviewGoal);
-            });
+            if (role.getReviewerType() != AppraisalStatusType.Master) {
+                countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
+                    AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+                    appraisalReviewGoal.setEmployeeId(person.getId());
+                    appraisalReviewGoal.setAppraisalId(savedReview.getId());
+                    appraisalReviewGoal.setReviewerId(role.getReviewerId());
+                    appraisalReviewGoal.setReviewerType(role.getReviewerType());
+                    appraisalReviewGoal.setGoalId(goalDefinition.getId());
+                    appraisalReviewGoal.setComment("");
+                    appraisalReviewGoal.setRating("");
+                    appraisalReviewGoal.setComplete(false);
+                    appraisalReviewGoal.setScore(0.0d);
+                    appraisalReviewGoalList.add(appraisalReviewGoal);
+                });
+            }
         });
         reviewGoalRepository.saveAll(appraisalReviewGoalList);
+        appraisalReviewMasterRepository.saveAll(appraisalReviewMasters);
     }
 
     private Map<String, List<AppraisalGoal>> getJobAndGoalMap(List<AppraisalGoal> appraisalGoals) {

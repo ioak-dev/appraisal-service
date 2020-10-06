@@ -14,12 +14,13 @@ public class AppraisalCycle {
     @Id
     private String id;
     private String name;
-    private String evaluationPeriod;
     private AppraisalCycleStatusType status;
     private String cu;
     private Map<AppraisalStatusType, Date> deadline;
+    private Map<AppraisalStatusType, String> workflowMap;
     private boolean showReviewToSelf;
     private int minCommentLength;
-    private Date startDate;
+    private Date start;
+    private Date end;
 
 }
