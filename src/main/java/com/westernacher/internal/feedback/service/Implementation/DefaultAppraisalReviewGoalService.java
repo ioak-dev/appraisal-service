@@ -93,7 +93,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
                     employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
 
-            appraisalRole.setTotalScore(totalScore);
+            appraisalRole.setTotalScore(Math.round(totalScore * 10) / 10.0);
             appraisalRole.setComplete(true);
             appraisalRoles.add(appraisalRoleRepository.save(appraisalRole));
             type = appraisalReview.getStatus();
