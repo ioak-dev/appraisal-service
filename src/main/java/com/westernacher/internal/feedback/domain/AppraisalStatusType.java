@@ -8,5 +8,6 @@ public enum AppraisalStatusType {
     Level_4,
     SET_GOALS,
     SELF_APPRAISAL,
-    Master
+    Master,
+    Complete
 }
