@@ -17,6 +17,7 @@ public class AppraisalReviewMasterController {
     @Autowired
     private AppraisalReviewGoalService service;
 
+    @Autowired
     private AppraisalReviewMasterRepository repository;
 
     @GetMapping
