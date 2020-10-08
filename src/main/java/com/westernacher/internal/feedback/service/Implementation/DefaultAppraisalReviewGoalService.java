@@ -123,6 +123,10 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
                 appraisalReview.setStatus(AppraisalStatusType.Level_3);
             } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_3)&& changeStatus == true) {
                 appraisalReview.setStatus(AppraisalStatusType.Level_4);
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_4)&& changeStatus == true) {
+                appraisalReview.setStatus(AppraisalStatusType.Master);
+            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Master)&& changeStatus == true) {
+                appraisalReview.setStatus(AppraisalStatusType.Complete);
             }
             appraisalReviewRepository.save(appraisalReview);
         }

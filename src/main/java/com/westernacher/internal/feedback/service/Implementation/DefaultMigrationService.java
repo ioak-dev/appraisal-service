@@ -87,9 +87,7 @@ public class DefaultMigrationService implements MigrationService {
         person.setJob(migrationAppraisalPerson.getJobName());
         person.setJoiningDate(migrationAppraisalPerson.getJoiningDate());
         person.setLastAppraisalDate(migrationAppraisalPerson.getLastAppraisalDate());
-        person.setLevel(migrationAppraisalPerson.getLevel());
-        person.setName(migrationAppraisalPerson.getName());
-        person.setSpecialization(migrationAppraisalPerson.getSpecialization());
+        person.setFirstName(migrationAppraisalPerson.getName());
         person.setStatus(migrationAppraisalPerson.getStatus());
         person.setUnit(migrationAppraisalPerson.getUnit());
         response.addPerson(person);
@@ -100,7 +98,20 @@ public class DefaultMigrationService implements MigrationService {
         appraisalReview.setId(new ObjectId().toString());
         appraisalReview.setCycleId(cycleId);
         appraisalReview.setEmployeeId(appraisal.getUserId());
-        appraisalReview.setStatus(appraisal.getStatus());
+        AppraisalStatusType status = AppraisalStatusType.Self;
+        if (appraisal.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL)) {
+            status = AppraisalStatusType.Self;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.PROJECT_MANAGER)) {
+            status = AppraisalStatusType.Level_1;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)) {
+            status = AppraisalStatusType.Level_2;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+            status = AppraisalStatusType.Level_3;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.HR)) {
+            status = AppraisalStatusType.Level_4;
+        }
+
+        appraisalReview.setStatus(status);
         response.addAppraisalReview(appraisalReview);
         appraisal.getSectiononeResponse().forEach(group -> {
             group.getResponse().forEach(criteria -> {
@@ -142,12 +153,15 @@ public class DefaultMigrationService implements MigrationService {
 
         //JSONObject jsonObject = new JSONObject();
         String sectionFourText ="";
-        try {
-            JSONObject jsonObject = new JSONObject(appraisal.getSectionfourResponse());
-            sectionFourText = jsonObject.getString("sectionfour");
-        }catch (JSONException err){
-            err.printStackTrace();
+        if (appraisal.getSectionfourResponse() != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(appraisal.getSectionfourResponse());
+                sectionFourText = jsonObject.getString("sectionfour");
+            }catch (JSONException err){
+                err.printStackTrace();
+            }
         }
+
 
         AppraisalGoal appraisalGoalSectionFour = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Additional feedback from you");
         populateAppraisalReviewGoal(AppraisalStatusType.Self, response, appraisal.getUserId(), appraisalGoalSectionFour, appraisalReview.getId(), sectionFourText);

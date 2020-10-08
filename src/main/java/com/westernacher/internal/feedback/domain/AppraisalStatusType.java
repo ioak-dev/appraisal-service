@@ -9,5 +9,14 @@ public enum AppraisalStatusType {
     SET_GOALS,
     SELF_APPRAISAL,
     Master,
-    Complete
+    Complete,
+    PROJECT_MANAGER,
+    REPORTING_MANAGER,
+    PRACTICE_DIRECTOR,
+    HR,
+    SELF_REVIEW,
+    HEAD_REVIEW,
+    PENDING_SCHEDULE,
+    SCHEDULED,
+    COMPLETE
 }
