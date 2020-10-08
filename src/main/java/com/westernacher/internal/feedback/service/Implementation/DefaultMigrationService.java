@@ -87,9 +87,7 @@ public class DefaultMigrationService implements MigrationService {
         person.setJob(migrationAppraisalPerson.getJobName());
         person.setJoiningDate(migrationAppraisalPerson.getJoiningDate());
         person.setLastAppraisalDate(migrationAppraisalPerson.getLastAppraisalDate());
-        person.setLevel(migrationAppraisalPerson.getLevel());
-        person.setName(migrationAppraisalPerson.getName());
-        person.setSpecialization(migrationAppraisalPerson.getSpecialization());
+        person.setFirstName(migrationAppraisalPerson.getName());
         person.setStatus(migrationAppraisalPerson.getStatus());
         person.setUnit(migrationAppraisalPerson.getUnit());
         response.addPerson(person);

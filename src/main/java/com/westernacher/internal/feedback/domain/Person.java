@@ -14,16 +14,18 @@ public class Person {
     @Id
     private String id;
     private String empId;
-    private String name;
-    private String job;
-    private String cu;
-    private String email;
-    private String unit;
+    private String firstName;
+    private String lastName;
     private Date joiningDate;
-    private String level;
-    private String specialization;
+    private String cu;
+    private String job;
+    private String unit;
+    private PersonStatus status;
+    private String email;
     private Date lastAppraisalDate;
     private int duration;
-    private PersonStatus status;
+
+
+
 
 }
