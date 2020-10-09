@@ -1,6 +1,5 @@
 package com.westernacher.internal.feedback.controller.representation;
 
-import com.westernacher.internal.feedback.domain.FeedbackStatusType;
 import lombok.Data;
 
 import java.util.List;

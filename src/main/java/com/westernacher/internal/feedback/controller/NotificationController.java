@@ -67,7 +67,7 @@ public class NotificationController {
     public String sendByCycleId(@PathVariable("cycleId") String cycleId,
                                 @Valid @RequestBody MailResource resource) {
         try {
-            List<Appraisal> appraisals = appraisalRepository.findAllByCycleIdAndStatus(cycleId, AppraisalStatusType.SELF_REVIEW.name());
+            List<Appraisal> appraisals = appraisalRepository.findAllByCycleIdAndStatus(cycleId, AppraisalStatusType.Self.name());
 
             List<String> emailIdList = new ArrayList<>();
             appraisals.stream().forEach(appraisal -> {

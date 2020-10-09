@@ -87,9 +87,7 @@ public class DefaultMigrationService implements MigrationService {
         person.setJob(migrationAppraisalPerson.getJobName());
         person.setJoiningDate(migrationAppraisalPerson.getJoiningDate());
         person.setLastAppraisalDate(migrationAppraisalPerson.getLastAppraisalDate());
-        person.setLevel(migrationAppraisalPerson.getLevel());
-        person.setName(migrationAppraisalPerson.getName());
-        person.setSpecialization(migrationAppraisalPerson.getSpecialization());
+        person.setFirstName(migrationAppraisalPerson.getName());
         person.setStatus(migrationAppraisalPerson.getStatus());
         person.setUnit(migrationAppraisalPerson.getUnit());
         response.addPerson(person);
@@ -100,7 +98,20 @@ public class DefaultMigrationService implements MigrationService {
         appraisalReview.setId(new ObjectId().toString());
         appraisalReview.setCycleId(cycleId);
         appraisalReview.setEmployeeId(appraisal.getUserId());
-        appraisalReview.setStatus(appraisal.getStatus());
+        AppraisalStatusType status = AppraisalStatusType.Self;
+        if (appraisal.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL)) {
+            status = AppraisalStatusType.Self;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.PROJECT_MANAGER)) {
+            status = AppraisalStatusType.Level_1;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.REPORTING_MANAGER)) {
+            status = AppraisalStatusType.Level_2;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.PRACTICE_DIRECTOR)) {
+            status = AppraisalStatusType.Level_3;
+        } else if (appraisal.getStatus().equals(AppraisalStatusType.HR)) {
+            status = AppraisalStatusType.Level_4;
+        }
+
+        appraisalReview.setStatus(status);
         response.addAppraisalReview(appraisalReview);
         appraisal.getSectiononeResponse().forEach(group -> {
             group.getResponse().forEach(criteria -> {
@@ -112,11 +123,11 @@ public class DefaultMigrationService implements MigrationService {
                         .isComplete(!appraisal.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL) && !appraisal.getStatus().equals(AppraisalStatusType.SET_GOALS))
                         .build()
                 );
-                populateAppraisalReviewGoals(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), selfReview);
-                populateAppraisalReviewGoals(AppraisalStatusType.PROJECT_MANAGER, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getProjectManagerReviews());
-                populateAppraisalReviewGoals(AppraisalStatusType.REPORTING_MANAGER, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getTeamLeadReviews());
-                populateAppraisalReviewGoals(AppraisalStatusType.PRACTICE_DIRECTOR, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getPracticeDirectorReviews());
-                populateAppraisalReviewGoals(AppraisalStatusType.HR, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getHrReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Self, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), selfReview);
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_1, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getProjectManagerReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_2, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getTeamLeadReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_3, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getPracticeDirectorReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_4, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getHrReviews());
             });
         });
 
@@ -128,7 +139,7 @@ public class DefaultMigrationService implements MigrationService {
             sectionTwoText.append("; ");
         });
         AppraisalGoal appraisalGoalSectionTwo = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Additional activities/tasks performed");
-        populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionTwo, appraisalReview.getId(), sectionTwoText.toString());
+        populateAppraisalReviewGoal(AppraisalStatusType.Self, response, appraisal.getUserId(), appraisalGoalSectionTwo, appraisalReview.getId(), sectionTwoText.toString());
 
         StringBuilder sectionThreeText = new StringBuilder();
         appraisal.getSectionthreeResponse().forEach(item -> {
@@ -138,19 +149,22 @@ public class DefaultMigrationService implements MigrationService {
             sectionThreeText.append("; ");
         });
         AppraisalGoal appraisalGoalSectionThree = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Future aspirations");
-        populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionThree, appraisalReview.getId(), sectionThreeText.toString());
+        populateAppraisalReviewGoal(AppraisalStatusType.Self, response, appraisal.getUserId(), appraisalGoalSectionThree, appraisalReview.getId(), sectionThreeText.toString());
 
         //JSONObject jsonObject = new JSONObject();
         String sectionFourText ="";
-        try {
-            JSONObject jsonObject = new JSONObject(appraisal.getSectionfourResponse());
-            sectionFourText = jsonObject.getString("sectionfour");
-        }catch (JSONException err){
-            err.printStackTrace();
+        if (appraisal.getSectionfourResponse() != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(appraisal.getSectionfourResponse());
+                sectionFourText = jsonObject.getString("sectionfour");
+            }catch (JSONException err){
+                err.printStackTrace();
+            }
         }
 
+
         AppraisalGoal appraisalGoalSectionFour = getAppraisalGoalCu(cycleId, response, personMap, 1, appraisal, "Notable contributions", "Additional feedback from you");
-        populateAppraisalReviewGoal(AppraisalStatusType.SELF_APPRAISAL, response, appraisal.getUserId(), appraisalGoalSectionFour, appraisalReview.getId(), sectionFourText);
+        populateAppraisalReviewGoal(AppraisalStatusType.Self, response, appraisal.getUserId(), appraisalGoalSectionFour, appraisalReview.getId(), sectionFourText);
 
         populateAppraisalRoles(cycleId, response, appraisal);
     }
@@ -193,23 +207,23 @@ public class DefaultMigrationService implements MigrationService {
     }
 
     private void populateAppraisalRoles(String cycleId, MigrationAppraisalResponse response, MigrationAppraisal appraisal) {
-        response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.SELF_APPRAISAL, cycleId, appraisal.getUserId(), appraisal.getUserId()));
+        response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.Self, cycleId, appraisal.getUserId(), appraisal.getUserId()));
         ObjectiveResponse reviewerElements = appraisal.getSectiononeResponse().get(0).getResponse().get(0);
         Map<String, ReviewerElements> pmReviews = reviewerElements.getProjectManagerReviews();
         pmReviews.keySet().forEach(reviewerId -> {
-            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.PROJECT_MANAGER, cycleId, appraisal.getUserId(), reviewerId));
+            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.Level_1, cycleId, appraisal.getUserId(), reviewerId));
         });
         Map<String, ReviewerElements> pdReviews = reviewerElements.getPracticeDirectorReviews();
         pdReviews.keySet().forEach(reviewerId -> {
-            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.PRACTICE_DIRECTOR, cycleId, appraisal.getUserId(), reviewerId));
+            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.Level_3, cycleId, appraisal.getUserId(), reviewerId));
         });
         Map<String, ReviewerElements> hrReviews = reviewerElements.getHrReviews();
         hrReviews.keySet().forEach(reviewerId -> {
-            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.HR, cycleId, appraisal.getUserId(), reviewerId));
+            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.Level_4, cycleId, appraisal.getUserId(), reviewerId));
         });
         Map<String, ReviewerElements> tlReviews = reviewerElements.getTeamLeadReviews();
         tlReviews.keySet().forEach(reviewerId -> {
-            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.REPORTING_MANAGER, cycleId, appraisal.getUserId(), reviewerId));
+            response.addAppraisalRole(getAppraisalRole(AppraisalStatusType.Level_2, cycleId, appraisal.getUserId(), reviewerId));
         });
     }
 
