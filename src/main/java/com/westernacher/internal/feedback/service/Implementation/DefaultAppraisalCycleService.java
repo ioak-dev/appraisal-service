@@ -179,6 +179,19 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     appraisalReviewGoal.setScore(0.0d);
                     appraisalReviewGoalList.add(appraisalReviewGoal);
                 });
+                countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
+                    AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+                    appraisalReviewGoal.setEmployeeId(person.getId());
+                    appraisalReviewGoal.setAppraisalId(savedReview.getId());
+                    appraisalReviewGoal.setReviewerId(role.getReviewerId());
+                    appraisalReviewGoal.setReviewerType(role.getReviewerType());
+                    appraisalReviewGoal.setGoalId(goalDefinition.getId());
+                    appraisalReviewGoal.setComment("");
+                    appraisalReviewGoal.setRating("");
+                    appraisalReviewGoal.setComplete(false);
+                    appraisalReviewGoal.setScore(0.0d);
+                    appraisalReviewGoalList.add(appraisalReviewGoal);
+                });
             }
         });
 
