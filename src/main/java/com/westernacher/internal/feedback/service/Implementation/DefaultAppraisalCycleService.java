@@ -156,35 +156,17 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         List<AppraisalReviewMaster> appraisalReviewMasters = new ArrayList<>();
 
         roleMap.get(person.getId()).forEach(role -> {
-           if (role.getReviewerType() != AppraisalStatusType.Master) {
-               goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
-                   AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
-                   appraisalReviewGoal.setEmployeeId(person.getId());
-                   appraisalReviewGoal.setAppraisalId(savedReview.getId());
-                   appraisalReviewGoal.setReviewerId(role.getReviewerId());
-                   appraisalReviewGoal.setReviewerType(role.getReviewerType());
-                   appraisalReviewGoal.setGoalId(goalDefinition.getId());
-                   appraisalReviewGoal.setComment("");
-                   appraisalReviewGoal.setRating("");
-                   appraisalReviewGoal.setComplete(false);
-                   appraisalReviewGoal.setScore(0.0d);
-                   appraisalReviewGoalList.add(appraisalReviewGoal);
-               });
-           } else if (role.getReviewerType() == AppraisalStatusType.Master) {
-               AppraisalReviewMaster appraisalReviewMaster = new AppraisalReviewMaster();
-               appraisalReviewMaster.setAppraisalId(savedReview.getId());
-               appraisalReviewMaster.setEmployeeId(person.getId());
-               appraisalReviewMaster.setReviewerId(role.getReviewerId());
-               appraisalReviewMaster.setComment("");
-               appraisalReviewMaster.setRating("");
-               appraisalReviewMaster.setComplete(false);
-               appraisalReviewMasters.add(appraisalReviewMaster);
-           }
-        });
-
-        roleMap.get(person.getId()).forEach(role -> {
-            if (role.getReviewerType() != AppraisalStatusType.Master) {
-                countryUnitMap.get(person.getCu()).stream().forEach(goalDefinition -> {
+            if (role.getReviewerType() == AppraisalStatusType.Master) {
+                AppraisalReviewMaster appraisalReviewMaster = new AppraisalReviewMaster();
+                appraisalReviewMaster.setAppraisalId(savedReview.getId());
+                appraisalReviewMaster.setEmployeeId(person.getId());
+                appraisalReviewMaster.setReviewerId(role.getReviewerId());
+                appraisalReviewMaster.setComment("");
+                appraisalReviewMaster.setRating("");
+                appraisalReviewMaster.setComplete(false);
+                appraisalReviewMasters.add(appraisalReviewMaster);
+            } else {
+                goalDefinitionMap.get(person.getJob()).stream().forEach(goalDefinition -> {
                     AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
                     appraisalReviewGoal.setEmployeeId(person.getId());
                     appraisalReviewGoal.setAppraisalId(savedReview.getId());
@@ -199,6 +181,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                 });
             }
         });
+
         reviewGoalRepository.saveAll(appraisalReviewGoalList);
         appraisalReviewMasterRepository.saveAll(appraisalReviewMasters);
     }
