@@ -44,11 +44,15 @@ public class DefaultPersonService implements PersonService {
 
     @Override
     public void uploadPersonFile(MultipartFile file) {
-        repository.deleteAll();
+        //repository.deleteAll();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         if (fileName.endsWith(".csv")) {
             List<String[]> csvRows = csvService.readCSVRows(file);
             csvRows.stream().forEach(line -> {
+                Person dbPerson = repository.findPersonByEmail(line[8].trim().toLowerCase());
+                if (dbPerson != null) {
+
+                }
                 Person person = new Person();
                 person.setEmpId(line[0].trim());
                 person.setFirstName(line[1].trim());
