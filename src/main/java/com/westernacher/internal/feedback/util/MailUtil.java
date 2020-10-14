@@ -53,8 +53,6 @@ public class MailUtil {
 
             message.setFrom(new InternetAddress(this.from));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            message.addRecipients(Message.RecipientType.CC,
-                    InternetAddress.parse("amarendra.sahoo@westernacher.com"));
             message.setSubject(getHtmlByTemplateAndContext(subjectTemplate, subjectValues), "UTF-8");
             message.setText(getHtmlByTemplateAndContext(bodyTemplate, bodyValues), "UTF-8");
 
