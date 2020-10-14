@@ -66,11 +66,21 @@ public class DefaultRoleService implements RoleService {
         List<Role> roles =  new ArrayList<>();
 
         for(String[] line : rows) {
-            Role role = new Role();
-            role.setReviewerId(personMap.get(line[0].trim().toLowerCase()));
-            role.setReviewerType(AppraisalStatusType.valueOf(line[1].trim()));
-            role.setEmployeeId(personMap.get(line[2].trim().toLowerCase()));
-            roles.add(role);
+            if (line[3].trim().toLowerCase().equals("add")) {
+                Role db = repository.findByEmployeeIdAndReviewerIdAndReviewerType(personMap.get(line[2].trim().toLowerCase()),
+                        personMap.get(line[0].trim().toLowerCase()), AppraisalStatusType.valueOf(line[1].trim()));
+                if (db == null) {
+                    Role role = new Role();
+                    role.setReviewerId(personMap.get(line[0].trim().toLowerCase()));
+                    role.setReviewerType(AppraisalStatusType.valueOf(line[1].trim()));
+                    role.setEmployeeId(personMap.get(line[2].trim().toLowerCase()));
+                    roles.add(repository.save(role));
+                }
+            }else if (line[3].trim().toLowerCase().equals("remove")) {
+                repository.deleteByEmployeeIdAndReviewerIdAndReviewerType(personMap.get(line[2].trim().toLowerCase()),
+                        personMap.get(line[0].trim().toLowerCase()), AppraisalStatusType.valueOf(line[1].trim()));
+            }
+
         }
         return roles;
 
