@@ -44,36 +44,54 @@ public class DefaultPersonService implements PersonService {
 
     @Override
     public void uploadPersonFile(MultipartFile file) {
-        //repository.deleteAll();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         if (fileName.endsWith(".csv")) {
             List<String[]> csvRows = csvService.readCSVRows(file);
             csvRows.stream().forEach(line -> {
                 Person dbPerson = repository.findPersonByEmail(line[8].trim().toLowerCase());
                 if (dbPerson != null) {
+                    dbPerson.setEmpId(line[0].trim());
+                    dbPerson.setFirstName(line[1].trim());
+                    dbPerson.setLastName(line[2].trim());
+                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    try{
+                        dbPerson.setJoiningDate(format.parse(line[3].trim()));
+                    }catch (ParseException e) {
 
-                }
-                Person person = new Person();
-                person.setEmpId(line[0].trim());
-                person.setFirstName(line[1].trim());
-                person.setLastName(line[2].trim());
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                try{
-                    person.setJoiningDate(format.parse(line[3].trim()));
-                }catch (ParseException e) {
+                    }
+                    dbPerson.setCu(line[4].trim());
+                    dbPerson.setJob(line[5].trim());
+                    dbPerson.setUnit(line[6].trim());
+                    dbPerson.setStatus(PersonStatus.valueOf(line[7].trim()));
+                    try{
+                        dbPerson.setLastAppraisalDate(format.parse(line[9].trim()));
+                    }catch(ParseException e){}
+                    dbPerson.setDuration(Integer.parseInt(line[10].trim()));
+                    repository.save(dbPerson);
+                } else {
+                    Person person = new Person();
+                    person.setEmpId(line[0].trim());
+                    person.setFirstName(line[1].trim());
+                    person.setLastName(line[2].trim());
+                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    try{
+                        person.setJoiningDate(format.parse(line[3].trim()));
+                    }catch (ParseException e) {
 
+                    }
+                    person.setCu(line[4].trim());
+                    person.setJob(line[5].trim());
+                    person.setUnit(line[6].trim());
+                    person.setStatus(PersonStatus.valueOf(line[7].trim()));
+                    person.setEmail(line[8].trim().toLowerCase());
+                    try{
+                        person.setLastAppraisalDate(format.parse(line[9].trim()));
+                    }catch(ParseException e){}
+                    person.setDuration(Integer.parseInt(line[10].trim()));
+                    repository.save(person);
                 }
-                person.setCu(line[4].trim());
-                person.setJob(line[5].trim());
-                person.setUnit(line[6].trim());
-                person.setStatus(PersonStatus.valueOf(line[7].trim()));
-                person.setEmail(line[8].trim().toLowerCase());
-                try{
-                    person.setLastAppraisalDate(format.parse(line[9].trim()));
-                }catch(ParseException e){}
-                person.setDuration(Integer.parseInt(line[10].trim()));
-                repository.save(person);
             });
         }
     }
