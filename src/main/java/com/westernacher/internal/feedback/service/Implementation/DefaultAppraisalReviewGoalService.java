@@ -96,7 +96,12 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
                     employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
 
-            appraisalRole.setTotalScore(Math.round(totalScore * 10) / 10.0);
+            if (totalScore != 0) {
+                appraisalRole.setTotalScore(Math.round(totalScore * 10) / 10.0);
+            } else {
+                appraisalRole.setTotalScore(0);
+            }
+
             appraisalRole.setComplete(true);
             appraisalRoles.add(appraisalRoleRepository.save(appraisalRole));
             type = appraisalReview.getStatus();
@@ -201,7 +206,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             subject.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());
 
             if (toPerson != null) {
-                mailUtil.send(toPerson.getEmail(), "appraisal-review-body.vm", body,
+                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "appraisal-review-body.vm", body,
                         "appraisal-review-subject.vm", subject);
             }
         });

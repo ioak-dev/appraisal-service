@@ -7,6 +7,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -32,6 +33,7 @@ public class MailUtil {
     @Value("${spring.mail.password}")
     String password;
 
+    @Async
     public boolean send( String to, String bodyTemplate, Map<String, String> bodyValues,
                       String subjectTemplate, Map<String, String> subjectValues) {
 
