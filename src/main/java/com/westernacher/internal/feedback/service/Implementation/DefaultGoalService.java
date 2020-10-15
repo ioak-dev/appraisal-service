@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -29,6 +31,18 @@ public class DefaultGoalService implements GoalService {
 
         try {
             List<String[]> csvRows = csvService.readCSVRows(file);
+
+            Set<String> cuList = new HashSet<>();
+            Set<String> jobList = new HashSet<>();
+
+            for (String[] columns : csvRows) {
+                cuList.add(columns[4]);
+                jobList.add(columns[5]);
+            }
+
+            repository.deleteAllByCuIn(cuList);
+            repository.deleteAllByJobIn(jobList);
+
             List<Goal> goals = new ArrayList<>();
             int rowNumber = 0;
             for (String[] columns : csvRows) {

@@ -1,0 +1,16 @@
+Sehr geehrte*r $!firstName $!lastName
+
+    Ihre Frage vom $!postCreationDate mit dem Titel $!postTitle wurde soeben beantwortet.
+    $!linkToPost
+
+Mit freundlichen Grüße
+Das Team von $!tenant
+
+Sehr geehrte*r $!firstName $!lastName
+
+    Ihre Frage vom $!postCreationDate mit dem Titel $!postTitle wurde aufgrund eines Verstoßes gegen die Richtlinien gesperrt.
+
+    Bei Nachfragen wenden Sie sich an unseren Support unter $!supportmailaddressOfTenant
+
+        Mit freundlichen Grüße
+        Das Team von <tenant name>

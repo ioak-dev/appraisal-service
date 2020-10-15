@@ -11,6 +11,7 @@ import com.westernacher.internal.feedback.domain.Person;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.Implementation.BackupService;
+import com.westernacher.internal.feedback.util.MailUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.buf.StringUtils;
@@ -21,6 +22,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,7 +31,7 @@ import java.util.Properties;
 @Slf4j
 public class NotificationController {
 
-    @Autowired
+    /*@Autowired
     private JavaMailSender sender;
 
     @Autowired
@@ -51,19 +53,18 @@ public class NotificationController {
     String port;
 
     @Value("${spring.mail.password}")
-    String password;
+    String password;*/
 
-    @RequestMapping(value = "/send", method = RequestMethod.POST)
-    public String send(@Valid @RequestBody MailResource resource) {
-        try {
-            sendMail(resource.getTo(), resource.getSubject(), resource.getBody());
-            return "Email Sent!";
-        }catch(Exception ex) {
-            return "Error in sending email: "+ex;
-        }
+    @Autowired
+    private MailUtil mailUtil;
+
+    @PostMapping("/send/{to}")
+    public void send(@PathVariable String to) {
+        mailUtil.send(to, "test-body.vm", new HashMap<>(),
+                "test-subject.vm", new HashMap<>());
     }
 
-    @RequestMapping(value = "/{cycleId}/send", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/{cycleId}/send", method = RequestMethod.POST)
     public String sendByCycleId(@PathVariable("cycleId") String cycleId,
                                 @Valid @RequestBody MailResource resource) {
         try {
@@ -153,7 +154,7 @@ public class NotificationController {
     @RequestMapping(value = "/backup", method = RequestMethod.GET)
     public void backup () {
         //backupService.sendAppraisalDatabase();
-    }
+    }*/
 
     @Data
     public static class MailResource {
