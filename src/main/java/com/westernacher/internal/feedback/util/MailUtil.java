@@ -33,7 +33,6 @@ public class MailUtil {
     @Value("${spring.mail.password}")
     String password;
 
-    @Async
     public boolean send( String to, String bodyTemplate, Map<String, String> bodyValues,
                       String subjectTemplate, Map<String, String> subjectValues) {
 

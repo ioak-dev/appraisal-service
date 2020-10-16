@@ -7,6 +7,7 @@ import com.westernacher.internal.feedback.service.AppraisalReviewGoalService;
 import com.westernacher.internal.feedback.util.MailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -96,7 +97,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
                     employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
 
-            if (totalScore != 0) {
+            if (totalScore != 0 && appraisalRole != null) {
                 appraisalRole.setTotalScore(Math.round(totalScore * 10) / 10.0);
             } else {
                 appraisalRole.setTotalScore(0);
@@ -192,7 +193,12 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             appraisalRoleListForMail = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(employeeId,
                     cycleId, appraisalReview.getStatus());
         }
+        sendMailAfterSubmit(appraisalRoleListForMail);
+        return repository.saveAll(newReviewGoals);
+    }
 
+    @Async
+    public void sendMailAfterSubmit(List<AppraisalRole> appraisalRoleListForMail) {
         appraisalRoleListForMail.stream().forEach(appraisalRole -> {
             Person toPerson = personRepository.findById(appraisalRole.getReviewerId()).orElse(null);
             Person fromPerson = personRepository.findById(appraisalRole.getEmployeeId()).orElse(null);
@@ -210,8 +216,6 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
                         "appraisal-review-subject.vm", subject);
             }
         });
-
-        return repository.saveAll(newReviewGoals);
     }
 }
 
