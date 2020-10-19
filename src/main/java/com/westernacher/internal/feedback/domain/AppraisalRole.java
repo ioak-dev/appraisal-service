@@ -19,6 +19,7 @@ public class AppraisalRole {
     private AppraisalStatusType reviewerType;
     private String employeeId;
     private String cycleId;
-    private double totalScore;
+    private double primaryScore;
+    private double SecondaryScore;
     private boolean isComplete;
 }

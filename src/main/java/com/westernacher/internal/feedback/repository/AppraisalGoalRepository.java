@@ -9,4 +9,5 @@ import java.util.List;
 public interface AppraisalGoalRepository extends MongoRepository<AppraisalGoal, String> {
 
     List<AppraisalGoal> findAllByCycleId(String cycleId);
+    List<AppraisalGoal> findAllByCuIsNull();
 }

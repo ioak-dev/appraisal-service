@@ -48,7 +48,7 @@ public class MigrationAppraisalResponse {
                 isComplete = appraisalReviewGoal.isComplete() || isComplete;
             }
         }
-        appraisalRole.setTotalScore(totalScore);
+        appraisalRole.setPrimaryScore(totalScore);
         appraisalRole.setComplete(isComplete);
         appraisalRoles.add(appraisalRole);
         incrementStatistics("appraisal.role");

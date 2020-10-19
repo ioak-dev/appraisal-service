@@ -107,7 +107,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalRole.setEmployeeId(role.getEmployeeId());
             appraisalRole.setCycleId(cycleId);
             appraisalRole.setComplete(false);
-            appraisalRole.setTotalScore(0.0d);
+            appraisalRole.setPrimaryScore(0.0d);
+            appraisalRole.setSecondaryScore(0.0d);
             employeeList.add(role.getEmployeeId());
             appraisalRoleList.add(appraisalRole);
         });
@@ -118,7 +119,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalRole.setEmployeeId(employee);
             appraisalRole.setCycleId(cycleId);
             appraisalRole.setComplete(false);
-            appraisalRole.setTotalScore(0.0d);
+            appraisalRole.setPrimaryScore(0.0d);
+            appraisalRole.setSecondaryScore(0.0d);
             appraisalRoleList.add(appraisalRole);
         });
 

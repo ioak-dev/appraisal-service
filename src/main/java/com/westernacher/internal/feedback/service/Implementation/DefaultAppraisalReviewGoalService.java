@@ -81,12 +81,25 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
         /*if i am submitting list of AppraisalReviewGoal then appraisalId
         (AppraisalReview ID), reviewerType, employeeId will be same for all record*/
 
+        double primaryScore = 0.0d;
+        double secondaryScore = 0.0d;
+        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCuIsNull();
+        List<String> appraisalGoalIds = new ArrayList<>();
+        appraisalGoals.stream().forEach(appraisalGoal -> {
+            appraisalGoalIds.add(appraisalGoal.getId());
+        });
+
         for (AppraisalReviewGoal appraisalReviewGoal : reviewGoals) {
             if (appraisalReviewGoal.getRating() != null && appraisalReviewGoal.getRating().length() > 0) {
                 AppraisalGoal appraisalGoal = appraisalGoalRepository.findById(appraisalReviewGoal.getGoalId()).orElse(null);
                 double weightage = appraisalGoal.getWeightage();
                 int rating = Integer.parseInt(appraisalReviewGoal.getRating().trim().substring(0,1));
                 appraisalReviewGoal.setScore(weightage * rating);
+                if (appraisalGoalIds.contains(appraisalReviewGoal.getGoalId())) {
+                    secondaryScore = secondaryScore + (weightage * rating);
+                }else {
+                    primaryScore = primaryScore + (weightage * rating);
+                }
                 totalScore = totalScore + (weightage * rating);
             }
             appraisalReviewGoal.setComplete(true);
@@ -97,10 +110,16 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
                     employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
 
-            if (totalScore != 0 && appraisalRole != null) {
-                appraisalRole.setTotalScore(Math.round(totalScore * 10) / 10.0);
+            if (primaryScore != 0 && appraisalRole != null) {
+                appraisalRole.setPrimaryScore(Math.round(primaryScore * 10) / 10.0);
             } else {
-                appraisalRole.setTotalScore(0);
+                appraisalRole.setPrimaryScore(0);
+            }
+
+            if (secondaryScore != 0 && appraisalRole != null) {
+                appraisalRole.setSecondaryScore(Math.round(secondaryScore * 10) / 10.0);
+            } else {
+                appraisalRole.setSecondaryScore(0);
             }
 
             appraisalRole.setComplete(true);
