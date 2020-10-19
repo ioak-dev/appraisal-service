@@ -100,11 +100,12 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
                 int rating = Integer.parseInt(appraisalReviewGoal.getRating().trim().substring(0,1));
                 appraisalReviewGoal.setScore(weightage * rating);
                 if (appraisalGoalIds.contains(appraisalReviewGoal.getGoalId())) {
-                    secondaryScore = secondaryScore + (weightage * rating);
-                    secondaryWeightage = secondaryWeightage + weightage;
-                }else {
                     primaryScore = primaryScore + (weightage * rating);
                     primaryWeightage = primaryWeightage + weightage;
+
+                }else {
+                    secondaryScore = secondaryScore + (weightage * rating);
+                    secondaryWeightage = secondaryWeightage + weightage;
                 }
                 totalScore = totalScore + (weightage * rating);
             }
