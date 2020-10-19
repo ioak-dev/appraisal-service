@@ -20,6 +20,6 @@ public class AppraisalRole {
     private String employeeId;
     private String cycleId;
     private double primaryScore;
-    private double SecondaryScore;
+    private double secondaryScore;
     private boolean isComplete;
 }
