@@ -10,4 +10,5 @@ public interface AppraisalGoalRepository extends MongoRepository<AppraisalGoal, 
 
     List<AppraisalGoal> findAllByCycleId(String cycleId);
     List<AppraisalGoal> findAllByCuIsNull();
+    List<AppraisalGoal> findAllByCuIs(String cu);
 }
