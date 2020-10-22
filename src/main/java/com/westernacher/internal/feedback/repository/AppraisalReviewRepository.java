@@ -9,4 +9,6 @@ public interface AppraisalReviewRepository extends MongoRepository<AppraisalRevi
 
     List<AppraisalReview> findAllByCycleId(String cycleId);
 
+    List<AppraisalReview> findAllByCycleIdAndEmployeeIdIn(String cycleId, List<String> employeeIds);
+
 }

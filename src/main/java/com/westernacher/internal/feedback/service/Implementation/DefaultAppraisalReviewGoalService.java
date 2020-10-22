@@ -66,6 +66,13 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
 
     @Override
     public List<AppraisalReviewGoal> submit(List<AppraisalReviewGoal> reviewGoals) {
+
+        Map<String, Person> personStore = new HashMap<>();
+        List<Person> personList = personRepository.findAll();
+        personList.stream().forEach(person -> {
+            personStore.put(person.getId(), person);
+        });
+
         List<AppraisalReviewGoal> newReviewGoals = new ArrayList<>();
 
         double totalScore = 0.0d;
@@ -221,15 +228,15 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             appraisalRoleListForMail = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(employeeId,
                     cycleId, appraisalReview.getStatus());
         }
-        sendMailAfterSubmit(appraisalRoleListForMail);
+        sendMailAfterSubmit(appraisalRoleListForMail, personStore);
         return repository.saveAll(newReviewGoals);
     }
 
     @Async
-    public void sendMailAfterSubmit(List<AppraisalRole> appraisalRoleListForMail) {
+    public void sendMailAfterSubmit(List<AppraisalRole> appraisalRoleListForMail, Map<String, Person> personStore) {
         appraisalRoleListForMail.stream().forEach(appraisalRole -> {
-            Person toPerson = personRepository.findById(appraisalRole.getReviewerId()).orElse(null);
-            Person fromPerson = personRepository.findById(appraisalRole.getEmployeeId()).orElse(null);
+            Person toPerson = personStore.get(appraisalRole.getReviewerId());
+            Person fromPerson = personStore.get(appraisalRole.getEmployeeId());
 
             Map<String, String> body= new HashMap<>();
             body.put("reviewer", toPerson.getFirstName()+" "+toPerson.getLastName());
