@@ -124,6 +124,30 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalRoleList.add(appraisalRole);
         });
 
+        employeeList.stream().forEach(employee-> {
+            AppraisalRole appraisalRole = new AppraisalRole();
+            appraisalRole.setReviewerId(employee);
+            appraisalRole.setReviewerType(AppraisalStatusType.SETGOAL);
+            appraisalRole.setEmployeeId(employee);
+            appraisalRole.setCycleId(cycleId);
+            appraisalRole.setComplete(false);
+            appraisalRole.setPrimaryScore(0.0d);
+            appraisalRole.setSecondaryScore(0.0d);
+            appraisalRoleList.add(appraisalRole);
+        });
+
+        employeeList.stream().forEach(employee-> {
+            AppraisalRole appraisalRole = new AppraisalRole();
+            appraisalRole.setReviewerId(employee);
+            appraisalRole.setReviewerType(AppraisalStatusType.REVIEWGOAL);
+            appraisalRole.setEmployeeId(employee);
+            appraisalRole.setCycleId(cycleId);
+            appraisalRole.setComplete(false);
+            appraisalRole.setPrimaryScore(0.0d);
+            appraisalRole.setSecondaryScore(0.0d);
+            appraisalRoleList.add(appraisalRole);
+        });
+
         return appraisalRoleList;
     }
 

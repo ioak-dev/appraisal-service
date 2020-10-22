@@ -14,6 +14,8 @@ public enum AppraisalStatusType {
     REPORTING_MANAGER,
     PRACTICE_DIRECTOR,
     HR,
+    SETGOAL,
+    REVIEWGOAL,
     SELF_REVIEW,
     HEAD_REVIEW,
     PENDING_SCHEDULE,
