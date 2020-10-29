@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
@@ -238,41 +239,49 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
     @Async
     public void sendMailAfterSubmit(List<AppraisalRole> appraisalRoleListForMail, Map<String, Person> personStore) {
 
-        AppraisalCycle appraisalCycle = appraisalCycleRepository.findById(appraisalRoleListForMail.get(0).getId()).orElse(null);
+        AppraisalCycle appraisalCycle = appraisalCycleRepository.findById(appraisalRoleListForMail.get(0).getCycleId()).orElse(null);
+        Map<AppraisalStatusType, Date> deadline = appraisalCycle.getDeadline();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMMM yyyy");
+        //dd MMMMM yyyy
 
         appraisalRoleListForMail.stream().forEach(appraisalRole -> {
             Person toPerson = personStore.get(appraisalRole.getReviewerId());
             Person fromPerson = personStore.get(appraisalRole.getEmployeeId());
 
             Map<String, String> body= new HashMap<>();
-            body.put("reviewer", toPerson.getFirstName()+" "+toPerson.getLastName());
-            body.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName()+"("+fromPerson.getEmail()+")");
+            body.put("reviewer", fromPerson.getFirstName()+" "+fromPerson.getLastName());
+            body.put("employee", toPerson.getFirstName()+" "+toPerson.getLastName());
             body.put("reviewerType", appraisalRole.getReviewerType().name());
 
             Map<String, String> subject= new HashMap<>();
             subject.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());
 
             if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_1)) {
+                body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_1)));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-one-body.vm", body,
                         "level-one-subject.vm", subject);
             }
 
             if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_2)) {
+                body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_2)));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-two-body.vm", body,
                         "level-two-subject.vm", subject);
             }
 
             if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_3)) {
+                body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_3)));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-three-body.vm", body,
                         "level-three-subject.vm", subject);
             }
 
             if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_4)) {
+                body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_4)));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-four-body.vm", body,
                         "level-four-subject.vm", subject);
             }
 
             if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Master)) {
+                body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Master)));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "master-body.vm", body,
                         "master-subject.vm", subject);
             }
