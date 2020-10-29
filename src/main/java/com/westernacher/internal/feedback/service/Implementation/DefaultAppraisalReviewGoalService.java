@@ -35,6 +35,9 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private AppraisalCycleRepository appraisalCycleRepository;
+
 
     @Override
     public List<AppraisalReviewGoal> getReviewGoals(String appraisalId) {
@@ -234,6 +237,9 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
 
     @Async
     public void sendMailAfterSubmit(List<AppraisalRole> appraisalRoleListForMail, Map<String, Person> personStore) {
+
+        AppraisalCycle appraisalCycle = appraisalCycleRepository.findById(appraisalRoleListForMail.get(0).getId()).orElse(null);
+
         appraisalRoleListForMail.stream().forEach(appraisalRole -> {
             Person toPerson = personStore.get(appraisalRole.getReviewerId());
             Person fromPerson = personStore.get(appraisalRole.getEmployeeId());
@@ -246,9 +252,29 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             Map<String, String> subject= new HashMap<>();
             subject.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());
 
-            if (toPerson != null) {
-                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "appraisal-review-body.vm", body,
-                        "appraisal-review-subject.vm", subject);
+            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_1)) {
+                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-one-body.vm", body,
+                        "level-one-subject.vm", subject);
+            }
+
+            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_2)) {
+                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-two-body.vm", body,
+                        "level-two-subject.vm", subject);
+            }
+
+            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_3)) {
+                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-three-body.vm", body,
+                        "level-three-subject.vm", subject);
+            }
+
+            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_4)) {
+                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-four-body.vm", body,
+                        "level-four-subject.vm", subject);
+            }
+
+            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Master)) {
+                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "master-body.vm", body,
+                        "master-subject.vm", subject);
             }
         });
     }
