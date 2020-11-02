@@ -17,6 +17,7 @@ public class MigrationAppraisalResponse {
     private List<AppraisalRole> appraisalRoles = new ArrayList<>();
     private List<AppraisalReviewGoal> appraisalReviewGoals = new ArrayList<>();
     private List<Person> persons = new ArrayList<>();
+    private List<AppraisalReviewMaster> appraisalReviewMasters = new ArrayList<>();
     private Map<String, Integer> statistics = new HashMap<>();
 
     public MigrationAppraisalResponse() {
@@ -24,6 +25,7 @@ public class MigrationAppraisalResponse {
         this.statistics.put("appraisal.goal", 0);
         this.statistics.put("appraisal.role", 0);
         this.statistics.put("appraisal.review.goal", 0);
+        this.statistics.put("appraisal.review.master", 0);
         this.statistics.put("person", 0);
     }
 
@@ -42,7 +44,7 @@ public class MigrationAppraisalResponse {
         boolean isComplete = false;
         for (AppraisalReviewGoal appraisalReviewGoal : appraisalReviewGoals) {
             if (appraisalReviewGoal.getEmployeeId().equals(appraisalRole.getEmployeeId())
-                    && appraisalReviewGoal.getReviewerId().equals(appraisalRole.getReviewerId())
+                    && appraisalReviewGoal.getReviewerId() != null && appraisalReviewGoal.getReviewerId().equals(appraisalRole.getReviewerId())
                     && appraisalReviewGoal.getReviewerType().equals(appraisalRole.getReviewerType())) {
                 totalScore = totalScore + appraisalReviewGoal.getScore();
                 isComplete = appraisalReviewGoal.isComplete() || isComplete;
@@ -62,6 +64,11 @@ public class MigrationAppraisalResponse {
     public void addPerson(Person person) {
         persons.add(person);
         incrementStatistics("person");
+    }
+
+    public void addAppraisalReviewMaster(AppraisalReviewMaster appraisalReviewMaster) {
+        appraisalReviewMasters.add(appraisalReviewMaster);
+        incrementStatistics("appraisal.review.master");
     }
 
     private void incrementStatistics(String key) {
