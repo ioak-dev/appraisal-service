@@ -256,6 +256,13 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             Map<String, String> subject= new HashMap<>();
             subject.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());
 
+            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Self)) {
+                body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Self)));
+                body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Self));
+                boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-self-body.vm", body,
+                        "level-self-subject.vm", subject);
+            }
+
             if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_1)) {
                 body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_1)));
                 body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Level_1));
