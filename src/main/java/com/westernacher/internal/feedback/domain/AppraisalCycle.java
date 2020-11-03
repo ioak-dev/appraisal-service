@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -18,6 +19,7 @@ public class AppraisalCycle {
     private String cu;
     private Map<AppraisalStatusType, Date> deadline;
     private Map<AppraisalStatusType, String> workflowMap;
+    private Map<String, List<String>> visibilityMap;
     private boolean showReviewToSelf;
     private int minCommentLength;
     private Date start;
