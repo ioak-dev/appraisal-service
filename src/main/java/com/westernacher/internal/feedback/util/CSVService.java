@@ -15,7 +15,7 @@ public class CSVService {
     public List<String[]> readCSVRows(MultipartFile file) {
 
         try {
-            Reader reader = new InputStreamReader(file.getInputStream());
+            Reader reader = new InputStreamReader(file.getInputStream(), "UTF-8");
             com.opencsv.CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
             return csvReader.readAll();
         } catch (IOException e) {
