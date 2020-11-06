@@ -89,10 +89,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     @Override
     public AppraisalCycleResource.CycleDeleteResource delete(String appraisalCycleName) {
         AppraisalCycle appraisalCycle = repository.findByName(appraisalCycleName);
-
-        long deletedRoles = appraisalRoleRepository.deleteAllByCycleId(appraisalCycle.getId());
-        long deletedGoals = appraisalGoalRepository.deleteAllByCycleId(appraisalCycle.getId());
-
+        
         List<AppraisalReview> appraisalReviews = appraisalReviewRepository.findAllByCycleId(appraisalCycle.getId());
 
         List<String> appraisalReviewIds = new ArrayList<>();
@@ -100,18 +97,15 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalReviewIds.add(appraisalReview.getId());
         });
 
-        long deletedAppraisalReviewGoals = reviewGoalRepository.deleteAllByAppraisalIdIn(appraisalReviewIds);
-        long deletedAppraisalReviewMasters = appraisalReviewMasterRepository.deleteAllByAppraisalIdIn(appraisalReviewIds);
-        long deletedAppraisalReviews = appraisalReviewRepository.deleteAllByCycleId(appraisalCycle.getId());
 
         repository.deleteById(appraisalCycle.getId());
 
         AppraisalCycleResource.CycleDeleteResource resource = new AppraisalCycleResource.CycleDeleteResource();
-        resource.setDeletedRoles(deletedRoles);
-        resource.setDeletedGoals(deletedGoals);
-        resource.setDeletedAppraisalReviewGoals(deletedAppraisalReviewGoals);
-        resource.setDeletedAppraisalReviewMasters(deletedAppraisalReviewMasters);
-        resource.setDeletedAppraisalReviews(deletedAppraisalReviews);
+        resource.setDeletedRoles(appraisalRoleRepository.deleteAllByCycleId(appraisalCycle.getId()));
+        resource.setDeletedGoals(appraisalGoalRepository.deleteAllByCycleId(appraisalCycle.getId()));
+        resource.setDeletedAppraisalReviewGoals(reviewGoalRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
+        resource.setDeletedAppraisalReviewMasters(appraisalReviewMasterRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
+        resource.setDeletedAppraisalReviews(appraisalReviewRepository.deleteAllByCycleId(appraisalCycle.getId()));
         resource.setDeletedCycle(1);
 
         return resource;
