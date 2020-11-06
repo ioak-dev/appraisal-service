@@ -3,6 +3,7 @@ package com.westernacher.internal.feedback.controller;
 import com.westernacher.internal.feedback.domain.AppraisalCycle;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
+import com.westernacher.internal.feedback.service.Implementation.AppraisalCycleResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +35,8 @@ public class AppraisalCycleController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete (@PathVariable("id") String id) {
-        repository.deleteById(id);
+    public AppraisalCycleResource.CycleDeleteResource delete (@PathVariable String id) {
+        return service.delete(id);
     }
 
 }

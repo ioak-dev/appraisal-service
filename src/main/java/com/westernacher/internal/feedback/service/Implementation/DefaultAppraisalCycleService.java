@@ -3,10 +3,14 @@ package com.westernacher.internal.feedback.service.Implementation;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.*;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Slf4j
@@ -80,6 +84,31 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         });
 
         return cycle;
+    }
+
+    @Override
+    public AppraisalCycleResource.CycleDeleteResource delete(String id) {
+
+        List<AppraisalReview> appraisalReviews = appraisalReviewRepository.findAllByCycleId(id);
+
+        List<String> appraisalReviewIds = new ArrayList<>();
+        appraisalReviews.stream().forEach(appraisalReview -> {
+            appraisalReviewIds.add(appraisalReview.getId());
+        });
+
+
+        repository.deleteById(id);
+
+        AppraisalCycleResource.CycleDeleteResource resource = new AppraisalCycleResource.CycleDeleteResource();
+        resource.setDeletedRoles(appraisalRoleRepository.deleteAllByCycleId(id));
+        resource.setDeletedGoals(appraisalGoalRepository.deleteAllByCycleId(id));
+        resource.setDeletedAppraisalReviewGoals(reviewGoalRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
+        resource.setDeletedAppraisalReviewMasters(appraisalReviewMasterRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
+        resource.setDeletedAppraisalReviews(appraisalReviewRepository.deleteAllByCycleId(id));
+        resource.setDeletedCycle(1);
+
+        return resource;
+
     }
 
     private List<AppraisalGoal> getAppraisalGoalFromGoal(List<Goal> goals, String cycleId) {
@@ -206,7 +235,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     private void createSetGoals(Map<String, List<AppraisalGoal>> goalDefinitionMap,
-                                           Map<String, List<AppraisalGoal>> countryUnitMap, Person person, 
+                                           Map<String, List<AppraisalGoal>> countryUnitMap, Person person,
                                            String cycleId, AppraisalStatusType appraisalStatusType, AppraisalReview appraisalReview) {
 
         List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
