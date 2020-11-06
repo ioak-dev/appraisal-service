@@ -5,6 +5,7 @@ import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.AppraisalGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewRepository;
+import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.MigrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class MigrationController {
 
     @Autowired
     private AppraisalGoalRepository appraisalGoalRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
 
     @Autowired
     private AppraisalReviewRepository appraisalReviewRepository;
@@ -47,11 +51,31 @@ public class MigrationController {
 
         //List<appraisal.goal> by sourceCycle => Map<goalId, "replacespaces(lower(group))::replacespaces(lower(criteria))"> sourceGoalReferenceMap
 
+        log.info("******************");
+
+        Map<String, Person> personMap = new HashMap<>();
+        personRepository.findAll().forEach(item -> {
+            personMap.put(item.getId(), item);
+        });
+
         Map<String, String> sourceGoalReferenceMap = new HashMap();
         List<AppraisalGoal> appraisalGoalList = appraisalGoalRepository.findAllByCycleId(sourceCycle);
         appraisalGoalList.stream().forEach(appraisalGoal -> {
-            sourceGoalReferenceMap.put(appraisalGoal.getId(), appraisalGoal.getGroup().toLowerCase().replaceAll("\\s", "")+
-                    "::"+appraisalGoal.getCriteria().toLowerCase().replaceAll("\\s", ""));
+            if (appraisalGoal.getJob() != null && !appraisalGoal.getJob().isEmpty()) {
+                sourceGoalReferenceMap.put(appraisalGoal.getId(), "JOB::"
+                        + textToIdentifier(appraisalGoal.getJob())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()));
+            } else if (appraisalGoal.getCu() != null && !appraisalGoal.getCu().isEmpty()) {
+                sourceGoalReferenceMap.put(appraisalGoal.getId(), "CU::"
+                        + textToIdentifier(appraisalGoal.getCu().toLowerCase())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()));
+            }
         });
 
         //List<appraisal.review> by sourceCycle => List<_id> sourceAppraisalIdList
@@ -60,7 +84,6 @@ public class MigrationController {
         sourceAppraisalList.stream().forEach(appraisalReview -> {
             sourceAppraisalIdList.add(appraisalReview.getId());
         });
-
 
         //List<appraisal.review.goal> by [appraisalId in sourceAppraisalIdList] and [reviewerType = Set_Goal] => Map<employeeId::sourceGoalReferenceMap.get(goalId), appraisal.review.goal> sourceSetGoalsMap
         List<AppraisalReviewGoal> appraisalReviewGoalLists = appraisalReviewGoalRepository.findAllByAppraisalIdInAndReviewerType(sourceAppraisalIdList, AppraisalStatusType.SET_GOAL);
@@ -73,18 +96,30 @@ public class MigrationController {
         Map<String, String> destGoalReferenceMap = new HashMap();
         List<AppraisalGoal> appraisalGoalListDest = appraisalGoalRepository.findAllByCycleId(destinationCycle);
         appraisalGoalListDest.stream().forEach(appraisalGoal -> {
-            destGoalReferenceMap.put(appraisalGoal.getGroup().toLowerCase().replaceAll("\\s", "")+
-                    "::"+appraisalGoal.getCriteria().toLowerCase().replaceAll("\\s", ""), appraisalGoal.getId());
+            if (appraisalGoal.getJob() != null && !appraisalGoal.getJob().isEmpty()) {
+                destGoalReferenceMap.put("JOB::"
+                        + textToIdentifier(appraisalGoal.getJob())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()), appraisalGoal.getId());
+            } else if (appraisalGoal.getCu() != null && !appraisalGoal.getCu().isEmpty()) {
+                destGoalReferenceMap.put("CU::"
+                        + textToIdentifier(appraisalGoal.getCu().toLowerCase())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()), appraisalGoal.getId());
+            }
         });
 
         //List<appraisal.review> by destCycle => Map<employeeId, _id> destEmployeeIdToAppraisalIdMap
         Map<String, String> destEmployeeIdToAppraisalIdMap = new HashMap<>();
         List<AppraisalReview> destAppraisalList = appraisalReviewRepository.findAllByCycleId(destinationCycle);
-        sourceAppraisalList.stream().forEach(appraisalReview -> {
+        destAppraisalList.stream().forEach(appraisalReview -> {
             destEmployeeIdToAppraisalIdMap.put(appraisalReview.getEmployeeId(), appraisalReview.getId());
         });
 
-        //appraisalReviewGoalList = new ArrayList()
         List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
 
         //sourceSetGoalsMap.keyset() -> iterate for each setGoal
@@ -100,24 +135,36 @@ public class MigrationController {
         sourceSetGoalsMap.keySet().stream().forEach(p -> {
             String[] splitsValue = p.split("::");
             String employeeId = splitsValue[0];
-            String goalKey = splitsValue[1]+"::"+splitsValue[2];
-            String goalId = destGoalReferenceMap.get(goalKey);
-            String appraisalId = destEmployeeIdToAppraisalIdMap.get(employeeId);
-            AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
-            appraisalReviewGoal.setEmployeeId(sourceSetGoalsMap.get(p).getEmployeeId());
-            appraisalReviewGoal.setAppraisalId(appraisalId);
-            appraisalReviewGoal.setReviewerType(AppraisalStatusType.REVIEW_GOAL);
-            appraisalReviewGoal.setGoalId(goalId);
-            appraisalReviewGoal.setComment(sourceSetGoalsMap.get(p).getComment());
-            appraisalReviewGoal.setRating(sourceSetGoalsMap.get(p).getRating());
-            appraisalReviewGoal.setComplete(sourceSetGoalsMap.get(p).isComplete());
-            appraisalReviewGoal.setScore(sourceSetGoalsMap.get(p).getScore());
-            appraisalReviewGoalList.add(appraisalReviewGoal);
+            if (personMap.containsKey(employeeId)) {
+                String goalKey = splitsValue[1] + "::"
+                        + textToIdentifier(splitsValue[1].equals("JOB") ? personMap.get(employeeId).getJob() : personMap.get(employeeId).getCu())
+                        + "::" + splitsValue[3] + "::" + splitsValue[4];
+                if (destGoalReferenceMap.containsKey(goalKey) && destEmployeeIdToAppraisalIdMap.containsKey(employeeId)) {
+                    String goalId = destGoalReferenceMap.get(goalKey);
+                    String appraisalId = destEmployeeIdToAppraisalIdMap.get(employeeId);
+                    AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+                    appraisalReviewGoal.setEmployeeId(sourceSetGoalsMap.get(p).getEmployeeId());
+                    appraisalReviewGoal.setAppraisalId(appraisalId);
+                    appraisalReviewGoal.setReviewerType(AppraisalStatusType.REVIEW_GOAL);
+                    appraisalReviewGoal.setGoalId(goalId);
+                    appraisalReviewGoal.setComment(sourceSetGoalsMap.get(p).getComment());
+                    appraisalReviewGoal.setRating(sourceSetGoalsMap.get(p).getRating());
+                    appraisalReviewGoal.setComplete(sourceSetGoalsMap.get(p).isComplete());
+                    appraisalReviewGoal.setScore(sourceSetGoalsMap.get(p).getScore());
+                    appraisalReviewGoalList.add(appraisalReviewGoal);
+                }
+            }
         });
-
 
         //persiste appraisalReviewGoalList to db
         appraisalReviewGoalRepository.saveAll(appraisalReviewGoalList);
+    }
+
+    private String textToIdentifier(String input) {
+        if (input == null) {
+            return "";
+        }
+        return input.toLowerCase().replaceAll("\\s", "");
     }
 }
 

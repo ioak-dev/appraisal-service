@@ -206,14 +206,14 @@ public class DefaultMigrationService implements MigrationService {
         setGoal.setGoalId(appraisalGoal.getId());
         response.addAppraisalReviewGoal(setGoal);
 
-        AppraisalReviewGoal reviewGoal = new AppraisalReviewGoal();
-        reviewGoal.setId(new ObjectId().toString());
-        reviewGoal.setAppraisalId(appraisalReviewId);
-        reviewGoal.setEmployeeId(employeeId);
-        reviewGoal.setReviewerType(AppraisalStatusType.REVIEW_GOAL);
-        reviewGoal.setComment("");
-        reviewGoal.setGoalId(appraisalGoal.getId());
-        response.addAppraisalReviewGoal(reviewGoal);
+//        AppraisalReviewGoal reviewGoal = new AppraisalReviewGoal();
+//        reviewGoal.setId(new ObjectId().toString());
+//        reviewGoal.setAppraisalId(appraisalReviewId);
+//        reviewGoal.setEmployeeId(employeeId);
+//        reviewGoal.setReviewerType(AppraisalStatusType.REVIEW_GOAL);
+//        reviewGoal.setComment("");
+//        reviewGoal.setGoalId(appraisalGoal.getId());
+//        response.addAppraisalReviewGoal(reviewGoal);
     }
 
     private void populateAppraisalReviewGoal(AppraisalStatusType appraisalStatusType, MigrationAppraisalResponse response, String employeeId, AppraisalGoal appraisalGoal, String appraisalReviewId, String comment) {
