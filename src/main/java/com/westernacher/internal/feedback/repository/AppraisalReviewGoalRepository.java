@@ -17,5 +17,7 @@ public interface AppraisalReviewGoalRepository extends MongoRepository<Appraisal
 
     List<AppraisalReviewGoal> findAllByAppraisalIdInAndReviewerType(List appraisalIds, AppraisalStatusType type);
 
+    long deleteAllByAppraisalIdIn(List<String> appraisalIds);
+
 
 }

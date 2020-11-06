@@ -5,4 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface AppraisalCycleRepository extends MongoRepository<AppraisalCycle, String> {
     AppraisalCycle findByName(String name);
+
 }
