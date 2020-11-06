@@ -249,8 +249,8 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             Person fromPerson = personStore.get(appraisalRole.getEmployeeId());
 
             Map<String, String> body= new HashMap<>();
-            body.put("reviewer", fromPerson.getFirstName()+" "+fromPerson.getLastName());
-            body.put("employee", toPerson.getFirstName()+" "+toPerson.getLastName());
+            body.put("reviewer", toPerson.getFirstName()+" "+toPerson.getLastName());
+            body.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());
             body.put("reviewerType", appraisalRole.getReviewerType().name());
 
             Map<String, String> subject= new HashMap<>();
