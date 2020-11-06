@@ -7,6 +7,6 @@ public interface AppraisalCycleService {
 
     AppraisalCycle create(AppraisalCycle appraisalCycle);
 
-    AppraisalCycleResource.CycleDeleteResource delete(String appraisalCycle);
+    AppraisalCycleResource.CycleDeleteResource delete(String id);
 
 }

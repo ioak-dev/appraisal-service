@@ -87,10 +87,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     @Override
-    public AppraisalCycleResource.CycleDeleteResource delete(String appraisalCycleName) {
-        AppraisalCycle appraisalCycle = repository.findByName(appraisalCycleName);
-        
-        List<AppraisalReview> appraisalReviews = appraisalReviewRepository.findAllByCycleId(appraisalCycle.getId());
+    public AppraisalCycleResource.CycleDeleteResource delete(String id) {
+
+        List<AppraisalReview> appraisalReviews = appraisalReviewRepository.findAllByCycleId(id);
 
         List<String> appraisalReviewIds = new ArrayList<>();
         appraisalReviews.stream().forEach(appraisalReview -> {
@@ -98,14 +97,14 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         });
 
 
-        repository.deleteById(appraisalCycle.getId());
+        repository.deleteById(id);
 
         AppraisalCycleResource.CycleDeleteResource resource = new AppraisalCycleResource.CycleDeleteResource();
-        resource.setDeletedRoles(appraisalRoleRepository.deleteAllByCycleId(appraisalCycle.getId()));
-        resource.setDeletedGoals(appraisalGoalRepository.deleteAllByCycleId(appraisalCycle.getId()));
+        resource.setDeletedRoles(appraisalRoleRepository.deleteAllByCycleId(id));
+        resource.setDeletedGoals(appraisalGoalRepository.deleteAllByCycleId(id));
         resource.setDeletedAppraisalReviewGoals(reviewGoalRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
         resource.setDeletedAppraisalReviewMasters(appraisalReviewMasterRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
-        resource.setDeletedAppraisalReviews(appraisalReviewRepository.deleteAllByCycleId(appraisalCycle.getId()));
+        resource.setDeletedAppraisalReviews(appraisalReviewRepository.deleteAllByCycleId(id));
         resource.setDeletedCycle(1);
 
         return resource;

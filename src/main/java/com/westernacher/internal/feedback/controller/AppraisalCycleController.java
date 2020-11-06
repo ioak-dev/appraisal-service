@@ -34,9 +34,9 @@ public class AppraisalCycleController {
         return service.create(appraisalCycle);
     }
 
-    @DeleteMapping("/{cycleName}")
-    public AppraisalCycleResource.CycleDeleteResource delete (@PathVariable String cycleName) {
-        return service.delete(cycleName);
+    @DeleteMapping("/{id}")
+    public AppraisalCycleResource.CycleDeleteResource delete (@PathVariable String id) {
+        return service.delete(id);
     }
 
 }
