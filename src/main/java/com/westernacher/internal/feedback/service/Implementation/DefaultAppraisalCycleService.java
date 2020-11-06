@@ -27,6 +27,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     private PersonRepository personRepository;
 
     @Autowired
+    private AppraisalPersonRepository appraisalPersonRepository;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
@@ -51,6 +54,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
         /*Persist appraisal goal from goal*/
         appraisalGoalRepository.saveAll(getAppraisalGoalFromGoal(goalRepository.findAll(), cycle.getId()));
+
+        /*Persist appraisal person from person*/
+        appraisalPersonRepository.saveAll(getAppraisalPersonFromPerson(personRepository.findAll(), cycle.getId()));
 
         List<Person> personList = personRepository.findAllByCu(cycle.getCu());
 
@@ -126,6 +132,27 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             appraisalGoalList.add(appraisalGoal);
         });
         return appraisalGoalList;
+    }
+
+    private List<AppraisalPerson> getAppraisalPersonFromPerson(List<Person> Persons, String cycleId) {
+        List<AppraisalPerson> appraisalPersonList = new ArrayList<>();
+        Persons.stream().forEach(person -> {
+            AppraisalPerson appraisalPerson = new AppraisalPerson();
+            appraisalPerson.setEmpId(person.getEmpId());
+            appraisalPerson.setFirstName(person.getFirstName());
+            appraisalPerson.setLastName(person.getLastName());
+            appraisalPerson.setJoiningDate(person.getJoiningDate());
+            appraisalPerson.setCycleId(cycleId);
+            appraisalPerson.setCu(person.getCu());
+            appraisalPerson.setJob(person.getJob());
+            appraisalPerson.setUnit(person.getUnit());
+            appraisalPerson.setStatus(person.getStatus());
+            appraisalPerson.setEmail(person.getEmail());
+            appraisalPerson.setLastAppraisalDate(person.getLastAppraisalDate());
+            appraisalPerson.setDuration(person.getDuration());
+            appraisalPersonList.add(appraisalPerson);
+        });
+        return appraisalPersonList;
     }
 
     private List<AppraisalRole> getAppraisalRoleFromRole(List<Role> roles, String cycleId) {
