@@ -42,6 +42,17 @@ dependencies {
 	implementation 'com.google.guava:guava:23.0'
 	implementation 'org.json:json:20200518'
 
+	//JWT
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
+	implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+	implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+	// https://mvnrepository.com/artifact/javax.activation/activation
+	compile group: 'javax.activation', name: 'activation', version: '1.1.1'
+	compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
+	compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+
 	compile('org.json:json:20090211')
 	compile('com.opencsv:opencsv:4.0')
 	compileOnly 'org.projectlombok:lombok'
