@@ -52,6 +52,10 @@ dependencies {
 	compile group: 'javax.activation', name: 'activation', version: '1.1.1'
 	compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
 	compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+	//compile group: 'com.google.http-client', name: 'google-http-client', version: '1.22.0'
+	// https://mvnrepository.com/artifact/com.google.api-client/google-api-client
+	compile group: 'com.google.api-client', name: 'google-api-client', version: '1.20.0'
+
 
 	compile('org.json:json:20090211')
 	compile('com.opencsv:opencsv:4.0')
