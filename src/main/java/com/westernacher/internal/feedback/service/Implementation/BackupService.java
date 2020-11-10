@@ -1,6 +1,7 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.westernacher.internal.feedback.controller.PersonController;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.*;
@@ -26,16 +27,30 @@ import java.util.*;
 public class BackupService {
 
     @Autowired
-    private AppraisalRepository appraisalRepository;
-
-    @Autowired
-    private AppraisalCycleRepository cycleRepository;
+    private AppraisalCycleRepository approsalCycleRepository;
 
     @Autowired
     private PersonRepository personRepository;
 
     @Autowired
-    private RatingScaleRepository ratingScaleRepository;
+    private AppraisalPersonRepository appraisalPersonRepository;
+
+    @Autowired
+    private AppraisalRoleRepository appraisalRoleRepository;
+
+    @Autowired
+    private AppraisalGoalRepository appraisalGoalRepository;
+
+    @Autowired
+    private AppraisalReviewRepository appraisalReviewRepository;
+
+    @Autowired
+    private AppraisalReviewGoalRepository appraisalReviewGoalRepository;
+
+    /*@Autowired
+    private AppraisalReviewMaster appraisalReviewMaster;*/
+
+
 
 
 
@@ -57,36 +72,32 @@ public class BackupService {
     @Value("${spring.mail.password}")
     String password;
 
-    /*@Scheduled(cron = "${backup.cron.expression}")
-    public void sendAppraisalDatabase() {
-        List<Person> personList = personRepository.findAll();
-        List<Appraisal> appraisalList = appraisalRepository.findAll();
-        List<AppraisalCycle> cycleList = cycleRepository.findAll();
-        List<GoalDefinition> goalDefinitionList = goalDefinitionRepository.findAll();
-        List<RatingScale> ratingScaleList = ratingScaleRepository.findAll();
+    @Value("${backup.directory}")
+    String directoryName;
+
+    //@Scheduled(cron = "${backup.cron.expression}")
+    public void storeBackUpFiles() {
+        List<Person> persons= personRepository.findAll();
+        List<AppraisalPerson> appraisalPersons = appraisalPersonRepository.findAll();
+
+        File directory = new File(directoryName);
+        if (! directory.exists()){
+            directory.mkdir();
+        }
 
         try {
-            File personFile = File.createTempFile("person", ".json");
-            File appraisalFile = File.createTempFile("appraisal", ".json");
-            File cycleFile = File.createTempFile("cycle", ".json");
-            File goalFile = File.createTempFile("goaldefination", ".json");
-            File ratingScaleFile = File.createTempFile("ratingscale", ".josn");
-
-            ObjectMapper mapper = new ObjectMapper();
-
-            mapper.writeValue(personFile, personList);
-            mapper.writeValue(appraisalFile, appraisalList);
-            mapper.writeValue(cycleFile, cycleList);
-            mapper.writeValue(goalFile, goalDefinitionList);
-            mapper.writeValue(ratingScaleFile, ratingScaleList);
-
-            send(to, personFile, appraisalFile, cycleFile, goalFile, ratingScaleFile);
+            String json = new Gson().toJson(persons);
+            File personFile = new File(directoryName+"person2.json");
+            FileWriter writer = new FileWriter(personFile.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(writer);
+            bw.write(json);
+            bw.close();
         }catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-   *//* @Async
+    /*@Async
     public void send( String to,
                       File personFile, File appraisalFile, File cycleFile) {
         try {
@@ -103,7 +114,7 @@ public class BackupService {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-    }*//*
+    }*/
 
     @Async
     public void send( String to,
@@ -170,7 +181,7 @@ public class BackupService {
         }
     }
 
-    public static void writeDataToCsvUsingStringArray(PrintWriter writer, List<PersonController.PersonResource> persons) {
+    /*public static void writeDataToCsvUsingStringArray(PrintWriter writer, List<PersonController.PersonResource> persons) {
         String[] CSV_HEADER = { "Name", "Id", "Email", "Status" };
         try (
                 CSVWriter csvWriter = new CSVWriter(writer,

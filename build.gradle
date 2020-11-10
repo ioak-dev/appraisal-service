@@ -43,6 +43,7 @@ dependencies {
 	implementation 'org.json:json:20200518'
 
 	compile('org.json:json:20090211')
+	compile('com.google.code.gson:gson:2.8.0')
 	compile('com.opencsv:opencsv:4.0')
 	compileOnly 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

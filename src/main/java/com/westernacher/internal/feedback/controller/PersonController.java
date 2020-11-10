@@ -36,6 +36,12 @@ public class PersonController {
         return repository.findAll();
     }
 
+    @GetMapping("/store/backup")
+    public void storeFile () {
+        backupService.storeBackUpFiles();
+    }
+
+
     @PutMapping
     public Person createAndUpdate (@RequestBody Person person) {
         return service.createAndUpdate(person);
