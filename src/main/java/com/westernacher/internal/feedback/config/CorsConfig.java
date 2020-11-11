@@ -23,7 +23,7 @@ public class CorsConfig implements Filter {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, PATCH");
         response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Tenant, Cache-Control, Pragma, Location");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, IdentityToken, Accept, X-Tenant, Cache-Control, Pragma, Location");
         response.setHeader("Access-Control-Expose-Headers", "Cache-Control, Pragma, Location, Content-Disposition");
 
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
