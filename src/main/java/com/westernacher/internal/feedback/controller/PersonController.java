@@ -35,8 +35,6 @@ public class PersonController {
 
     @GetMapping
     public List<Person> get () {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
         return repository.findAll();
     }
 
@@ -55,9 +53,15 @@ public class PersonController {
         return ResponseEntity.ok(repository.findAllByUnit(unit));
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Person> getPersonByEmail (@PathVariable("email") String email) {
-        return ResponseEntity.ok(repository.findPersonByEmail(email.toLowerCase()));
+    @GetMapping("/email")
+    public ResponseEntity<?> getPersonByEmail () {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
+        if(name == null && !name.isEmpty()) {
+            return ResponseEntity.ok(repository.findPersonByEmail(name.toLowerCase()));
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
