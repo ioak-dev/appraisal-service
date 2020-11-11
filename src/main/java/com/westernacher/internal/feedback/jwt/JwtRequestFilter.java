@@ -26,14 +26,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
-        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+        String authorizationHeader = httpServletRequest.getHeader("IdentityToken");
 
         String token = null;
         String userId = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            userId = jwtUtil.extractUserId(token);
+        if (authorizationHeader != null) {
+            token = authorizationHeader;
+            userId = jwtUtil.extractEmailId(token);
+            //jwtUtil.verifyToken(token);
         }
 
         if (userId != null) {

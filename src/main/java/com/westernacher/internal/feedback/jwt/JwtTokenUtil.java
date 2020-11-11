@@ -1,5 +1,13 @@
 package com.westernacher.internal.feedback.jwt;
 
+import com.auth0.jwk.Jwk;
+import com.auth0.jwk.JwkException;
+import com.auth0.jwk.JwkProvider;
+import com.auth0.jwk.UrlJwkProvider;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.westernacher.internal.feedback.domain.Person;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -35,6 +43,28 @@ public class JwtTokenUtil {
         return claims.get("userId").toString();
     }
 
+    public String extractEmailId(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        Map<String, Claim> claims =jwt.getClaims();
+        return claims.get("preferred_username").asString();
+    }
+
+    public void verifyToken(String token) {
+        try{
+            DecodedJWT jwt = JWT.decode(token);
+
+            if (jwt.getExpiresAt().before(Calendar.getInstance().getTime())) {
+                throw new RuntimeException("Exired token!");
+            }
+            JwkProvider provider = new UrlJwkProvider("http://localhost:4200");
+            Jwk jwk = provider.get(jwt.getKeyId());
+            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
+            algorithm.verify(jwt);
+        }catch(JwkException e) {
+
+        }
+    }
+
     public String extractUser(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("email").toString();
@@ -51,7 +81,10 @@ public class JwtTokenUtil {
     private Claims extractAllClaims(String token) {
         Jws<Claims> claimsJws = null;
         try {
-            claimsJws = Jwts.parser().setSigningKey(getParsedPublicKey().get()).parseClaimsJws(token);
+            //Object bbb = jwtUtil.parseToken(token);
+            DecodedJWT jwt = JWT.decode(token);
+            /*claimsJws = Jwts.parser().parseClaimsJws(token);*/
+            System.out.println("");
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,7 +93,7 @@ public class JwtTokenUtil {
 
     public static Optional<RSAPublicKey> getParsedPublicKey() {
         // public key content...excluding '---PUBLIC KEY---' and '---END PUBLIC KEY---'
-        String PUB_KEY = "secret";
+        String PUB_KEY = "3sKcJSD4cHwTY5jYm5lNEzqk3wON1CaARO5EoWIQt5u-X-ZnW61CiRZpWpfhKwRYU153td5R8p-AJDWT-NcEJ0MHU3KiuIEPmbgJpS7qkyURuHRucDM2lO4L4XfIlvizQrlyJnJcd09uLErZEO9PcvKiDHoois2B4fGj7CsAe5UZgExJvACDlsQSku2JUyDmZUZP2_u_gCuqNJM5o0hW7FKRI3MFoYCsqSEmHnnumuJ2jF0RHDRWQpodhlAR6uKLoiWHqHO3aG7scxYMj5cMzkpe1Kq_Dm5yyHkMCSJ_JaRhwymFfV_SWkqd3n-WVZT0ADLEq0RNi9tqZ43noUnO_w";
 
         // removes white spaces or char 20
         String PUBLIC_KEY = "";
