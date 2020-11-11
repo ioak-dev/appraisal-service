@@ -29,11 +29,12 @@ public class AppraisalReviewGoalController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();
 
-        if ((name != null && !name.isEmpty()) &&
+        /*if ((name != null && !name.isEmpty()) &&
                 (!approsalRoleRepository.findAllByEmployeeId(name).isEmpty() || !approsalRoleRepository.findAllByReviewerId(name).isEmpty())) {
             return ResponseEntity.ok(service.getReviewGoals(appraisalId));
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();*/
+        return ResponseEntity.ok(service.getReviewGoals(appraisalId));
     }
 
     @PutMapping
