@@ -58,7 +58,7 @@ public class PersonController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();
 
-        if(name == null && !name.isEmpty()) {
+        if(name != null && !name.isEmpty()) {
             return ResponseEntity.ok(repository.findPersonByEmail(name.toLowerCase()));
         }
         return ResponseEntity.noContent().build();

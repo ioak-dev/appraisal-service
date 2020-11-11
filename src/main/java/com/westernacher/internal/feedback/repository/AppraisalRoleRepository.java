@@ -14,4 +14,6 @@ public interface AppraisalRoleRepository extends MongoRepository<AppraisalRole, 
     List<AppraisalRole> findByEmployeeIdAndCycleIdAndReviewerType(String employeeId, String cycleId, AppraisalStatusType type);
     List<AppraisalRole> findByEmployeeIdAndCycleId(String employeeId, String cycleId);
     long deleteAllByCycleId(String cycleId);
+    List<AppraisalRole> findAllByEmployeeId(String employeeId);
+    List<AppraisalRole> findAllByReviewerId(String reviewerId);
 }
