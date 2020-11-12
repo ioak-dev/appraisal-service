@@ -46,6 +46,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
                 //.antMatchers("/role/**/**/**/**").permitAll()
+                .antMatchers("/role/upload").permitAll()
+                .antMatchers("/goal/upload").permitAll()
+                .antMatchers("/person/upload").permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
