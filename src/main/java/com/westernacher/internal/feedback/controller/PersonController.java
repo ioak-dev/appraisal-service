@@ -9,6 +9,8 @@ import com.westernacher.internal.feedback.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,9 +53,15 @@ public class PersonController {
         return ResponseEntity.ok(repository.findAllByUnit(unit));
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Person> getPersonByEmail (@PathVariable("email") String email) {
-        return ResponseEntity.ok(repository.findPersonByEmail(email.toLowerCase()));
+    @GetMapping("/email")
+    public ResponseEntity<?> getPersonByEmail () {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
+        if(name != null && !name.isEmpty()) {
+            return ResponseEntity.ok(repository.findPersonByEmail(name.toLowerCase()));
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
