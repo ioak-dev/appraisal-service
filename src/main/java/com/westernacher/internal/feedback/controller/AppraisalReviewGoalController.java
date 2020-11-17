@@ -4,6 +4,7 @@ package com.westernacher.internal.feedback.controller;
 import com.westernacher.internal.feedback.domain.AppraisalReviewGoal;
 import com.westernacher.internal.feedback.domain.AppraisalRole;
 import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
+import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalReviewGoalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +25,21 @@ public class AppraisalReviewGoalController {
     @Autowired
     private AppraisalRoleRepository approsalRoleRepository;
 
+    @Autowired
+    private PersonRepository personRepository;
+
     @GetMapping
     public ResponseEntity<?> getReviewGoals (@RequestParam String appraisalId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
+        String email = authentication.getName();
+        String id = personRepository.findPersonByEmail(email).getId();
 
-        /*if ((name != null && !name.isEmpty()) &&
-                (!approsalRoleRepository.findAllByEmployeeId(name).isEmpty() || !approsalRoleRepository.findAllByReviewerId(name).isEmpty())) {
+        if ((email != null && !email.isEmpty()) &&
+                (!approsalRoleRepository.findAllByEmployeeId(id).isEmpty() || !approsalRoleRepository.findAllByReviewerId(id).isEmpty())) {
             return ResponseEntity.ok(service.getReviewGoals(appraisalId));
         }
-        return ResponseEntity.noContent().build();*/
-        return ResponseEntity.ok(service.getReviewGoals(appraisalId));
+        return ResponseEntity.noContent().build();
+        //return ResponseEntity.ok(service.getReviewGoals(appraisalId));
     }
 
     @PutMapping
