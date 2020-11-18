@@ -113,7 +113,7 @@ public class DefaultMigrationService implements MigrationService {
             status = AppraisalStatusType.Level_4;
         }
 
-        appraisalReview.setStatus(status);
+        appraisalReview.setStatus(status.name());
         response.addAppraisalReview(appraisalReview);
         appraisal.getSectiononeResponse().forEach(group -> {
             group.getResponse().forEach(criteria -> {
@@ -125,11 +125,11 @@ public class DefaultMigrationService implements MigrationService {
                         .isComplete(!appraisal.getStatus().equals(AppraisalStatusType.SELF_APPRAISAL) && !appraisal.getStatus().equals(AppraisalStatusType.SET_GOALS))
                         .build()
                 );
-                populateAppraisalReviewGoals(AppraisalStatusType.Self, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), selfReview);
-                populateAppraisalReviewGoals(AppraisalStatusType.Level_1, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getProjectManagerReviews());
-                populateAppraisalReviewGoals(AppraisalStatusType.Level_2, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getTeamLeadReviews());
-                populateAppraisalReviewGoals(AppraisalStatusType.Level_3, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getPracticeDirectorReviews());
-                populateAppraisalReviewGoals(AppraisalStatusType.Level_4, response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getHrReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Self.name(), response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), selfReview);
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_1.name(), response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getProjectManagerReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_2.name(), response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getTeamLeadReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_3.name(), response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getPracticeDirectorReviews());
+                populateAppraisalReviewGoals(AppraisalStatusType.Level_4.name(), response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getHrReviews());
                 populateGoalSetting(response, appraisal.getUserId(), appraisalGoal, appraisalReview.getId(), criteria.getCustomDescription() == null ? "" : criteria.getCustomDescription());
             });
         });
@@ -174,7 +174,7 @@ public class DefaultMigrationService implements MigrationService {
         populateAppraisalRoles(cycleId, response, appraisal, appraisalReview);
     }
 
-    private void populateAppraisalReviewGoals(AppraisalStatusType appraisalStatusType, MigrationAppraisalResponse response, String employeeId, AppraisalGoal appraisalGoal, String appraisalReviewId, Map<String, ReviewerElements> reviews) {
+    private void populateAppraisalReviewGoals(String appraisalStatusType, MigrationAppraisalResponse response, String employeeId, AppraisalGoal appraisalGoal, String appraisalReviewId, Map<String, ReviewerElements> reviews) {
         for (String reviewerId : reviews.keySet()) {
             ReviewerElements reviewerElements = reviews.get(reviewerId);
             AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
@@ -201,7 +201,7 @@ public class DefaultMigrationService implements MigrationService {
         setGoal.setId(new ObjectId().toString());
         setGoal.setAppraisalId(appraisalReviewId);
         setGoal.setEmployeeId(employeeId);
-        setGoal.setReviewerType(AppraisalStatusType.SET_GOAL);
+        setGoal.setReviewerType(AppraisalStatusType.SET_GOAL.name());
         setGoal.setComment(comment);
         setGoal.setGoalId(appraisalGoal.getId());
         response.addAppraisalReviewGoal(setGoal);
@@ -222,7 +222,7 @@ public class DefaultMigrationService implements MigrationService {
         appraisalReviewGoal.setAppraisalId(appraisalReviewId);
         appraisalReviewGoal.setEmployeeId(employeeId);
         appraisalReviewGoal.setReviewerId(employeeId);
-        appraisalReviewGoal.setReviewerType(appraisalStatusType);
+        appraisalReviewGoal.setReviewerType(appraisalStatusType.name());
         appraisalReviewGoal.setComment(comment);
         // appraisalReviewGoal.setRating();
         appraisalReviewGoal.setGoalId(appraisalGoal.getId());
@@ -260,7 +260,7 @@ public class DefaultMigrationService implements MigrationService {
         appraisalRole.setCycleId(cycleId);
         appraisalRole.setEmployeeId(employeeId);
         appraisalRole.setReviewerId(reviewerId);
-        appraisalRole.setReviewerType(reviewerType);
+        appraisalRole.setReviewerType(reviewerType.name());
         return appraisalRole;
     }
 
@@ -304,7 +304,7 @@ public class DefaultMigrationService implements MigrationService {
         appraisalGoal.setGroup(group);
         appraisalGoal.setCriteria(criteria);
         appraisalGoal.setDescription("lorem ipsum dolor sit");
-        appraisalGoal.setWeightage(0);
+        appraisalGoal.setWeightage(Float.valueOf(0));
         appraisalGoal.setCycleId(cycleId);
         appraisalGoal.setCu("WIN");
         appraisalGoal.setOrder(goalOrder);

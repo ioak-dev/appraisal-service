@@ -23,5 +23,5 @@ public class AppraisalReview {
     private List<SubjectiveResponse> sectionthreeResponse;
     private String sectionfourResponse;
     private String sectionfiveResponse;
-    private AppraisalStatusType status;
+    private String status;
 }

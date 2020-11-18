@@ -1,5 +1,6 @@
 package com.westernacher.internal.feedback.domain;
 
+import com.bol.secure.Encrypted;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,10 +19,20 @@ public class Goal {
     @Id
     private String id;
     private String job;
-    private String group;
-    private String criteria;
-    private float weightage;
-    private String description;
-    private int order;
     private String cu;
+
+    @Encrypted
+    private String group;
+
+    @Encrypted
+    private String criteria;
+
+    @Encrypted
+    private float weightage;
+
+    @Encrypted
+    private String description;
+
+    @Encrypted
+    private int order;
 }

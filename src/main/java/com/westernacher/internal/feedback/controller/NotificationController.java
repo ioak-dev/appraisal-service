@@ -51,7 +51,7 @@ public class NotificationController {
 
         for (AppraisalReview appraisalReview  : appraisalReviews) {
             List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(appraisalReview.getEmployeeId(),
-                    appraisalReview.getCycleId(),appraisalReview.getStatus());
+                    appraisalReview.getCycleId(),AppraisalStatusType.valueOf(appraisalReview.getStatus()));
             appraisalRoleList.stream().forEach(appraisalRole -> {
                 if (!appraisalRole.isComplete()) {
                     appraisalRoles.add(appraisalRole);
@@ -73,7 +73,7 @@ public class NotificationController {
         List<AppraisalRole> appraisalRoles = new ArrayList<>();
 
         appraisalRoles.addAll(appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(appraisalReview.getEmployeeId(),
-                cycleId, appraisalReview.getStatus()));
+                cycleId, AppraisalStatusType.valueOf(appraisalReview.getStatus())));
 
         appraisalReviewGoalService.sendMailAfterSubmit(appraisalRoles, personStore);
     }

@@ -25,6 +25,6 @@ public class MigrationAppraisalPerson {
     private Date lastAppraisalDate;
     private int duration;
     private List<Role> roles;
-    private PersonStatus status;
+    private String status;
 
 }

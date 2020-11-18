@@ -1,8 +1,10 @@
 package com.westernacher.internal.feedback.domain;
 
+import com.bol.secure.Encrypted;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 import java.util.List;
@@ -13,19 +15,33 @@ public class Person {
 
     @Id
     private String id;
+
+    @Encrypted
     private String empId;
+
+    @Encrypted
     private String firstName;
+
+    @Encrypted
     private String lastName;
+
+    @Encrypted
     private Date joiningDate;
-    private String cu;
+
+    @Encrypted
     private String job;
-    private String unit;
-    private PersonStatus status;
-    private String email;
+
+    @Encrypted
+    private String status;
+
+    @Encrypted
     private Date lastAppraisalDate;
-    private int duration;
 
+    @Encrypted
+    private Integer duration;
 
-
+    private String email;
+    private String cu;
+    private String unit;
 
 }

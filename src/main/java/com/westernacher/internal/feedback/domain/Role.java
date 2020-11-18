@@ -10,6 +10,6 @@ public class Role {
     @Id
     private String id;
     private String reviewerId;
-    private AppraisalStatusType reviewerType;
+    private String reviewerType;
     private String employeeId;
 }

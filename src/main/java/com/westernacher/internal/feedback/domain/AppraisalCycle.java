@@ -1,5 +1,6 @@
 package com.westernacher.internal.feedback.domain;
 
+import com.bol.secure.Encrypted;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,15 +15,33 @@ public class AppraisalCycle {
 
     @Id
     private String id;
+
+    @Encrypted
     private String name;
+
+    @Encrypted
     private AppraisalCycleStatusType status;
     private String cu;
+
+    @Encrypted
     private Map<AppraisalStatusType, Date> deadline;
+
+    @Encrypted
     private Map<AppraisalStatusType, String> workflowMap;
+
+    @Encrypted
     private Map<String, List<String>> visibilityMap;
-    private boolean showReviewToSelf;
-    private int minCommentLength;
+
+    @Encrypted
+    private Boolean showReviewToSelf;
+
+    @Encrypted
+    private Integer minCommentLength;
+
+    @Encrypted
     private Date start;
+
+    @Encrypted
     private Date end;
 
 }

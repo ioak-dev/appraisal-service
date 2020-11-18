@@ -1,5 +1,6 @@
 package com.westernacher.internal.feedback.domain;
 
+import com.bol.secure.Encrypted;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,13 @@ public class AppraisalReviewMaster {
     private String employeeId;
     private String appraisalId;
     private String reviewerId;
+
+    @Encrypted
     private String comment;
+
+    @Encrypted
     private String rating;
+
+    @Encrypted
     private boolean isComplete;
 }

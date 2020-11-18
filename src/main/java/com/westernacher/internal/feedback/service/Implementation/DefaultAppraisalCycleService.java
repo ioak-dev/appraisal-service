@@ -173,7 +173,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         employeeList.stream().forEach(employee-> {
             AppraisalRole appraisalRole = new AppraisalRole();
             appraisalRole.setReviewerId(employee);
-            appraisalRole.setReviewerType(AppraisalStatusType.Self);
+            appraisalRole.setReviewerType(AppraisalStatusType.Self.name());
             appraisalRole.setEmployeeId(employee);
             appraisalRole.setCycleId(cycleId);
             appraisalRole.setComplete(false);
@@ -209,14 +209,14 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         AppraisalReview appraisalReview = new AppraisalReview();
         appraisalReview.setCycleId(cycleId);
         appraisalReview.setEmployeeId(person.getId());
-        appraisalReview.setStatus(AppraisalStatusType.Self);
+        appraisalReview.setStatus(AppraisalStatusType.Self.name());
         AppraisalReview savedReview = appraisalReviewRepository.save(appraisalReview);
 
         List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
         List<AppraisalReviewMaster> appraisalReviewMasters = new ArrayList<>();
 
         roleMap.get(person.getId()).forEach(role -> {
-            if (role.getReviewerType() == AppraisalStatusType.Master) {
+            if (role.getReviewerType() == AppraisalStatusType.Master.name()) {
                 AppraisalReviewMaster appraisalReviewMaster = new AppraisalReviewMaster();
                 appraisalReviewMaster.setAppraisalId(savedReview.getId());
                 appraisalReviewMaster.setEmployeeId(person.getId());
@@ -271,7 +271,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
             appraisalReviewGoal.setAppraisalId(appraisalReview.getId());
             appraisalReviewGoal.setEmployeeId(person.getId());
-            appraisalReviewGoal.setReviewerType(appraisalStatusType);
+            appraisalReviewGoal.setReviewerType(appraisalStatusType.name());
             appraisalReviewGoal.setGoalId(goalDefinition.getId());
             appraisalReviewGoal.setComment("");
             appraisalReviewGoalList.add(appraisalReviewGoal);
@@ -280,7 +280,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
             appraisalReviewGoal.setAppraisalId(appraisalReview.getId());
             appraisalReviewGoal.setEmployeeId(person.getId());
-            appraisalReviewGoal.setReviewerType(appraisalStatusType);
+            appraisalReviewGoal.setReviewerType(appraisalStatusType.name());
             appraisalReviewGoal.setGoalId(goalDefinition.getId());
             appraisalReviewGoal.setComment("");
             appraisalReviewGoalList.add(appraisalReviewGoal);

@@ -2,6 +2,7 @@
 package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalRole;
+import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,8 @@ public class AppraisalRoleController {
 
         Comparator<AppraisalRole> appraisalRoleComparator = Comparator
                 .comparing(AppraisalRole::getEmployeeId)
-                .thenComparing(AppraisalRole::getReviewerType)
+                .thenComparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
                 .thenComparing(AppraisalRole::isComplete);
-
         List<AppraisalRole> sortedEmployees = appraisalRoleList.stream()
                 .sorted(appraisalRoleComparator)
                 .collect(Collectors.toList());

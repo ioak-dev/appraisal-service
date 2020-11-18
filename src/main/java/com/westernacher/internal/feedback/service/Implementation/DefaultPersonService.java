@@ -63,7 +63,7 @@ public class DefaultPersonService implements PersonService {
                     dbPerson.setCu(line[4].trim());
                     dbPerson.setJob(line[5].trim());
                     dbPerson.setUnit(line[6].trim());
-                    dbPerson.setStatus(PersonStatus.valueOf(line[7].trim()));
+                    dbPerson.setStatus(line[7].trim());
                     try{
                         dbPerson.setLastAppraisalDate(format.parse(line[9].trim()));
                     }catch(ParseException e){}
@@ -84,7 +84,7 @@ public class DefaultPersonService implements PersonService {
                     person.setCu(line[4].trim());
                     person.setJob(line[5].trim());
                     person.setUnit(line[6].trim());
-                    person.setStatus(PersonStatus.valueOf(line[7].trim()));
+                    person.setStatus(line[7].trim());
                     person.setEmail(line[8].trim().toLowerCase());
                     try{
                         person.setLastAppraisalDate(format.parse(line[9].trim()));

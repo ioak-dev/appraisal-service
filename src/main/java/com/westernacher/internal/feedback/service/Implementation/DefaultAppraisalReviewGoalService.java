@@ -44,7 +44,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
     public List<AppraisalReviewGoal> getReviewGoals(String appraisalId) {
         List<AppraisalReviewGoal> appraisalReviewGoals = repository.findAllByAppraisalId(appraisalId);
         appraisalReviewGoals.sort(
-                Comparator.comparing((AppraisalReviewGoal ARG) -> ARG.getReviewerType().ordinal())
+                Comparator.comparing((AppraisalReviewGoal ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
         );
         return appraisalReviewGoals;
     }
@@ -126,7 +126,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             /*Setting appraisal role totalscore and iscomplete*/
             AppraisalReview appraisalReview = appraisalReviewRepository.findById(appraisalReviewGoal.getAppraisalId()).orElse(null);
             AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
-                    employeeId, appraisalReview.getCycleId(), appraisalReview.getStatus());
+                    employeeId, appraisalReview.getCycleId(), AppraisalStatusType.valueOf(appraisalReview.getStatus()));
 
             double primaryNormalizedScore = primaryScore / primaryWeightage;
             if (primaryNormalizedScore != 0 && appraisalRole != null) {
@@ -144,7 +144,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
 
             appraisalRole.setComplete(true);
             appraisalRoles.add(appraisalRoleRepository.save(appraisalRole));
-            type = appraisalReview.getStatus();
+            type = AppraisalStatusType.valueOf(appraisalReview.getStatus());
             cycleId = appraisalReview.getCycleId();
             reviewerId = appraisalReviewGoal.getReviewerId();
         }
@@ -165,72 +165,72 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
 
         List<AppraisalStatusType> statusTypes = new ArrayList<>();
         appraisalRoleList.stream().forEach(appraisalRole -> {
-            statusTypes.add(appraisalRole.getReviewerType());
+            statusTypes.add(AppraisalStatusType.valueOf(appraisalRole.getReviewerType()));
         });
 
         /*Changing appraisal review status to next role*/
         List<AppraisalRole> appraisalRoleListForMail= new ArrayList<>();
 
         if (appraisalReview != null) {
-            if (appraisalReview.getStatus().equals(AppraisalStatusType.Self) && changeStatus == true) {
+            if (AppraisalStatusType.valueOf(appraisalReview.getStatus()).equals(AppraisalStatusType.Self) && changeStatus == true) {
                 if (statusTypes.contains(AppraisalStatusType.Level_1)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_1);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_1.name());
                 } else if(statusTypes.contains(AppraisalStatusType.Level_2)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_2);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_2.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Level_3)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_3);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_3.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Level_4)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_4);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_4.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Master)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Master);
+                    appraisalReview.setStatus(AppraisalStatusType.Master.name());
                 }else {
-                    appraisalReview.setStatus(AppraisalStatusType.Complete);
+                    appraisalReview.setStatus(AppraisalStatusType.Complete.name());
                 }
 
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_1)&& changeStatus == true) {
+            } else if (AppraisalStatusType.valueOf(appraisalReview.getStatus()).equals(AppraisalStatusType.Level_1)&& changeStatus == true) {
 
                 if(statusTypes.contains(AppraisalStatusType.Level_2)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_2);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_2.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Level_3)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_3);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_3.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Level_4)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_4);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_4.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Master)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Master);
+                    appraisalReview.setStatus(AppraisalStatusType.Master.name());
                 }else {
-                    appraisalReview.setStatus(AppraisalStatusType.Complete);
+                    appraisalReview.setStatus(AppraisalStatusType.Complete.name());
                 }
 
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_2)&& changeStatus == true) {
+            } else if (AppraisalStatusType.valueOf(appraisalReview.getStatus()).equals(AppraisalStatusType.Level_2)&& changeStatus == true) {
                 if(statusTypes.contains(AppraisalStatusType.Level_3)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_3);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_3.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Level_4)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_4);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_4.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Master)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Master);
+                    appraisalReview.setStatus(AppraisalStatusType.Master.name());
                 }else {
-                    appraisalReview.setStatus(AppraisalStatusType.Complete);
+                    appraisalReview.setStatus(AppraisalStatusType.Complete.name());
                 }
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_3)&& changeStatus == true) {
+            } else if (AppraisalStatusType.valueOf(appraisalReview.getStatus()).equals(AppraisalStatusType.Level_3)&& changeStatus == true) {
                 if(statusTypes.contains(AppraisalStatusType.Level_4)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Level_4);
+                    appraisalReview.setStatus(AppraisalStatusType.Level_4.name());
                 }else if(statusTypes.contains(AppraisalStatusType.Master)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Master);
+                    appraisalReview.setStatus(AppraisalStatusType.Master.name());
                 }else {
-                    appraisalReview.setStatus(AppraisalStatusType.Complete);
+                    appraisalReview.setStatus(AppraisalStatusType.Complete.name());
                 }
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Level_4)&& changeStatus == true) {
+            } else if (AppraisalStatusType.valueOf(appraisalReview.getStatus()).equals(AppraisalStatusType.Level_4)&& changeStatus == true) {
                 if(statusTypes.contains(AppraisalStatusType.Master)) {
-                    appraisalReview.setStatus(AppraisalStatusType.Master);
+                    appraisalReview.setStatus(AppraisalStatusType.Master.name());
                 }else {
-                    appraisalReview.setStatus(AppraisalStatusType.Complete);
+                    appraisalReview.setStatus(AppraisalStatusType.Complete.name());
                 }
-            } else if (appraisalReview.getStatus().equals(AppraisalStatusType.Master)&& changeStatus == true) {
-                appraisalReview.setStatus(AppraisalStatusType.Complete);
+            } else if (AppraisalStatusType.valueOf(appraisalReview.getStatus()).equals(AppraisalStatusType.Master)&& changeStatus == true) {
+                appraisalReview.setStatus(AppraisalStatusType.Complete.name());
             }
             appraisalReviewRepository.save(appraisalReview);
             appraisalRoleListForMail = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(employeeId,
-                    cycleId, appraisalReview.getStatus());
+                    cycleId, AppraisalStatusType.valueOf(appraisalReview.getStatus()));
         }
         sendMailAfterSubmit(appraisalRoleListForMail, personStore);
         return repository.saveAll(newReviewGoals);
@@ -251,7 +251,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             Map<String, String> body= new HashMap<>();
             body.put("reviewer", toPerson.getFirstName()+" "+toPerson.getLastName());
             body.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());
-            body.put("reviewerType", appraisalRole.getReviewerType().name());
+            body.put("reviewerType", appraisalRole.getReviewerType());
 
             Map<String, String> subject= new HashMap<>();
             subject.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());

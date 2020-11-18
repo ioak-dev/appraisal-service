@@ -145,7 +145,7 @@ public class MigrationController {
                     AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
                     appraisalReviewGoal.setEmployeeId(sourceSetGoalsMap.get(p).getEmployeeId());
                     appraisalReviewGoal.setAppraisalId(appraisalId);
-                    appraisalReviewGoal.setReviewerType(AppraisalStatusType.REVIEW_GOAL);
+                    appraisalReviewGoal.setReviewerType(AppraisalStatusType.REVIEW_GOAL.name());
                     appraisalReviewGoal.setGoalId(goalId);
                     appraisalReviewGoal.setComment(sourceSetGoalsMap.get(p).getComment());
                     appraisalReviewGoal.setRating(sourceSetGoalsMap.get(p).getRating());

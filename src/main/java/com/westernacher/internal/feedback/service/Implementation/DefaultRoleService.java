@@ -72,7 +72,7 @@ public class DefaultRoleService implements RoleService {
                 if (db == null) {
                     Role role = new Role();
                     role.setReviewerId(personMap.get(line[0].trim().toLowerCase()));
-                    role.setReviewerType(AppraisalStatusType.valueOf(line[1].trim()));
+                    role.setReviewerType(line[1].trim());
                     role.setEmployeeId(personMap.get(line[2].trim().toLowerCase()));
                     roles.add(repository.save(role));
                 }
