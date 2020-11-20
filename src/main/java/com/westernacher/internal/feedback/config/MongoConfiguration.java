@@ -42,20 +42,20 @@ public class MongoConfiguration {
     }
 
 
-    @Bean
-    public CryptVault cryptVault() {
-        return new CryptVault()
-//                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(0, Base64.getDecoder().decode("o0ujVbQbFv21CYEJKMM76ZNuxk7fjekayv/Pfa6480s="))
+//    @Bean
+//    public CryptVault cryptVault() {
+//        return new CryptVault()
+////                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(0, Base64.getDecoder().decode("o0ujVbQbFv21CYEJKMM76ZNuxk7fjekayv/Pfa6480s="))
+////                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(1, Base64.getDecoder().decode("fkqjK03nu3qtMzXaA0nH9axYDMWlTZtGOiv94CoBt24="))
+//                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(0, Base64.getDecoder().decode("GAPWed5b7q9hLIjx/fvEpO9aBzrhSoSAFHIOzINZA0Q="))
 //                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(1, Base64.getDecoder().decode("fkqjK03nu3qtMzXaA0nH9axYDMWlTZtGOiv94CoBt24="))
-                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(0, Base64.getDecoder().decode("GAPWed5b7q9hLIjx/fvEpO9aBzrhSoSAFHIOzINZA0Q="))
-                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(1, Base64.getDecoder().decode("fkqjK03nu3qtMzXaA0nH9axYDMWlTZtGOiv94CoBt24="))
-                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(2, Base64.getDecoder().decode("/lWVfmhRlNSiiPsfbHI2QzF4TNLvKW2TjMgKw6tXs7Q="))
-                // can be omitted if it's the highest version
-                .withDefaultKeyVersion(2);
-    }
-
-    @Bean
-    public CachedEncryptionEventListener encryptionEventListener(CryptVault cryptVault) {
-        return new CachedEncryptionEventListener(cryptVault);
-    }
+//                .with256BitAesCbcPkcs5PaddingAnd128BitSaltKey(2, Base64.getDecoder().decode("/lWVfmhRlNSiiPsfbHI2QzF4TNLvKW2TjMgKw6tXs7Q="))
+//                // can be omitted if it's the highest version
+//                .withDefaultKeyVersion(2);
+//    }
+//
+//    @Bean
+//    public CachedEncryptionEventListener encryptionEventListener(CryptVault cryptVault) {
+//        return new CachedEncryptionEventListener(cryptVault);
+//    }
 }

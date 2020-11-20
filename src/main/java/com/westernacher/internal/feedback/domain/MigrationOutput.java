@@ -18,5 +18,6 @@ public class MigrationOutput {
     List<AppraisalGoal> appraisalGoals;
     List<AppraisalRole> appraisalRoles;
     List<AppraisalReviewGoal> appraisalReviewGoals;
+    List<AppraisalReviewMaster> appraisalReviewMasters;
     List<Person> persons;
 }

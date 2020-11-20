@@ -32,6 +32,9 @@ public class DefaultMigrationService implements MigrationService {
     private AppraisalReviewGoalRepository appraisalReviewGoalRepository;
 
     @Autowired
+    private AppraisalReviewMasterRepository appraisalReviewMasterRepository;
+
+    @Autowired
     private PersonRepository personRepository;
 
     @Override
@@ -57,6 +60,10 @@ public class DefaultMigrationService implements MigrationService {
 
     @Override
     public void migrateToNewDb(MigrationOutput output) {
+        if (output.getAppraisalReviewMasters() != null && !output.getAppraisalReviewMasters().isEmpty()) {
+            appraisalReviewMasterRepository.saveAll(output.getAppraisalReviewMasters());
+        }
+
         if (output.getAppraisalReviews() != null && !output.getAppraisalReviews().isEmpty()) {
             appraisalReviewRepository.saveAll(output.getAppraisalReviews());
         }
@@ -266,6 +273,7 @@ public class DefaultMigrationService implements MigrationService {
 
     private AppraisalReviewMaster getAppraisalReviewMaster(String cycleId, String employeeId, String reviewerId, String appraisalId) {
         AppraisalReviewMaster appraisalReviewMaster = new AppraisalReviewMaster();
+        appraisalReviewMaster.setId(new ObjectId().toString());
         appraisalReviewMaster.setAppraisalId(appraisalId);
         appraisalReviewMaster.setComment("");
         appraisalReviewMaster.setComplete(false);
