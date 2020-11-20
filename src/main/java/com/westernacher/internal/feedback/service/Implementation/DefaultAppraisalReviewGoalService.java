@@ -256,42 +256,42 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             Map<String, String> subject= new HashMap<>();
             subject.put("employee", fromPerson.getFirstName()+" "+fromPerson.getLastName());
 
-            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Self)) {
+            if (toPerson != null && AppraisalStatusType.valueOf(appraisalRole.getReviewerType()).equals(AppraisalStatusType.Self)) {
                 body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Self)));
                 body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Self));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-self-body.vm", body,
                         "level-self-subject.vm", subject);
             }
 
-            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_1)) {
+            if (toPerson != null && AppraisalStatusType.valueOf(appraisalRole.getReviewerType()).equals(AppraisalStatusType.Level_1)) {
                 body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_1)));
                 body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Level_1));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-one-body.vm", body,
                         "level-one-subject.vm", subject);
             }
 
-            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_2)) {
+            if (toPerson != null && AppraisalStatusType.valueOf(appraisalRole.getReviewerType()).equals(AppraisalStatusType.Level_2)) {
                 body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_2)));
                 body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Level_2));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-two-body.vm", body,
                         "level-two-subject.vm", subject);
             }
 
-            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_3)) {
+            if (toPerson != null && AppraisalStatusType.valueOf(appraisalRole.getReviewerType()).equals(AppraisalStatusType.Level_3)) {
                 body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_3)));
                 body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Level_3));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-three-body.vm", body,
                         "level-three-subject.vm", subject);
             }
 
-            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Level_4)) {
+            if (toPerson != null && AppraisalStatusType.valueOf(appraisalRole.getReviewerType()).equals(AppraisalStatusType.Level_4)) {
                 body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Level_4)));
                 body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Level_4));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "level-four-body.vm", body,
                         "level-four-subject.vm", subject);
             }
 
-            if (toPerson != null && appraisalRole.getReviewerType().equals(AppraisalStatusType.Master)) {
+            if (toPerson != null && AppraisalStatusType.valueOf(appraisalRole.getReviewerType()).equals(AppraisalStatusType.Master)) {
                 body.put("deadline", simpleDateFormat.format(deadline.get(AppraisalStatusType.Master)));
                 body.put("reviewer", appraisalCycle.getWorkflowMap().get(AppraisalStatusType.Master));
                 boolean isSuccess = mailUtil.send(toPerson.getEmail(), "master-body.vm", body,
