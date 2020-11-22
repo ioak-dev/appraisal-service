@@ -19,29 +19,21 @@ public class AppraisalCycle {
     @Encrypted
     private String name;
 
-    @Encrypted
     private AppraisalCycleStatusType status;
     private String cu;
 
-    @Encrypted
     private Map<AppraisalStatusType, Date> deadline;
 
-    @Encrypted
     private Map<AppraisalStatusType, String> workflowMap;
 
-    @Encrypted
     private Map<String, List<String>> visibilityMap;
 
-    @Encrypted
     private Boolean showReviewToSelf;
 
-    @Encrypted
     private Integer minCommentLength;
 
-    @Encrypted
     private Date start;
 
-    @Encrypted
     private Date end;
 
 }
