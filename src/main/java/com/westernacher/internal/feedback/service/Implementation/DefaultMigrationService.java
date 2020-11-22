@@ -311,7 +311,7 @@ public class DefaultMigrationService implements MigrationService {
         appraisalGoal.setId(new ObjectId().toString());
         appraisalGoal.setGroup(group);
         appraisalGoal.setCriteria(criteria);
-        appraisalGoal.setDescription("lorem ipsum dolor sit");
+        appraisalGoal.setDescription(" ");
         appraisalGoal.setWeightage(Float.valueOf(0));
         appraisalGoal.setCycleId(cycleId);
         appraisalGoal.setCu("WIN");
