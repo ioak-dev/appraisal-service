@@ -7,10 +7,14 @@ import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
 import com.westernacher.internal.feedback.repository.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalReviewGoalService;
 import com.westernacher.internal.feedback.util.MailUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @RestController
@@ -37,6 +41,28 @@ public class NotificationController {
     public void send(@PathVariable String to) {
         mailUtil.send(to, "test-body.vm", new HashMap<>(),
                 "test-subject.vm", new HashMap<>());
+    }
+
+    @PostMapping("/send")
+    public void sendContactSupport(@RequestBody ContactResource resource) {
+        Map<String, String> body= new HashMap<>();
+        body.put("body", resource.getBody());
+
+        Map<String, String> subject= new HashMap<>();
+        subject.put("subject", resource.getSubject());
+
+        mailUtil.send(resource.getTo(), "contact-body.vm", body,
+                "contact-subject.vm", subject);
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ContactResource {
+        private String body;
+        private String signature;
+        private String subject;
+        private String to;
     }
 
     @PostMapping("/send/all/{cycleId}")
