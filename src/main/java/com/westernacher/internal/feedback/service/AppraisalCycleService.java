@@ -9,4 +9,5 @@ public interface AppraisalCycleService {
 
     AppraisalCycleResource.CycleDeleteResource delete(String id);
 
+    void copyPreviousAppraisalGoals(String sourceCycleId, String destinationCycleId);
 }

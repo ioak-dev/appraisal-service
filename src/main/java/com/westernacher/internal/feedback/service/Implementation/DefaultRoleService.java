@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DefaultRoleService implements RoleService {
@@ -53,6 +51,14 @@ public class DefaultRoleService implements RoleService {
         updateAll(getRoles(csvService.readCSVRows(file)));
     }
 
+    @Override
+    public void resetAndUploadCsvFile(MultipartFile file) {
+        List<Role> rolesToAdd = getRoles(csvService.readCSVRows(file));
+        Set<String> employeeIds = rolesToAdd.stream().map(item -> item.getEmployeeId()).collect(Collectors.toSet());
+        repository.deleteByEmployeeIdIn(employeeIds);
+        updateAll(rolesToAdd);
+    }
+
     private List<Role> getRoles(List<String[]> rows) {
 
         Map<String, String> personMap = new HashMap<>();
@@ -76,7 +82,7 @@ public class DefaultRoleService implements RoleService {
                     role.setEmployeeId(personMap.get(line[2].trim().toLowerCase()));
                     roles.add(repository.save(role));
                 }
-            }else if (line[3].trim().toLowerCase().equals("remove")) {
+            } else if (line[3].trim().toLowerCase().equals("remove")) {
                 repository.deleteByEmployeeIdAndReviewerIdAndReviewerType(personMap.get(line[2].trim().toLowerCase()),
                         personMap.get(line[0].trim().toLowerCase()), AppraisalStatusType.valueOf(line[1].trim()));
             }

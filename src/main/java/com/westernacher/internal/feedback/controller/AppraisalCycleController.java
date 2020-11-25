@@ -16,6 +16,7 @@ public class AppraisalCycleController {
 
     @Autowired
     private AppraisalCycleRepository repository;
+
     @Autowired
     private AppraisalCycleService service;
 
@@ -30,8 +31,14 @@ public class AppraisalCycleController {
     }
 
     @PostMapping
-    public AppraisalCycle create (@Valid @RequestBody AppraisalCycle appraisalCycle) {
-        return service.create(appraisalCycle);
+    public AppraisalCycle create (@Valid @RequestBody AppraisalCycle appraisalCycle, @RequestParam(required = false) String sourceCycleId) {
+        AppraisalCycle cycle = service.create(appraisalCycle);
+
+        if (sourceCycleId != null) {
+            service.copyPreviousAppraisalGoals(sourceCycleId, cycle.getId());
+        }
+
+        return cycle;
     }
 
     @DeleteMapping("/{id}")
@@ -39,6 +46,11 @@ public class AppraisalCycleController {
         return service.delete(id);
     }
 
+    @PostMapping("/copygoals/{sourceCycleId}/{destinationCycleId}")
+    public void copyPreviousAppraisalGoals(@PathVariable String sourceCycleId,
+                                           @PathVariable String destinationCycleId) {
+        service.copyPreviousAppraisalGoals(sourceCycleId, destinationCycleId);
+    }
 }
 
 

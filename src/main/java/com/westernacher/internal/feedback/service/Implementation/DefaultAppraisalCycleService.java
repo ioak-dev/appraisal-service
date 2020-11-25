@@ -9,9 +9,12 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,6 +40,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
     @Autowired
     private AppraisalReviewRepository appraisalReviewRepository;
+
+    @Autowired
+    private AppraisalReviewGoalRepository appraisalReviewGoalRepository;
 
     @Autowired
     private AppraisalGoalRepository appraisalGoalRepository;
@@ -325,6 +331,111 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             }
         }
         return countryUnitMap;
+    }
+
+    @Override
+    public void copyPreviousAppraisalGoals(String sourceCycleId, String destinationCycleId) {
+
+        log.info(sourceCycleId + " to " + destinationCycleId);
+        Map<String, Person> personMap = new HashMap<>();
+        personRepository.findAll().forEach(item -> {
+            personMap.put(item.getId(), item);
+        });
+
+        Map<String, String> sourceGoalReferenceMap = new HashMap();
+        appraisalGoalRepository.findAllByCycleId(sourceCycleId).stream().forEach(appraisalGoal -> {
+            if (appraisalGoal.getJob() != null && !appraisalGoal.getJob().isEmpty()) {
+                sourceGoalReferenceMap.put(appraisalGoal.getId(), "JOB::"
+                        + textToIdentifier(appraisalGoal.getJob())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()));
+            } else if (appraisalGoal.getCu() != null && !appraisalGoal.getCu().isEmpty()) {
+                sourceGoalReferenceMap.put(appraisalGoal.getId(), "CU::"
+                        + textToIdentifier(appraisalGoal.getCu().toLowerCase())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()));
+            }
+        });
+
+        List<String> sourceAppraisalIdList = new ArrayList();
+        List<AppraisalReview> sourceAppraisalList = appraisalReviewRepository.findAllByCycleId(sourceCycleId);
+        sourceAppraisalList.stream().forEach(appraisalReview -> {
+            sourceAppraisalIdList.add(appraisalReview.getId());
+        });
+
+        List<AppraisalReviewGoal> appraisalReviewGoalLists = appraisalReviewGoalRepository.findAllByAppraisalIdInAndReviewerType(sourceAppraisalIdList, AppraisalStatusType.REVIEW_GOAL);
+        Map<String, AppraisalReviewGoal> sourceSetGoalsMap = new HashMap<>();
+        appraisalReviewGoalLists.stream().forEach(appraisalReviewGoal -> {
+            sourceSetGoalsMap.put(appraisalReviewGoal.getEmployeeId()+"::"+sourceGoalReferenceMap.get(appraisalReviewGoal.getGoalId()), appraisalReviewGoal);
+        });
+
+        Map<String, String> destGoalReferenceMap = new HashMap();
+        List<AppraisalGoal> appraisalGoalListDest = appraisalGoalRepository.findAllByCycleId(destinationCycleId);
+        appraisalGoalListDest.stream().forEach(appraisalGoal -> {
+            if (appraisalGoal.getJob() != null && !appraisalGoal.getJob().isEmpty()) {
+                destGoalReferenceMap.put("JOB::"
+                        + textToIdentifier(appraisalGoal.getJob())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()), appraisalGoal.getId());
+            } else if (appraisalGoal.getCu() != null && !appraisalGoal.getCu().isEmpty()) {
+                destGoalReferenceMap.put("CU::"
+                        + textToIdentifier(appraisalGoal.getCu().toLowerCase())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getGroup())
+                        + "::"
+                        + textToIdentifier(appraisalGoal.getCriteria()), appraisalGoal.getId());
+            }
+        });
+
+        Map<String, String> destEmployeeIdToAppraisalIdMap = new HashMap<>();
+        List<AppraisalReview> destAppraisalList = appraisalReviewRepository.findAllByCycleId(destinationCycleId);
+        destAppraisalList.stream().forEach(appraisalReview -> {
+            destEmployeeIdToAppraisalIdMap.put(appraisalReview.getEmployeeId(), appraisalReview.getId());
+        });
+
+        List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
+
+        sourceSetGoalsMap.keySet().stream().forEach(p -> {
+            String[] splitsValue = p.split("::");
+            String employeeId = splitsValue[0];
+            if (personMap.containsKey(employeeId)) {
+                String goalKey = splitsValue[1] + "::"
+                        + textToIdentifier(splitsValue[1].equals("JOB") ? personMap.get(employeeId).getJob() : personMap.get(employeeId).getCu())
+                        + "::" + splitsValue[3] + "::" + splitsValue[4];
+                if (destGoalReferenceMap.containsKey(goalKey) && destEmployeeIdToAppraisalIdMap.containsKey(employeeId)) {
+                    String goalId = destGoalReferenceMap.get(goalKey);
+                    String appraisalId = destEmployeeIdToAppraisalIdMap.get(employeeId);
+                    AppraisalReviewGoal appraisalReviewGoal = new AppraisalReviewGoal();
+                    appraisalReviewGoal.setEmployeeId(sourceSetGoalsMap.get(p).getEmployeeId());
+                    appraisalReviewGoal.setAppraisalId(appraisalId);
+                    appraisalReviewGoal.setReviewerType(AppraisalStatusType.SET_GOAL.name());
+                    appraisalReviewGoal.setGoalId(goalId);
+                    appraisalReviewGoal.setComment(sourceSetGoalsMap.get(p).getComment());
+                    appraisalReviewGoal.setRating(sourceSetGoalsMap.get(p).getRating());
+                    appraisalReviewGoal.setComplete(sourceSetGoalsMap.get(p).isComplete());
+                    appraisalReviewGoal.setScore(sourceSetGoalsMap.get(p).getScore());
+                    appraisalReviewGoalList.add(appraisalReviewGoal);
+                }
+            }
+        });
+
+        Set<String> appraisalIdList = appraisalReviewGoalList.stream().map(item -> item.getAppraisalId()).collect(Collectors.toSet());
+
+        appraisalReviewGoalRepository.deleteAllByAppraisalIdInAndReviewerType(appraisalIdList, AppraisalStatusType.SET_GOAL);
+        appraisalReviewGoalRepository.saveAll(appraisalReviewGoalList);
+    }
+
+    private String textToIdentifier(String input) {
+        if (input == null) {
+            return "";
+        }
+        return input.toLowerCase().replaceAll("\\s", "");
     }
 
 }

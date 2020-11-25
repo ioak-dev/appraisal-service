@@ -53,4 +53,10 @@ public class RoleController {
         service.uploadCsvFile(file);
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
+
+    @PostMapping(value = "/upload/reset", consumes = "multipart/form-data")
+    public ResponseEntity<?> resetAnduploadCsvFile(@RequestParam("file") MultipartFile file) {
+        service.resetAndUploadCsvFile(file);
+        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    }
 }

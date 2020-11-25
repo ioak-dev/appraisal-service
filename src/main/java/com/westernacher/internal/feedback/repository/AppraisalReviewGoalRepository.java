@@ -6,6 +6,7 @@ import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AppraisalReviewGoalRepository extends MongoRepository<AppraisalReviewGoal, String> {
 
@@ -16,6 +17,8 @@ public interface AppraisalReviewGoalRepository extends MongoRepository<Appraisal
     List<AppraisalReviewGoal> findByGoalId(String goalId);
 
     List<AppraisalReviewGoal> findAllByAppraisalIdInAndReviewerType(List appraisalIds, AppraisalStatusType type);
+
+    long deleteAllByAppraisalIdInAndReviewerType(Set appraisalIds, AppraisalStatusType type);
 
     long deleteAllByAppraisalIdIn(List<String> appraisalIds);
 

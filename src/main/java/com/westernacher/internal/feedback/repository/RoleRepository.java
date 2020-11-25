@@ -6,6 +6,7 @@ import com.westernacher.internal.feedback.domain.Role;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface RoleRepository extends MongoRepository<Role, String> {
 
@@ -18,5 +19,8 @@ public interface RoleRepository extends MongoRepository<Role, String> {
     Role findByEmployeeIdAndReviewerIdAndReviewerType(String employeeId, String reviewerId, AppraisalStatusType reviewerType);
 
     void deleteByEmployeeIdAndReviewerIdAndReviewerType(String employeeId, String reviewerId, AppraisalStatusType reviewerType);
+
+    void deleteByEmployeeIdIn(Set<String> employeeId);
+
 
 }

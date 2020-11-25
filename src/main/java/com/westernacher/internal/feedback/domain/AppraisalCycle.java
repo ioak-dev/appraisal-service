@@ -16,7 +16,6 @@ public class AppraisalCycle {
     @Id
     private String id;
 
-    @Encrypted
     private String name;
 
     private AppraisalCycleStatusType status;

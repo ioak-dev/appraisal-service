@@ -12,4 +12,5 @@ public interface RoleService {
 
     void uploadCsvFile(MultipartFile file);
 
+    void resetAndUploadCsvFile(MultipartFile file);
 }
