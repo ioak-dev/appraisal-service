@@ -1,6 +1,7 @@
 package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalCycle;
+import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
 import com.westernacher.internal.feedback.service.Implementation.AppraisalCycleResource;
@@ -39,6 +40,16 @@ public class AppraisalCycleController {
         }
 
         return cycle;
+    }
+
+    @PostMapping("/movetonextlevel/{id}")
+    public List<String> movetonextlevel (@PathVariable String id, @RequestParam(required = false) String currentLevel, @RequestParam(required=false) String employeeId) {
+        return service.movetonextlevel(id, currentLevel, employeeId, false);
+    }
+
+    @PostMapping("/movetopreviouslevel/{id}")
+    public List<String> movetopreviouslevel (@PathVariable String id, @RequestParam(required = false) String currentLevel, @RequestParam(required=false) String employeeId) {
+        return service.movetonextlevel(id, currentLevel, employeeId, true);
     }
 
     @DeleteMapping("/{id}")

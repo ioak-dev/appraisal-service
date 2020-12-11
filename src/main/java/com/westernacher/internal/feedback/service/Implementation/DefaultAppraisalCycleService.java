@@ -3,16 +3,10 @@ package com.westernacher.internal.feedback.service.Implementation;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.*;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -429,6 +423,76 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
         appraisalReviewGoalRepository.deleteAllByAppraisalIdInAndReviewerType(appraisalIdList, AppraisalStatusType.SET_GOAL);
         appraisalReviewGoalRepository.saveAll(appraisalReviewGoalList);
+    }
+
+    @Override
+    public List<String> movetonextlevel(String cycleId, String currentLevel, String employeeId, boolean moveBackwards) {
+        List<String> updatedPersons = new ArrayList<>();
+        List<AppraisalReview> appraisalReviewList = null;
+        if (employeeId != null) {
+            appraisalReviewList = appraisalReviewRepository.findAllByCycleIdAndEmployeeIdIn(cycleId, Arrays.asList(employeeId));
+        } else if (currentLevel != null) {
+            appraisalReviewList = appraisalReviewRepository.findAllByCycleIdAndStatus(cycleId, currentLevel);
+        } else {
+            return updatedPersons;
+        }
+
+        List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findAllByCycleId(cycleId);
+        Map<String, List<String>> roleMap = new HashMap<>();
+        appraisalRoleList.forEach(appraisalRole -> {
+            if (!appraisalRole.isComplete()) {
+                if (roleMap.containsKey(appraisalRole.getEmployeeId())) {
+                    roleMap.get(appraisalRole.getEmployeeId()).add(appraisalRole.getReviewerType());
+                } else {
+                    List<String> list = new ArrayList<>();
+                    list.add(appraisalRole.getReviewerType());
+                    roleMap.put(appraisalRole.getEmployeeId(), list);
+                }
+            }
+        });
+
+        Map<String, Person> personMap = new HashMap<>();
+        personRepository.findAll().forEach(item -> {
+            personMap.put(item.getId(), item);
+        });
+
+        appraisalReviewList.forEach(appraisalReview -> {
+            if (updateAppraisalReviewStatus(appraisalReview, roleMap.get(appraisalReview.getEmployeeId()), moveBackwards)) {
+                updatedPersons.add(personMap.get(appraisalReview.getEmployeeId()).getEmail());
+            }
+        });
+
+        return updatedPersons;
+    }
+
+    private boolean updateAppraisalReviewStatus(AppraisalReview appraisalReview, List<String> availableStatusList, boolean moveBackwards) {
+        List<AppraisalStatusType> allStatusList = Arrays.asList(
+                AppraisalStatusType.Self,
+                AppraisalStatusType.Level_1,
+                AppraisalStatusType.Level_2,
+                AppraisalStatusType.Level_3,
+                AppraisalStatusType.Level_4,
+                AppraisalStatusType.Master
+        );
+        if(moveBackwards) {
+            Collections.reverse(allStatusList);
+        }
+        if (appraisalReview.getStatus().equals((moveBackwards ? AppraisalStatusType.Self : AppraisalStatusType.Master).name())) {
+            return false;
+        }
+        int index = allStatusList.indexOf(AppraisalStatusType.valueOf(appraisalReview.getStatus()));
+        List<AppraisalStatusType> targetStatusList =  allStatusList.subList(index + 1, allStatusList.size());
+        boolean outcome = false;
+        for (AppraisalStatusType targetStatus : targetStatusList) {
+            if (availableStatusList.contains(targetStatus.name())) {
+                appraisalReview.setStatus(targetStatus.name());
+                appraisalReviewRepository.save(appraisalReview);
+                outcome = true;
+                break;
+            }
+        }
+
+        return outcome;
     }
 
     private String textToIdentifier(String input) {
