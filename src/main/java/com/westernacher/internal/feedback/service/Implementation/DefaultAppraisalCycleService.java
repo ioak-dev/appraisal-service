@@ -1,12 +1,19 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.*;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -465,6 +472,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         return updatedPersons;
     }
 
+
     private boolean updateAppraisalReviewStatus(AppraisalReview appraisalReview, List<String> availableStatusList, boolean moveBackwards) {
         List<AppraisalStatusType> allStatusList = Arrays.asList(
                 AppraisalStatusType.Self,
@@ -502,4 +510,151 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         return input.toLowerCase().replaceAll("\\s", "");
     }
 
+    @Override
+    public StringBuffer printPdf(String id) {
+        Map<String, Person> personMap = new HashMap<>();
+        personRepository.findAll().forEach(item -> {
+            personMap.put(item.getId(), item);
+        });
+
+        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId("600fb016532bf156fc727f7f");
+
+
+        List<Report.CriteriaDetails> criteriaDetails = new LinkedList<>();
+
+        for(AppraisalGoal appraisalGoal : appraisalGoals) {
+            List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAllByGoalIdAndEmployeeId(appraisalGoal.getId(), "60092e4c42ce2e2c480566e4");
+            List<Report.PersonDetails> personDetails = new ArrayList<>();
+            Report.CriteriaDetails criteriaDetail = new Report.CriteriaDetails();
+            for(AppraisalReviewGoal appraisalReviewGoal : appraisalReviewGoals) {
+                if(appraisalReviewGoal.getReviewerType().equals("REVIEW_GOAL")) {
+                    criteriaDetail.setReviewGoal(appraisalReviewGoal.getComment());
+                } else if(appraisalReviewGoal.getReviewerType().equals("SET_GOAL")) {
+                    criteriaDetail.setSetGoal(appraisalReviewGoal.getComment());
+                } else {
+                    Report.PersonDetails personDetail = new Report.PersonDetails();
+                    personDetail.setPersonName(personMap.get(appraisalReviewGoal.getReviewerId()).getFirstName());
+                    personDetail.setPosition(appraisalReviewGoal.getReviewerType());
+                    personDetail.setRating(appraisalReviewGoal.getRating());
+                    personDetail.setComment(appraisalReviewGoal.getComment());
+                    personDetails.add(personDetail);
+                }
+            }
+            criteriaDetail.setGroupName(appraisalGoal.getGroup());
+            criteriaDetail.setCriteriaName(appraisalGoal.getCriteria());
+            criteriaDetail.setCriteriaDescription(appraisalGoal.getDescription());
+            criteriaDetail.setWeightage(Float.toString(appraisalGoal.getWeightage()));
+            criteriaDetail.setPersonDetails(personDetails);
+            criteriaDetails.add(criteriaDetail);
+        }
+
+        Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
+
+        for(Report.CriteriaDetails criteriaDetail : criteriaDetails) {
+            List<Report.CriteriaDetails> criteriaDetailsList;
+
+            if(groupMap.containsKey(criteriaDetail.getGroupName())) {
+                criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
+            }else {
+                criteriaDetailsList = new ArrayList<>();
+            }
+            criteriaDetailsList.add(criteriaDetail);
+            groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
+        }
+
+        List<Report.ReportDetails> reportDetails5 = new LinkedList<>();
+
+        for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
+            Report.ReportDetails reportDetail = new Report.ReportDetails();
+            reportDetail.setGroupName(entry.getKey());
+            reportDetail.setCriteriaDetails(entry.getValue());
+            reportDetails5.add(reportDetail);
+        }
+        generatePDFFromHTML("", createReport(reportDetails5).toString());
+        return createReport(reportDetails5);
+    }
+    private static void generatePDFFromHTML(String filename, String k) {
+        try {
+            OutputStream file = new FileOutputStream(new File("C:\\PersonalData\\Test.pdf"));
+            Document document = new Document();
+            PdfWriter.getInstance(document, file);
+            document.open();
+            HTMLWorker htmlWorker = new HTMLWorker(document);
+            htmlWorker.parse(new StringReader(k));
+            document.close();
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public StringBuffer createReport(List<Report.ReportDetails> reportDetails) {
+        StringBuffer response = new StringBuffer();
+        reportDetails.stream().forEach(report->{
+            response.append(createGroupDetails(report.getGroupName(), report.getCriteriaDetails()));
+        });
+        return response;
+    }
+
+    public StringBuffer createGroupDetails(String groupName, List<Report.CriteriaDetails> criteriaDetails) {
+        StringBuffer response = new StringBuffer();
+        response.append("<html><head><title>Appraisal</title></head><body><div><h1>");
+        response.append(groupName);
+        response.append("</h1>");
+
+        //Criteria Details
+        criteriaDetails.stream().forEach(criteria->{
+            response.append(createCriteriaDetails(criteria.getCriteriaName(), criteria.getWeightage(),
+                    criteria.getCriteriaDescription(), criteria.getReviewGoal(), criteria.getSetGoal(), criteria.getPersonDetails()));
+        });
+
+        response.append("</div></body></html>");
+        return response;
+    }
+
+    public StringBuffer createCriteriaDetails(String criteriaName, String weightage,String criteriaDescription,
+                                              String reviewGoal, String setGoal, List<Report.PersonDetails> personDetails) {
+        StringBuffer response = new StringBuffer();
+        response.append("<div style=\"background-color: #f5f5f5; padding: 10px; border-radius: 8px;\"><h2>");
+        response.append(criteriaName);
+        response.append("<span style=\"float: right\">Weightage: ");
+        response.append(weightage);
+        response.append("%</span></h2><p>");
+        response.append(criteriaDescription);
+        response.append("</p>");
+
+        //Review Goal
+        response.append("<div style=\"background-color: #ffffff; padding: 10px; border-radius: 8px; margin: 10px 0;\">");
+        response.append("<h3>Targets for current year</h3><p>");
+        response.append(reviewGoal);
+        response.append("</p></div>");
+
+        //Person Details
+        personDetails.stream().forEach(person->{
+            response.append(createPersonDetails(person.getPersonName(), person.getPosition(), person.getComment(), person.getRating()));
+        });
+
+        //Set goals
+        response.append("<div style=\"background-color: #ffffff; padding: 10px; border-radius: 8px; margin: 10px 0;\">");
+        response.append("<h3>Targets for next year</h3><p>");
+        response.append(setGoal);
+        response.append("</p></div>");
+        response.append("</div>");
+        return response;
+    }
+    public StringBuffer createPersonDetails(String personName, String position, String comment, String rating) {
+        StringBuffer response = new StringBuffer();
+        response.append("<div style=\"background-color: #ffffff; padding: 10px; border-radius: 8px; margin: 10px 0;\">");
+        response.append("<h3>");
+        response.append("Reviewed by ");
+        response.append(personName);
+        response.append(" (");
+        response.append(position);
+        response.append(")");
+        response.append("<span style=\"float: right\">");
+        response.append(rating);
+        response.append("</span></h3><p>");
+        response.append(comment);
+        response.append("</p></div>");
+        return response;
+    }
 }

@@ -14,4 +14,6 @@ public interface AppraisalCycleService {
     void copyPreviousAppraisalGoals(String sourceCycleId, String destinationCycleId);
 
     List<String> movetonextlevel(String cycleId, String currentLevel, String employeeId, boolean moveBackwards);
+
+    StringBuffer printPdf(String id);
 }

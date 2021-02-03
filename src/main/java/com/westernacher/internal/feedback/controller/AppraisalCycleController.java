@@ -2,6 +2,7 @@ package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalCycle;
 import com.westernacher.internal.feedback.domain.AppraisalStatusType;
+import com.westernacher.internal.feedback.domain.Report;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
 import com.westernacher.internal.feedback.service.Implementation.AppraisalCycleResource;
@@ -62,6 +63,13 @@ public class AppraisalCycleController {
                                            @PathVariable String destinationCycleId) {
         service.copyPreviousAppraisalGoals(sourceCycleId, destinationCycleId);
     }
+
+    @GetMapping("/{id}/print")
+    public StringBuffer printPdf (@PathVariable("id") String id) {
+        return service.printPdf(id);
+    }
+
+
 }
 
 
