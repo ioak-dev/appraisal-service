@@ -223,7 +223,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         List<AppraisalReviewMaster> appraisalReviewMasters = new ArrayList<>();
 
         roleMap.get(person.getId()).forEach(role -> {
-            if (role.getReviewerType() == AppraisalStatusType.Master.name()) {
+            if (role.getReviewerType().equals(AppraisalStatusType.Master.name())) {
                 AppraisalReviewMaster appraisalReviewMaster = new AppraisalReviewMaster();
                 appraisalReviewMaster.setAppraisalId(savedReview.getId());
                 appraisalReviewMaster.setEmployeeId(person.getId());
@@ -517,13 +517,62 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             personMap.put(item.getId(), item);
         });
 
-        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId("600fb016532bf156fc727f7f");
+        AppraisalReview appraisalReview = appraisalReviewRepository.findById(id).orElse(null);
+
+        AppraisalCycle approsalCycle = repository.findById(appraisalReview.getCycleId()).orElse(null);
+
+        Person person = personMap.get(appraisalReview.getEmployeeId());
+
+        List<AppraisalRole> approsalRoleList = appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
+
+        approsalRoleList.sort(
+                Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
+        );
+
+        StringBuffer header = new StringBuffer();
+        header.append("<h3>ANNUAL REVIEW ");
+        header.append(approsalCycle.getName());
+        header.append(" AND TARGET DISCUSSION</h3>");
+        header.append("<h3>Master Data:</h3>");
+        header.append("<p>Name of Reviewee :"+ person.getFirstName()+ " "+person.getLastName()+"</p>");
+        header.append("<p>Level :"+ person.getJob()+"</p>");
+        header.append("<p>Practice :"+ person.getUnit()+"</p>");
+        header.append("<p>CU :"+ person.getCu()+"</p>");
+        header.append("<h3>Contributors:</h3>");
+        
+        Map<String, List<String>> contributerMap = new LinkedHashMap<>();
+
+        for(AppraisalRole approsalRole: approsalRoleList) {
+            if(!approsalRole.getReviewerType().equals("Self")) {
+                if(contributerMap.containsKey(approsalRole.getReviewerType())) {
+                    List<String> list = contributerMap.get(approsalRole.getReviewerType());
+                    list.add(personMap.get(approsalRole.getReviewerId()).getFirstName()+" "+personMap.get(approsalRole.getReviewerId()).getLastName());
+                }else {
+                    List<String> list = new ArrayList<>();
+                    list.add(personMap.get(approsalRole.getReviewerId()).getFirstName()+" "+personMap.get(approsalRole.getReviewerId()).getLastName());
+                    contributerMap.put(approsalRole.getReviewerType(), list);
+                }
+            }
+        }
+        for (Map.Entry<String, List<String>> entry : contributerMap.entrySet()) {
+            header.append("<p>"+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())));
+            header.append(":"+entry.getValue().stream().collect(Collectors.joining(","))+"</p>");
+        }
+            /*for(AppraisalRole approsalRole: approsalRoleList) {
+            if(!approsalRole.getReviewerType().equals("Self")) {
+                header.append("<p>"+personMap.get(approsalRole.getReviewerId()).getFirstName()
+                        +" "+personMap.get(approsalRole.getReviewerId()).getLastName()+", "+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(approsalRole.getReviewerType()))+"</p>");
+            }
+
+        }*/
+
+        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
 
 
         List<Report.CriteriaDetails> criteriaDetails = new LinkedList<>();
 
         for(AppraisalGoal appraisalGoal : appraisalGoals) {
-            List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAllByGoalIdAndEmployeeId(appraisalGoal.getId(), "60092e4c42ce2e2c480566e4");
+            List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAllByGoalIdAndEmployeeId(appraisalGoal.getId(), appraisalReview.getEmployeeId());
             List<Report.PersonDetails> personDetails = new ArrayList<>();
             Report.CriteriaDetails criteriaDetail = new Report.CriteriaDetails();
             for(AppraisalReviewGoal appraisalReviewGoal : appraisalReviewGoals) {
@@ -533,7 +582,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     criteriaDetail.setSetGoal(appraisalReviewGoal.getComment());
                 } else {
                     Report.PersonDetails personDetail = new Report.PersonDetails();
-                    personDetail.setPersonName(personMap.get(appraisalReviewGoal.getReviewerId()).getFirstName());
+                    personDetail.setPersonName(personMap.get(appraisalReviewGoal.getReviewerId()).getFirstName()
+                            +" "+personMap.get(appraisalReviewGoal.getReviewerId()).getLastName());
                     personDetail.setPosition(appraisalReviewGoal.getReviewerType());
                     personDetail.setRating(appraisalReviewGoal.getRating());
                     personDetail.setComment(appraisalReviewGoal.getComment());
@@ -570,8 +620,63 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             reportDetail.setCriteriaDetails(entry.getValue());
             reportDetails5.add(reportDetail);
         }
-        generatePDFFromHTML("", createReport(reportDetails5).toString());
-        return createReport(reportDetails5);
+        //generatePDFFromHTML("", createReport(reportDetails5).toString());
+        List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
+
+        return createReport(reportDetails5, header,
+                createRatingSummary(approsalRoleList, personMap, approsalCycle),
+                createDiscusionSummary(appraisalReviewMasters, personMap), approsalCycle);
+    }
+    private StringBuffer createDiscusionSummary(List<AppraisalReviewMaster> appraisalReviewMasters, Map<String, Person> personMap) {
+        StringBuffer response =  new StringBuffer();
+        response.append("<h3>Discussion Summary:</h3>");
+        appraisalReviewMasters.stream().forEach(appraisalReviewMaster -> {
+            response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
+                    personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
+            response.append("<span style=\"float: right\">");
+            response.append(appraisalReviewMaster.getRating());
+            response.append("</span></h5>");
+            response.append("<p>"+appraisalReviewMaster.getComment()+"</p>");
+            response.append("<p>"+appraisalReviewMaster.getRating()+"</p>");
+        });
+        response.append("<br></br>");
+        response.append("<br></br>");
+        response.append("<br></br>");
+        response.append("<h3>Signatures:</h3>");
+        response.append("<br></br>");
+        response.append("<p>______________</p>");
+        response.append("<p>Reviewee</p>");
+        response.append("<br></br>");
+        response.append("<br></br>");
+        response.append("<p>______________</p>");
+        response.append("<p>Reviewer (manager)</p>");
+
+        return response;
+
+    }
+
+    private StringBuffer createRatingSummary(List<AppraisalRole> approsalRoleList, Map<String, Person> personMap, AppraisalCycle cycle) {
+
+        StringBuffer response =  new StringBuffer();
+        response.append("<h3>Rating  Summary:</h3>");
+        approsalRoleList.stream().forEach(appraisalReviewMaster -> {
+            if(!appraisalReviewMaster.getReviewerType().equals("Master")) {
+                response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
+                        personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
+
+                if(appraisalReviewMaster.getReviewerType().equals("Self")) {
+                    response.append(" As Self Appraisal</h5>");
+                }else {
+                    response.append(" As " + cycle.getWorkflowMap().get(AppraisalStatusType.valueOf(appraisalReviewMaster.getReviewerType()))+"</h5>");
+                }
+
+                response.append("<p>"+"Goals and objectives - "+appraisalReviewMaster.getPrimaryScore()+"</br>");
+                response.append("Notable Contributions - "+appraisalReviewMaster.getSecondaryScore()+"</p>");
+            }
+        });
+
+        return response;
+
     }
     private static void generatePDFFromHTML(String filename, String k) {
         try {
@@ -587,74 +692,104 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             e.printStackTrace();
         }
     }
-    public StringBuffer createReport(List<Report.ReportDetails> reportDetails) {
+    public StringBuffer createReport(List<Report.ReportDetails> reportDetails, StringBuffer header, StringBuffer ratingSummary, StringBuffer summary, AppraisalCycle cycle) {
         StringBuffer response = new StringBuffer();
+        response.append("<html><head><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">\n" +
+                "<link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap\" rel=\"stylesheet\"><style>*{font-family: 'Open Sans', sans-serif;}p {margin: 0; padding: 0; margin-bottom: 10px; font-size: 14px;}h1, h2, h3, h4, h5, h6 {margin: 0; padding: 0;}</style><title>Appraisal</title></head><body>");
+        response.append(header);
         reportDetails.stream().forEach(report->{
-            response.append(createGroupDetails(report.getGroupName(), report.getCriteriaDetails()));
+            response.append(createGroupDetails(report.getGroupName(), report.getCriteriaDetails(), cycle));
         });
+        response.append(ratingSummary);
+        response.append(summary);
+        response.append("</body></html>");
         return response;
     }
 
-    public StringBuffer createGroupDetails(String groupName, List<Report.CriteriaDetails> criteriaDetails) {
+    public StringBuffer createGroupDetails(String groupName, List<Report.CriteriaDetails> criteriaDetails, AppraisalCycle cycle) {
         StringBuffer response = new StringBuffer();
-        response.append("<html><head><title>Appraisal</title></head><body><div><h1>");
-        response.append(groupName);
-        response.append("</h1>");
+        response.append("<div><h3>"+groupName);
+        response.append("</h3>");
 
         //Criteria Details
         criteriaDetails.stream().forEach(criteria->{
-            response.append(createCriteriaDetails(criteria.getCriteriaName(), criteria.getWeightage(),
-                    criteria.getCriteriaDescription(), criteria.getReviewGoal(), criteria.getSetGoal(), criteria.getPersonDetails()));
+            if (criteria.getPersonDetails().size()>0) {
+                response.append(createCriteriaDetails(criteria.getCriteriaName(), criteria.getWeightage(),
+                        criteria.getCriteriaDescription(), criteria.getReviewGoal(), criteria.getSetGoal(), criteria.getPersonDetails(), cycle));
+            }
         });
 
-        response.append("</div></body></html>");
+        response.append("</div>");
         return response;
     }
 
     public StringBuffer createCriteriaDetails(String criteriaName, String weightage,String criteriaDescription,
-                                              String reviewGoal, String setGoal, List<Report.PersonDetails> personDetails) {
+                                              String reviewGoal, String setGoal, List<Report.PersonDetails> personDetails, AppraisalCycle cycle) {
         StringBuffer response = new StringBuffer();
-        response.append("<div style=\"background-color: #f5f5f5; padding: 10px; border-radius: 8px;\"><h2>");
+        response.append("<div><h4>");
         response.append(criteriaName);
-        response.append("<span style=\"float: right\">Weightage: ");
-        response.append(weightage);
-        response.append("%</span></h2><p>");
-        response.append(criteriaDescription);
+        response.append("</h4><p>");
+        try {
+            response.append(new String(criteriaDescription.getBytes(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         response.append("</p>");
 
         //Review Goal
-        response.append("<div style=\"background-color: #ffffff; padding: 10px; border-radius: 8px; margin: 10px 0;\">");
-        response.append("<h3>Targets for current year</h3><p>");
-        response.append(reviewGoal);
-        response.append("</p></div>");
+        if(reviewGoal != null && !reviewGoal.isEmpty()) {
+            response.append("<div>");
+            response.append("<h5>Targets for current year</h5><p>");
+            response.append(reviewGoal);
+            response.append("</p></div>");
+        }
+
 
         //Person Details
+        personDetails.sort(
+                Comparator.comparing((Report.PersonDetails ARG) -> AppraisalStatusType.valueOf(ARG.getPosition()).ordinal())
+        );
         personDetails.stream().forEach(person->{
-            response.append(createPersonDetails(person.getPersonName(), person.getPosition(), person.getComment(), person.getRating()));
+            response.append(createPersonDetails(person.getPersonName(), person.getPosition(), person.getComment(), person.getRating(), cycle));
         });
 
         //Set goals
-        response.append("<div style=\"background-color: #ffffff; padding: 10px; border-radius: 8px; margin: 10px 0;\">");
-        response.append("<h3>Targets for next year</h3><p>");
-        response.append(setGoal);
-        response.append("</p></div>");
-        response.append("</div>");
+        if(setGoal != null && !setGoal.isEmpty()) {
+            response.append("<div>");
+            response.append("<h5>Targets for next year</h5><p>");
+            response.append(setGoal);
+            response.append("</p></div>");
+            response.append("</div>");
+        }
+
         return response;
     }
-    public StringBuffer createPersonDetails(String personName, String position, String comment, String rating) {
+    public StringBuffer createPersonDetails(String personName, String position, String comment, String rating, AppraisalCycle cycle) {
         StringBuffer response = new StringBuffer();
-        response.append("<div style=\"background-color: #ffffff; padding: 10px; border-radius: 8px; margin: 10px 0;\">");
-        response.append("<h3>");
-        response.append("Reviewed by ");
-        response.append(personName);
-        response.append(" (");
-        response.append(position);
-        response.append(")");
-        response.append("<span style=\"float: right\">");
-        response.append(rating);
-        response.append("</span></h3><p>");
-        response.append(comment);
-        response.append("</p></div>");
+
+        if(position.equals("Self")) {
+            response.append("<div>");
+            response.append("<h5>");
+            response.append("Self Appraisal");
+            response.append("<span style=\"float: right\">");
+            response.append(rating);
+            response.append("</span></h5><p>");
+            response.append(comment);
+            response.append("</p></div>");
+        } else if (position.equals("Level_2")){
+            response.append("<div>");
+            response.append("<h5>");
+            response.append(personName);
+            response.append(" As ");
+            response.append(cycle.getWorkflowMap().get(AppraisalStatusType.valueOf(position)));
+            response.append("<span style=\"float: right\">");
+            response.append(rating);
+            response.append("</span></h5><p>");
+            response.append(comment);
+            response.append("</p></div>");
+        }
+
+
         return response;
     }
 }

@@ -28,7 +28,6 @@ public class AppraisalReviewGoal {
     @Encrypted
     private String rating;
 
-    @Encrypted
     private boolean isComplete;
 
     @Encrypted

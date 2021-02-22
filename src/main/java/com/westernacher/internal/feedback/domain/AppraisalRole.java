@@ -27,6 +27,5 @@ public class AppraisalRole {
     @Encrypted
     private double secondaryScore;
 
-    @Encrypted
     private boolean isComplete;
 }
