@@ -15,4 +15,6 @@ public interface AppraisalReviewRepository extends MongoRepository<AppraisalRevi
 
     long deleteAllByCycleId(String cycleId);
 
+    AppraisalReview findFirstByCycleIdAndEmployeeId(String cycleId, String employeeId);
+
 }
