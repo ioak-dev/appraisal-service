@@ -519,60 +519,69 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
         AppraisalReview appraisalReview = appraisalReviewRepository.findById(id).orElse(null);
 
-        AppraisalCycle approsalCycle = repository.findById(appraisalReview.getCycleId()).orElse(null);
+        AppraisalCycle appraisalCycle = repository.findById(appraisalReview.getCycleId()).orElse(null);
 
         Person person = personMap.get(appraisalReview.getEmployeeId());
 
-        List<AppraisalRole> approsalRoleList = appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
+        List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
 
-        approsalRoleList.sort(
+        appraisalRoleList.sort(
                 Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
         );
 
-        StringBuffer header = new StringBuffer();
-        header.append("<h3>ANNUAL REVIEW ");
-        header.append(approsalCycle.getName());
-        header.append(" AND TARGET DISCUSSION</h3>");
-        header.append("<h3>Master Data:</h3>");
-        header.append("<p>Name of Reviewee :"+ person.getFirstName()+ " "+person.getLastName()+"</p>");
-        header.append("<p>Level :"+ person.getJob()+"</p>");
-        header.append("<p>Practice :"+ person.getUnit()+"</p>");
-        header.append("<p>CU :"+ person.getCu()+"</p>");
-        header.append("<h3>Contributors:</h3>");
-        
-        Map<String, List<String>> contributerMap = new LinkedHashMap<>();
+        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
 
-        for(AppraisalRole approsalRole: approsalRoleList) {
-            if(!approsalRole.getReviewerType().equals("Self")) {
-                if(contributerMap.containsKey(approsalRole.getReviewerType())) {
-                    List<String> list = contributerMap.get(approsalRole.getReviewerType());
-                    list.add(personMap.get(approsalRole.getReviewerId()).getFirstName()+" "+personMap.get(approsalRole.getReviewerId()).getLastName());
-                }else {
-                    List<String> list = new ArrayList<>();
-                    list.add(personMap.get(approsalRole.getReviewerId()).getFirstName()+" "+personMap.get(approsalRole.getReviewerId()).getLastName());
-                    contributerMap.put(approsalRole.getReviewerType(), list);
-                }
+
+        List<Report.CriteriaDetails> criteriaDetails = getCriteriaDetails(appraisalGoals, personMap, appraisalReview);
+
+
+        Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
+
+        for(Report.CriteriaDetails criteriaDetail : criteriaDetails) {
+            List<Report.CriteriaDetails> criteriaDetailsList;
+
+            if(groupMap.containsKey(criteriaDetail.getGroupName())) {
+                criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
+            }else {
+                criteriaDetailsList = new ArrayList<>();
             }
+            criteriaDetailsList.add(criteriaDetail);
+            groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
         }
-        for (Map.Entry<String, List<String>> entry : contributerMap.entrySet()) {
-            header.append("<p>"+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())));
-            header.append(":"+entry.getValue().stream().collect(Collectors.joining(","))+"</p>");
+
+        List<Report.ReportDetails> reportBody = new LinkedList<>();
+
+        for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
+            Report.ReportDetails reportDetail = new Report.ReportDetails();
+            reportDetail.setGroupName(entry.getKey());
+            reportDetail.setCriteriaDetails(entry.getValue());
+            reportBody.add(reportDetail);
         }
-            /*for(AppraisalRole approsalRole: approsalRoleList) {
+
+        List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
+
+        return createReport(reportBody,
+                getHeader(appraisalCycle.getName(), person, appraisalRoleList, personMap, appraisalCycle),
+                createRatingSummary(appraisalRoleList, personMap, appraisalCycle),
+                createDiscusionSummary(appraisalReviewMasters, personMap), appraisalCycle);
+
+        /*for(AppraisalRole approsalRole: approsalRoleList) {
             if(!approsalRole.getReviewerType().equals("Self")) {
                 header.append("<p>"+personMap.get(approsalRole.getReviewerId()).getFirstName()
                         +" "+personMap.get(approsalRole.getReviewerId()).getLastName()+", "+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(approsalRole.getReviewerType()))+"</p>");
             }
 
         }*/
+    }
 
-        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
-
-
+    private List<Report.CriteriaDetails> getCriteriaDetails(List<AppraisalGoal> appraisalGoals,
+                                                            Map<String, Person> personMap,
+                                                            AppraisalReview appraisalReview) {
         List<Report.CriteriaDetails> criteriaDetails = new LinkedList<>();
 
         for(AppraisalGoal appraisalGoal : appraisalGoals) {
-            List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAllByGoalIdAndEmployeeId(appraisalGoal.getId(), appraisalReview.getEmployeeId());
+            List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAllByGoalIdAndEmployeeId(appraisalGoal.getId(),
+                    appraisalReview.getEmployeeId());
             List<Report.PersonDetails> personDetails = new ArrayList<>();
             Report.CriteriaDetails criteriaDetail = new Report.CriteriaDetails();
             for(AppraisalReviewGoal appraisalReviewGoal : appraisalReviewGoals) {
@@ -597,47 +606,58 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             criteriaDetail.setPersonDetails(personDetails);
             criteriaDetails.add(criteriaDetail);
         }
+        return criteriaDetails;
+    }
 
-        Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
+    private StringBuffer getHeader(String cycleName,
+                             Person person,
+                             List<AppraisalRole> approsalRoleList,
+                             Map<String, Person> personMap,
+                             AppraisalCycle approsalCycle) {
+        StringBuffer header = new StringBuffer();
+        header.append("<h3 style=\"border-bottom: 1px solid black; padding-bottom: 20px; margin-top: 20px; margin-bottom: 20px;\">Annual Review ");
+        header.append(cycleName);
+        header.append(" AND TARGET DISCUSSION</h3>");
+        //header.append("<h3>Master Data:</h3>");
+        header.append("<p>Name of Reviewee: <u>"+ person.getFirstName()+ " "+person.getLastName()+"</u></p>");
+        header.append("<p>Level: <u>"+ person.getJob()+"</u></p>");
+        header.append("<p>Practice: <u>"+ person.getUnit()+"</u></p>");
+        header.append("<p>CU: <u>"+ person.getCu()+"</u></p>");
+        header.append("<br/>");
 
-        for(Report.CriteriaDetails criteriaDetail : criteriaDetails) {
-            List<Report.CriteriaDetails> criteriaDetailsList;
+        Map<String, List<String>> contributerMap = new LinkedHashMap<>();
 
-            if(groupMap.containsKey(criteriaDetail.getGroupName())) {
-                criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
-            }else {
-                criteriaDetailsList = new ArrayList<>();
+        for(AppraisalRole approsalRole: approsalRoleList) {
+            if(!approsalRole.getReviewerType().equals("Self")) {
+                if(contributerMap.containsKey(approsalRole.getReviewerType())) {
+                    List<String> list = contributerMap.get(approsalRole.getReviewerType());
+                    list.add(personMap.get(approsalRole.getReviewerId()).getFirstName()+" "+personMap.get(approsalRole.getReviewerId()).getLastName());
+                }else {
+                    List<String> list = new ArrayList<>();
+                    list.add(personMap.get(approsalRole.getReviewerId()).getFirstName()+" "+personMap.get(approsalRole.getReviewerId()).getLastName());
+                    contributerMap.put(approsalRole.getReviewerType(), list);
+                }
             }
-            criteriaDetailsList.add(criteriaDetail);
-            groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
         }
-
-        List<Report.ReportDetails> reportDetails5 = new LinkedList<>();
-
-        for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
-            Report.ReportDetails reportDetail = new Report.ReportDetails();
-            reportDetail.setGroupName(entry.getKey());
-            reportDetail.setCriteriaDetails(entry.getValue());
-            reportDetails5.add(reportDetail);
+        for (Map.Entry<String, List<String>> entry : contributerMap.entrySet()) {
+            header.append("<p>"+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())));
+            header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(","))+"</u></p>");
         }
-        //generatePDFFromHTML("", createReport(reportDetails5).toString());
-        List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
-
-        return createReport(reportDetails5, header,
-                createRatingSummary(approsalRoleList, personMap, approsalCycle),
-                createDiscusionSummary(appraisalReviewMasters, personMap), approsalCycle);
+        header.append("<br/><br/>");
+        return header;
     }
     private StringBuffer createDiscusionSummary(List<AppraisalReviewMaster> appraisalReviewMasters, Map<String, Person> personMap) {
         StringBuffer response =  new StringBuffer();
         response.append("<h3>Discussion Summary:</h3>");
         appraisalReviewMasters.stream().forEach(appraisalReviewMaster -> {
             response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
-                    personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
-            response.append("<span style=\"float: right\">");
+                    personMap.get(appraisalReviewMaster.getReviewerId()).getLastName()+"</h5>");
+            //response.append("<span style=\"float: right\">");
+            response.append("<p><i>");
             response.append(appraisalReviewMaster.getRating());
-            response.append("</span></h5>");
+            response.append("</i></p>");
             response.append("<p>"+appraisalReviewMaster.getComment()+"</p>");
-            response.append("<p>"+appraisalReviewMaster.getRating()+"</p>");
+            //response.append("<p>"+appraisalReviewMaster.getRating()+"</p>");
         });
         response.append("<br></br>");
         response.append("<br></br>");
@@ -694,8 +714,12 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
     public StringBuffer createReport(List<Report.ReportDetails> reportDetails, StringBuffer header, StringBuffer ratingSummary, StringBuffer summary, AppraisalCycle cycle) {
         StringBuffer response = new StringBuffer();
-        response.append("<html><head><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">\n" +
-                "<link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap\" rel=\"stylesheet\"><style>*{font-family: 'Open Sans', sans-serif;}p {margin: 0; padding: 0; margin-bottom: 10px; font-size: 14px;}h1, h2, h3, h4, h5, h6 {margin: 0; padding: 0;}</style><title>Appraisal</title></head><body>");
+        response.append("<html><head><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">");
+        response.append("<link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap\" rel=\"stylesheet\">");
+        response.append("<style>*{font-family: 'Open Sans', sans-serif;}p {text-align: justify; margin: 0; padding: 0; margin-bottom: 10px; font-size: 14px;}h1, h2, h3, h4, h5, h6 {margin: 0; padding: 0;}body {margin: 0 50px;}</style>");
+        response.append("<title>Appraisal</title>");
+        response.append("</head>");
+        response.append("<body>");
         response.append(header);
         reportDetails.stream().forEach(report->{
             response.append(createGroupDetails(report.getGroupName(), report.getCriteriaDetails(), cycle));
