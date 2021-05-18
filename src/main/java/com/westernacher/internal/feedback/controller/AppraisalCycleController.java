@@ -9,6 +9,7 @@ import com.westernacher.internal.feedback.service.Implementation.AppraisalCycleR
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -64,9 +65,9 @@ public class AppraisalCycleController {
         service.copyPreviousAppraisalGoals(sourceCycleId, destinationCycleId);
     }
 
-    @GetMapping("/{id}/print")
-    public StringBuffer printPdf (@PathVariable("id") String id) {
-        return service.printPdf(id);
+    @PostMapping(value = "/printPDF", produces = "application/zip")
+    public byte[] printPdf (HttpServletResponse response, @RequestBody List<String> appraisalReviewIds) {
+        return service.printPdf(response, appraisalReviewIds);
     }
 
 

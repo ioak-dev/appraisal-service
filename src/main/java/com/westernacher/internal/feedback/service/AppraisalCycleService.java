@@ -3,6 +3,7 @@ package com.westernacher.internal.feedback.service;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.service.Implementation.AppraisalCycleResource;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface AppraisalCycleService {
@@ -15,5 +16,5 @@ public interface AppraisalCycleService {
 
     List<String> movetonextlevel(String cycleId, String currentLevel, String employeeId, boolean moveBackwards);
 
-    StringBuffer printPdf(String id);
+    byte[] printPdf(HttpServletResponse response, List<String> appraisalReviewIds);
 }

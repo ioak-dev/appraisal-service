@@ -1,21 +1,28 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.html.simpleparser.HTMLWorker;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.*;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
+import org.springframework.web.server.ResponseStatusException;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @Service
@@ -53,6 +60,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
     @Autowired
     private AppraisalReviewMasterRepository appraisalReviewMasterRepository;
+
+    @Value("${zip.file.name}")
+    private String zippedFile;
 
     public AppraisalCycle create(AppraisalCycle appraisalCycle) {
 
@@ -511,67 +521,70 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     @Override
-    public StringBuffer printPdf(String id) {
-        Map<String, Person> personMap = new HashMap<>();
-        personRepository.findAll().forEach(item -> {
-            personMap.put(item.getId(), item);
-        });
+    public byte[] printPdf(HttpServletResponse response, List<String> appraisalReviewIds) {
+        try{
+            Path tmpFilePath = Files.createTempDirectory("appraisal-");
+            appraisalReviewIds.forEach(id->{
+                Map<String, Person> personMap = new HashMap<>();
+                personRepository.findAll().forEach(item -> {
+                    personMap.put(item.getId(), item);
+                });
 
-        AppraisalReview appraisalReview = appraisalReviewRepository.findById(id).orElse(null);
+                AppraisalReview appraisalReview = appraisalReviewRepository.findById(id).orElse(null);
 
-        AppraisalCycle appraisalCycle = repository.findById(appraisalReview.getCycleId()).orElse(null);
+                AppraisalCycle appraisalCycle = repository.findById(appraisalReview.getCycleId()).orElse(null);
 
-        Person person = personMap.get(appraisalReview.getEmployeeId());
+                Person person = personMap.get(appraisalReview.getEmployeeId());
 
-        List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
+                List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
 
-        appraisalRoleList.sort(
-                Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
-        );
+                appraisalRoleList.sort(
+                        Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
+                );
 
-        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
-
-
-        List<Report.CriteriaDetails> criteriaDetails = getCriteriaDetails(appraisalGoals, personMap, appraisalReview);
+                List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
 
 
-        Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
+                List<Report.CriteriaDetails> criteriaDetails = getCriteriaDetails(appraisalGoals, personMap, appraisalReview);
 
-        for(Report.CriteriaDetails criteriaDetail : criteriaDetails) {
-            List<Report.CriteriaDetails> criteriaDetailsList;
 
-            if(groupMap.containsKey(criteriaDetail.getGroupName())) {
-                criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
-            }else {
-                criteriaDetailsList = new ArrayList<>();
-            }
-            criteriaDetailsList.add(criteriaDetail);
-            groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
+                Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
+
+                for(Report.CriteriaDetails criteriaDetail : criteriaDetails) {
+                    List<Report.CriteriaDetails> criteriaDetailsList;
+
+                    if(groupMap.containsKey(criteriaDetail.getGroupName())) {
+                        criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
+                    }else {
+                        criteriaDetailsList = new ArrayList<>();
+                    }
+                    criteriaDetailsList.add(criteriaDetail);
+                    groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
+                }
+
+                List<Report.ReportDetails> reportBody = new LinkedList<>();
+
+                for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
+                    Report.ReportDetails reportDetail = new Report.ReportDetails();
+                    reportDetail.setGroupName(entry.getKey());
+                    reportDetail.setCriteriaDetails(entry.getValue());
+                    reportBody.add(reportDetail);
+                }
+
+                List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
+
+                StringBuffer htmlContent =  createReport(reportBody,
+                        getHeader(appraisalCycle.getName(), person, appraisalRoleList, personMap, appraisalCycle),
+                        createRatingSummary(appraisalRoleList, personMap, appraisalCycle),
+                        createDiscusionSummary(appraisalReviewMasters, personMap), appraisalCycle);
+                String xhtml = htmlToXhtml(htmlContent.toString());
+                xhtmlToPdf(xhtml, tmpFilePath, person.getFirstName(), person.getLastName());
+            });
+            return zipFiles(response, tmpFilePath);
+        }catch (IOException e){
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        List<Report.ReportDetails> reportBody = new LinkedList<>();
-
-        for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
-            Report.ReportDetails reportDetail = new Report.ReportDetails();
-            reportDetail.setGroupName(entry.getKey());
-            reportDetail.setCriteriaDetails(entry.getValue());
-            reportBody.add(reportDetail);
-        }
-
-        List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
-
-        return createReport(reportBody,
-                getHeader(appraisalCycle.getName(), person, appraisalRoleList, personMap, appraisalCycle),
-                createRatingSummary(appraisalRoleList, personMap, appraisalCycle),
-                createDiscusionSummary(appraisalReviewMasters, personMap), appraisalCycle);
-
-        /*for(AppraisalRole approsalRole: approsalRoleList) {
-            if(!approsalRole.getReviewerType().equals("Self")) {
-                header.append("<p>"+personMap.get(approsalRole.getReviewerId()).getFirstName()
-                        +" "+personMap.get(approsalRole.getReviewerId()).getLastName()+", "+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(approsalRole.getReviewerType()))+"</p>");
-            }
-
-        }*/
     }
 
     private List<Report.CriteriaDetails> getCriteriaDetails(List<AppraisalGoal> appraisalGoals,
@@ -698,20 +711,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         return response;
 
     }
-    private static void generatePDFFromHTML(String filename, String k) {
-        try {
-            OutputStream file = new FileOutputStream(new File("C:\\PersonalData\\Test.pdf"));
-            Document document = new Document();
-            PdfWriter.getInstance(document, file);
-            document.open();
-            HTMLWorker htmlWorker = new HTMLWorker(document);
-            htmlWorker.parse(new StringReader(k));
-            document.close();
-            file.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
     public StringBuffer createReport(List<Report.ReportDetails> reportDetails, StringBuffer header, StringBuffer ratingSummary, StringBuffer summary, AppraisalCycle cycle) {
         StringBuffer response = new StringBuffer();
         response.append("<html><head><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">");
@@ -812,8 +812,64 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             response.append(comment);
             response.append("</p></div>");
         }
-
-
         return response;
+    }
+
+    private static String htmlToXhtml(String html) {
+        Document document = Jsoup.parse(html);
+        document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+        log.info("Conversion to XHTML Successful");
+        return document.html();
+    }
+
+    private static void xhtmlToPdf(String xhtml,Path tmpFilePath, String firstName, String lastName) {
+        try{
+            File output = new File(firstName+ " "+lastName+".pdf");
+            ITextRenderer iTextRenderer = new ITextRenderer();
+            iTextRenderer.setDocumentFromString(xhtml);
+            iTextRenderer.layout();
+            OutputStream os = new FileOutputStream(tmpFilePath.toFile().getAbsolutePath() + File.separator + output);
+            iTextRenderer.createPDF(os);
+            os.close();
+            log.info("Conversion to "+ output + " Successful");
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error converting to PDF");
+        }
+    }
+
+    public byte[] zipFiles(HttpServletResponse response, Path tmpFilePath) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.addHeader("Content-Disposition", "attachment; filename="+zippedFile);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+        ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
+        try{
+            List<File> files = Files.list(Paths.get(tmpFilePath.toFile().getAbsolutePath()))
+                    .map(Path::toFile).collect(Collectors.toList());
+            files.forEach(file -> {
+                try {
+                    zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    IOUtils.copy(fileInputStream, zipOutputStream);
+                    fileInputStream.close();
+                    zipOutputStream.closeEntry();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            });
+            zipOutputStream.finish();
+            zipOutputStream.flush();
+            IOUtils.closeQuietly(zipOutputStream);
+            IOUtils.closeQuietly(bufferedOutputStream);
+            IOUtils.closeQuietly(byteArrayOutputStream);
+            log.info("Compression and Zipping of PDF Successful");
+        } catch (IOException e){
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 }
