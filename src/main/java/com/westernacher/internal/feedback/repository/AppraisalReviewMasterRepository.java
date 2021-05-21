@@ -9,6 +9,7 @@ import java.util.List;
 public interface AppraisalReviewMasterRepository extends MongoRepository<AppraisalReviewMaster, String> {
 
     List<AppraisalReviewMaster> findAllByAppraisalId(String appraisalId);
+    List<AppraisalReviewMaster> findAllByEmployeeId(String employeeId);
 
     long deleteAllByAppraisalIdIn(List<String> appraisalIds);
 }

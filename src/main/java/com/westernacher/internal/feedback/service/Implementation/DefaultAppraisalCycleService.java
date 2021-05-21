@@ -521,7 +521,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     @Override
-    public byte[] printPdf(HttpServletResponse response, List<String> appraisalReviewIds) {
+    public void printPdf(HttpServletResponse response, List<String> appraisalReviewIds) {
         try{
             Path tmpFilePath = Files.createTempDirectory("appraisal-");
             appraisalReviewIds.forEach(id->{
@@ -580,7 +580,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                 String xhtml = htmlToXhtml(htmlContent.toString());
                 xhtmlToPdf(xhtml, tmpFilePath, person.getFirstName(), person.getLastName());
             });
-            return zipFiles(response, tmpFilePath);
+            //return zipFiles(response, tmpFilePath);
+
         }catch (IOException e){
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
