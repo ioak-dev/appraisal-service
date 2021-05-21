@@ -631,7 +631,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         StringBuffer header = new StringBuffer();
         header.append("<h3 style=\"border-bottom: 1px solid black; padding-bottom: 20px; margin-top: 20px; margin-bottom: 20px;\">Annual Review ");
         header.append(cycleName);
-        header.append(" AND TARGET DISCUSSION</h3>");
+        header.append(" and Target Discussion</h3>");
         //header.append("<h3>Master Data:</h3>");
         header.append("<p>Name of Reviewee: <u>"+ person.getFirstName()+ " "+person.getLastName()+"</u></p>");
         header.append("<p>Level: <u>"+ person.getJob()+"</u></p>");
@@ -654,8 +654,14 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             }
         }
         for (Map.Entry<String, List<String>> entry : contributerMap.entrySet()) {
-            header.append("<p>"+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())));
-            header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(","))+"</u></p>");
+            if (approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())).equalsIgnoreCase("master")) {
+                header.append("<p>Review Master");
+                header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(","))+"</u></p>");
+            } else {
+                header.append("<p>"+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())));
+                header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(","))+"</u></p>");
+            }
+
         }
         header.append("<br/><br/>");
         return header;
