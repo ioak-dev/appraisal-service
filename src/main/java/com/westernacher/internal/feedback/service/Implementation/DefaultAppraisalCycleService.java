@@ -656,10 +656,10 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         for (Map.Entry<String, List<String>> entry : contributerMap.entrySet()) {
             if (approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())).equalsIgnoreCase("master")) {
                 header.append("<p>Review Master");
-                header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(","))+"</u></p>");
+                header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(", "))+"</u></p>");
             } else {
                 header.append("<p>"+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())));
-                header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(","))+"</u></p>");
+                header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(", "))+"</u></p>");
             }
 
         }
@@ -739,7 +739,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
     public StringBuffer createGroupDetails(String groupName, List<Report.CriteriaDetails> criteriaDetails, AppraisalCycle cycle) {
         StringBuffer response = new StringBuffer();
-        response.append("<div><h3>"+groupName);
+        response.append("<div style=\"page-break-before: always;\"><h3>"+groupName);
         response.append("</h3>");
 
         //Criteria Details
@@ -803,7 +803,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             response.append("<h5>");
             response.append("Self Appraisal");
             response.append("<span style=\"float: right\">");
-            response.append(rating);
+            response.append("Self Evaluation: "+rating);
             response.append("</span></h5><p>");
             response.append(comment);
             response.append("</p></div>");
@@ -814,7 +814,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             response.append(" As ");
             response.append(cycle.getWorkflowMap().get(AppraisalStatusType.valueOf(position)));
             response.append("<span style=\"float: right\">");
-            response.append(rating);
+            response.append("Manager Evaluation: "+rating);
             response.append("</span></h5><p>");
             response.append(comment);
             response.append("</p></div>");
