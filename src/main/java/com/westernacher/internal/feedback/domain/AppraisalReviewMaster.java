@@ -25,7 +25,6 @@ public class AppraisalReviewMaster {
 
     @Encrypted
     private String rating;
-
     @Encrypted
     private boolean isComplete;
 }

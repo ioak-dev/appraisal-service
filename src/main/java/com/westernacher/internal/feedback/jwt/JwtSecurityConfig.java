@@ -50,7 +50,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/goal/upload").permitAll()
                 .antMatchers("/person/upload").permitAll()
                 .antMatchers("/notification/send").permitAll()
-                //.antMatchers("/cycle").permitAll()
+                .antMatchers("/cycle").permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

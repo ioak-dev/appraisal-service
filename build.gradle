@@ -28,6 +28,9 @@ targetCompatibility = 11
 repositories {
 	mavenCentral()
 	gradlePluginPortal()
+	maven {
+		url "http://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/"
+	}
 }
 
 dependencies {
@@ -48,6 +51,24 @@ dependencies {
 	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
 	implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
 	implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+	//pdf generator
+	//implementation "org.apache.pdfbox:pdfbox:2.0.4"
+
+	/*compile 'com.itextpdf:itextpdf:5.5.12' // used by jasperreports
+	compile 'org.olap4j:olap4j:1.2.0' // used by jasperreport
+	compile("net.sf.jasperreports:jasperreports:6.16.0")*/ /*{
+		exclude group: 'com.lowagie' // iText 2.1.7 is already in project
+	}*/
+	// https://mvnrepository.com/artifact/com.lowagie/itext
+	/*compile group: 'com.lowagie', name: 'itext', version: '2.1.7'*/
+	implementation "com.itextpdf:itextpdf:5.5.10"
+	// https://mvnrepository.com/artifact/com.itextpdf.tool/xmlworker
+	compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13.2'
+
+
+
+
+
 	// https://mvnrepository.com/artifact/javax.activation/activation
 	compile group: 'javax.activation', name: 'activation', version: '1.1.1'
 	compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
@@ -58,7 +79,9 @@ dependencies {
 	compile group: 'com.auth0', name: 'java-jwt', version:'3.8.3'
 	compile group: 'com.auth0', name: 'jwks-rsa', version:'0.9.0'
 	compile group: 'com.bol', name: 'spring-data-mongodb-encrypt', version: '2.5.0'
-
+	compile group: 'org.xhtmlrenderer', name: 'flying-saucer-core', version: '9.1.20'
+	compile group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf-openpdf', version: '9.1.20'
+	implementation 'org.jsoup:jsoup:1.13.1'
 
  	compile('org.json:json:20090211')
 	compile('com.opencsv:opencsv:4.0')
