@@ -3,6 +3,7 @@ package com.westernacher.internal.feedback.service.Implementation;
 import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.*;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
+import com.westernacher.internal.feedback.util.MailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.jsoup.Jsoup;
@@ -61,8 +62,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     @Autowired
     private AppraisalReviewMasterRepository appraisalReviewMasterRepository;
 
-    @Value("${zip.file.name}")
-    private String zippedFile;
+    @Autowired
+    private MailUtil mailUtil;
 
     public AppraisalCycle create(AppraisalCycle appraisalCycle) {
 
@@ -221,7 +222,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     private AppraisalReview createAppraisalreviewGoal(Map<String, List<AppraisalRole>> roleMap, Map<String, List<AppraisalGoal>> goalDefinitionMap,
-                                           Map<String, List<AppraisalGoal>> countryUnitMap, Person person, String cycleId) {
+                                                      Map<String, List<AppraisalGoal>> countryUnitMap, Person person, String cycleId) {
 
         AppraisalReview appraisalReview = new AppraisalReview();
         appraisalReview.setCycleId(cycleId);
@@ -279,8 +280,8 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     private void createSetGoals(Map<String, List<AppraisalGoal>> goalDefinitionMap,
-                                           Map<String, List<AppraisalGoal>> countryUnitMap, Person person,
-                                           String cycleId, AppraisalStatusType appraisalStatusType, AppraisalReview appraisalReview) {
+                                Map<String, List<AppraisalGoal>> countryUnitMap, Person person,
+                                String cycleId, AppraisalStatusType appraisalStatusType, AppraisalReview appraisalReview) {
 
         List<AppraisalReviewGoal> appraisalReviewGoalList = new ArrayList<>();
 
@@ -521,71 +522,69 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     @Override
-    public void printPdf(HttpServletResponse response, List<String> appraisalReviewIds) {
-        try{
-            Path tmpFilePath = Files.createTempDirectory("appraisal-");
-            appraisalReviewIds.forEach(id->{
-                Map<String, Person> personMap = new HashMap<>();
-                personRepository.findAll().forEach(item -> {
-                    personMap.put(item.getId(), item);
-                });
+    public String printPdf(String cycleId) {
 
-                AppraisalReview appraisalReview = appraisalReviewRepository.findById(id).orElse(null);
-
-                AppraisalCycle appraisalCycle = repository.findById(appraisalReview.getCycleId()).orElse(null);
-
-                Person person = personMap.get(appraisalReview.getEmployeeId());
-
-                List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
-
-                appraisalRoleList.sort(
-                        Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
-                );
-
-                List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
-
-
-                List<Report.CriteriaDetails> criteriaDetails = getCriteriaDetails(appraisalGoals, personMap, appraisalReview);
-
-
-                Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
-
-                for(Report.CriteriaDetails criteriaDetail : criteriaDetails) {
-                    List<Report.CriteriaDetails> criteriaDetailsList;
-
-                    if(groupMap.containsKey(criteriaDetail.getGroupName())) {
-                        criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
-                    }else {
-                        criteriaDetailsList = new ArrayList<>();
+        AppraisalCycle appraisalCycle = repository.findById(cycleId).orElse(null);
+        List<AppraisalReview> appraisalReviews;
+        Map<String, Person> personMap = new HashMap<>();
+        personRepository.findAll().forEach(item -> {
+            personMap.put(item.getId(), item);
+        });
+        if(appraisalCycle!=null){
+            try{
+                appraisalReviews = appraisalReviewRepository.findAllByCycleId(appraisalCycle.getId());
+                Path tmpFilePath = Files.createTempDirectory("appraisal-");
+                appraisalReviews.forEach(appraisalReview -> {
+                    List<AppraisalRole> appraisalRoleList =
+                            appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
+                    Person person = personMap.get(appraisalReview.getEmployeeId());
+                    appraisalRoleList.sort(
+                            Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
+                    );
+                    List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
+                    List<Report.CriteriaDetails> criteriaDetails = getCriteriaDetails(appraisalGoals, personMap, appraisalReview);
+                    Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
+                    for (Report.CriteriaDetails criteriaDetail : criteriaDetails) {
+                        List<Report.CriteriaDetails> criteriaDetailsList;
+                        if (groupMap.containsKey(criteriaDetail.getGroupName())) {
+                            criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
+                        } else {
+                            criteriaDetailsList = new ArrayList<>();
+                        }
+                        criteriaDetailsList.add(criteriaDetail);
+                        groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
                     }
-                    criteriaDetailsList.add(criteriaDetail);
-                    groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
-                }
+                    List<Report.ReportDetails> reportBody = new LinkedList<>();
+                    for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
+                        Report.ReportDetails reportDetail = new Report.ReportDetails();
+                        reportDetail.setGroupName(entry.getKey());
+                        reportDetail.setCriteriaDetails(entry.getValue());
+                        reportBody.add(reportDetail);
+                    }
+                    List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
 
-                List<Report.ReportDetails> reportBody = new LinkedList<>();
-
-                for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
-                    Report.ReportDetails reportDetail = new Report.ReportDetails();
-                    reportDetail.setGroupName(entry.getKey());
-                    reportDetail.setCriteriaDetails(entry.getValue());
-                    reportBody.add(reportDetail);
-                }
-
-                List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
-
-                StringBuffer htmlContent =  createReport(reportBody,
-                        getHeader(appraisalCycle.getName(), person, appraisalRoleList, personMap, appraisalCycle),
-                        createRatingSummary(appraisalRoleList, personMap, appraisalCycle),
-                        createDiscusionSummary(appraisalReviewMasters, personMap), appraisalCycle);
-                String xhtml = htmlToXhtml(htmlContent.toString());
-                xhtmlToPdf(xhtml, tmpFilePath, person.getFirstName(), person.getLastName());
-            });
-            //return zipFiles(response, tmpFilePath);
-
-        }catch (IOException e){
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    StringBuffer htmlContent = createReport(reportBody,
+                            getHeader(appraisalCycle.getName(), person, appraisalRoleList, personMap, appraisalCycle),
+                            createRatingSummary(appraisalRoleList, personMap, appraisalCycle),
+                            createDiscusionSummary(appraisalReviewMasters, personMap), appraisalCycle);
+                    String xhtml = htmlToXhtml(htmlContent.toString());
+                    xhtmlToPdf(xhtml, tmpFilePath, person.getFirstName(), person.getLastName());
+                });
+                byte[] zippedFile = zipFiles(tmpFilePath);
+                OutputStream os = new FileOutputStream(tmpFilePath.toFile().getAbsolutePath() + File.separator);
+                os.write(zippedFile);
+                os.close();
+                String to = "parag.ravindranath@westernacher.com";
+                mailUtil.send(to, "test-body.vm", new HashMap<>(),
+                        "test-subject.vm", new HashMap<>(),
+                        tmpFilePath.toFile().getAbsolutePath() + File.separator);
+                return "";
+            } catch (IOException exception) {
+                log.error(exception.toString());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+            }
         }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "cycleId does not exist");
     }
 
     private List<Report.CriteriaDetails> getCriteriaDetails(List<AppraisalGoal> appraisalGoals,
@@ -624,10 +623,10 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     }
 
     private StringBuffer getHeader(String cycleName,
-                             Person person,
-                             List<AppraisalRole> approsalRoleList,
-                             Map<String, Person> personMap,
-                             AppraisalCycle approsalCycle) {
+                                   Person person,
+                                   List<AppraisalRole> approsalRoleList,
+                                   Map<String, Person> personMap,
+                                   AppraisalCycle approsalCycle) {
         StringBuffer header = new StringBuffer();
         header.append("<h3 style=\"border-bottom: 1px solid black; padding-bottom: 20px; margin-top: 20px; margin-bottom: 20px;\">Annual Review ");
         header.append(cycleName);
@@ -846,9 +845,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         }
     }
 
-    public byte[] zipFiles(HttpServletResponse response, Path tmpFilePath) {
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.addHeader("Content-Disposition", "attachment; filename="+zippedFile);
+    public byte[] zipFiles(Path tmpFilePath) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
         ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);

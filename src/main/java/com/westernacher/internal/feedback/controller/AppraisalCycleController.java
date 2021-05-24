@@ -66,10 +66,10 @@ public class AppraisalCycleController {
         service.copyPreviousAppraisalGoals(sourceCycleId, destinationCycleId);
     }
 
-    @PostMapping(value = "/printPDF")
+    @GetMapping(value = "/printPDF/{cycleID}")
     @ResponseStatus(HttpStatus.OK)
-    public void printPdf (HttpServletResponse response, @RequestBody List<String> appraisalReviewIds) {
-        service.printPdf(response, appraisalReviewIds);
+    public String printPdf (@PathVariable String cycleID) {
+        return service.printPdf(cycleID);
     }
 
 
