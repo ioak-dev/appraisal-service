@@ -531,7 +531,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         AppraisalCycle appraisalCycle = repository.findById(cycleId).orElse(null);
         List<AppraisalReview> appraisalReviews;
         Map<String, Person> personMap = new HashMap<>();
-        //personRepository.findAll().forEach(item -> personMap.put(item.getId(), item));
+        personRepository.findAll().forEach(item -> personMap.put(item.getId(), item));
         if(appraisalCycle!=null){
             try{
                 appraisalReviews = appraisalReviewRepository.findAllByCycleId(appraisalCycle.getId());
