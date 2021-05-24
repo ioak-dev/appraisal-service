@@ -527,62 +527,65 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
     @Override
     public String printPdf(String cycleId) {
-
-        AppraisalCycle appraisalCycle = repository.findById(cycleId).orElse(null);
-        List<AppraisalReview> appraisalReviews;
-        Map<String, Person> personMap = new HashMap<>();
-        personRepository.findAll().forEach(item -> personMap.put(item.getId(), item));
-        if(appraisalCycle!=null){
-            try{
+        try{
+            AppraisalCycle appraisalCycle = repository.findById(cycleId).orElse(null);
+            List<AppraisalReview> appraisalReviews;
+            Map<String, Person> personMap = new HashMap<>();
+            personRepository.findAll().forEach(item -> personMap.put(item.getId(), item));
+            if (appraisalCycle != null) {
                 appraisalReviews = appraisalReviewRepository.findAllByCycleId(appraisalCycle.getId());
                 Path tmpFilePath = Files.createTempDirectory("appraisal-");
                 appraisalReviews.forEach(appraisalReview -> {
-                    List<AppraisalRole> appraisalRoleList =
-                            appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
-                    Person person = personMap.get(appraisalReview.getEmployeeId());
-                    appraisalRoleList.sort(
-                            Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
-                    );
-                    List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
-                    List<Report.CriteriaDetails> criteriaDetails = getCriteriaDetails(appraisalGoals, personMap, appraisalReview);
-                    Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
-                    for (Report.CriteriaDetails criteriaDetail : criteriaDetails) {
-                        List<Report.CriteriaDetails> criteriaDetailsList;
-                        if (groupMap.containsKey(criteriaDetail.getGroupName())) {
-                            criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
-                        } else {
-                            criteriaDetailsList = new ArrayList<>();
+                    try {
+                        List<AppraisalRole> appraisalRoleList =
+                                appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
+                        Person person = personMap.get(appraisalReview.getEmployeeId());
+                        appraisalRoleList.sort(
+                                Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
+                        );
+                        List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(appraisalReview.getCycleId());
+                        List<Report.CriteriaDetails> criteriaDetails = getCriteriaDetails(appraisalGoals, personMap, appraisalReview);
+                        Map<String, List<Report.CriteriaDetails>> groupMap = new LinkedHashMap<>();
+                        for (Report.CriteriaDetails criteriaDetail : criteriaDetails) {
+                            List<Report.CriteriaDetails> criteriaDetailsList;
+                            if (groupMap.containsKey(criteriaDetail.getGroupName())) {
+                                criteriaDetailsList = groupMap.get(criteriaDetail.getGroupName());
+                            } else {
+                                criteriaDetailsList = new ArrayList<>();
+                            }
+                            criteriaDetailsList.add(criteriaDetail);
+                            groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
                         }
-                        criteriaDetailsList.add(criteriaDetail);
-                        groupMap.put(criteriaDetail.getGroupName(), criteriaDetailsList);
+                        List<Report.ReportDetails> reportBody = new LinkedList<>();
+                        for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
+                            Report.ReportDetails reportDetail = new Report.ReportDetails();
+                            reportDetail.setGroupName(entry.getKey());
+                            reportDetail.setCriteriaDetails(entry.getValue());
+                            reportBody.add(reportDetail);
+                        }
+                        List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.
+                                findAllByAppraisalId(appraisalReview.getId());
+                        StringBuffer htmlContent = createReport(reportBody,
+                                getHeader(appraisalCycle.getName(), person, appraisalRoleList, personMap, appraisalCycle),
+                                createRatingSummary(appraisalRoleList, personMap, appraisalCycle),
+                                createDiscusionSummary(appraisalReviewMasters, personMap), appraisalCycle);
+                        String xhtml = htmlToXhtml(htmlContent.toString());
+                        xhtmlToPdf(xhtml, tmpFilePath, person.getFirstName(), person.getLastName());
+                    }catch (Exception exception){
+                        exception.printStackTrace();
+                        log.error("PDF generation process was not successful for employee " +appraisalReview.getEmployeeId());
                     }
-                    List<Report.ReportDetails> reportBody = new LinkedList<>();
-                    for (Map.Entry<String, List<Report.CriteriaDetails>> entry : groupMap.entrySet()) {
-                        Report.ReportDetails reportDetail = new Report.ReportDetails();
-                        reportDetail.setGroupName(entry.getKey());
-                        reportDetail.setCriteriaDetails(entry.getValue());
-                        reportBody.add(reportDetail);
-                    }
-                    List<AppraisalReviewMaster> appraisalReviewMasters = appraisalReviewMasterRepository.findAllByAppraisalId(appraisalReview.getId());
-
-                    StringBuffer htmlContent = createReport(reportBody,
-                            getHeader(appraisalCycle.getName(), person, appraisalRoleList, personMap, appraisalCycle),
-                            createRatingSummary(appraisalRoleList, personMap, appraisalCycle),
-                            createDiscusionSummary(appraisalReviewMasters, personMap), appraisalCycle);
-                    String xhtml = htmlToXhtml(htmlContent.toString());
-                    xhtmlToPdf(xhtml, tmpFilePath, person.getFirstName(), person.getLastName());
                 });
                 byte[] zippedFile = zipFiles(tmpFilePath);
                 DataSource dataSource = new ByteArrayDataSource(zippedFile, "application/zip");
                 boolean isSuccess = mailUtil.send(appraisalCycle.getAdmin(), "test-body.vm", new HashMap<>(),
                         "test-subject.vm", new HashMap<>(), dataSource);
-                if(isSuccess)
-                    return "Mail sent to "+appraisalCycle.getAdmin();
+                if (isSuccess)
+                    return "Mail sent to " + appraisalCycle.getAdmin();
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong");
-            } catch (IOException exception) {
-                log.error(exception.toString());
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
             }
+        }catch (IOException exception){
+            log.error(exception.getMessage());
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "cycleId does not exist");
     }
