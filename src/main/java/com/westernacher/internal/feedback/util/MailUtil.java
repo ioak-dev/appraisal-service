@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -58,9 +60,8 @@ public class MailUtil {
         }
     }
 
-    public boolean send( String to, String bodyTemplate, Map<String, String> bodyValues,
-                         String subjectTemplate, Map<String, String> subjectValues, String zippedFile) {
-        to = "parag.ravindranath@westernacher.com";
+    public boolean send(String to, String bodyTemplate, Map<String, String> bodyValues,
+                        String subjectTemplate, Map<String, String> subjectValues, DataSource dataSource) {
         Session session = getPropertyAndSessionDetails();
         try{
             MimeMessage message = new MimeMessage(session);
@@ -70,19 +71,17 @@ public class MailUtil {
             message.setSubject(getHtmlByTemplateAndContext(subjectTemplate, subjectValues), "UTF-8");
             message.setText(getHtmlByTemplateAndContext(bodyTemplate, bodyValues), "UTF-8");
 
-            //BodyPart messageBody = new MimeBodyPart();
-            //messageBody.setText(getHtmlByTemplateAndContext(bodyTemplate, bodyValues), "UTF-8");
-
-            MimeBodyPart attachmentPart = new MimeBodyPart();
-            attachmentPart.attachFile(new File(zippedFile));
+            MimeBodyPart attachment = new MimeBodyPart();
+            attachment.setDataHandler(new DataHandler(dataSource));
+            attachment.setFileName("Appraisal-Report.zip");
 
             Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(attachmentPart);
+            multipart.addBodyPart(attachment);
             message.setContent(multipart);
             Transport.send(message);
             log.info("Mail send successfully to :"+to);
             return true;
-        }catch(MessagingException | IOException e){
+        }catch(MessagingException e){
             log.info("Sending From: " + this.from + " Sending To: " + to);
             log.error("Error occured during sending mail"+e);
             return false;

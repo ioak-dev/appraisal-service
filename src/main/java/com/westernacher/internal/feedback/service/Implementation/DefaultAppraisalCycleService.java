@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
@@ -527,9 +531,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         AppraisalCycle appraisalCycle = repository.findById(cycleId).orElse(null);
         List<AppraisalReview> appraisalReviews;
         Map<String, Person> personMap = new HashMap<>();
-        personRepository.findAll().forEach(item -> {
-            personMap.put(item.getId(), item);
-        });
+        //personRepository.findAll().forEach(item -> personMap.put(item.getId(), item));
         if(appraisalCycle!=null){
             try{
                 appraisalReviews = appraisalReviewRepository.findAllByCycleId(appraisalCycle.getId());
@@ -571,14 +573,12 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                     xhtmlToPdf(xhtml, tmpFilePath, person.getFirstName(), person.getLastName());
                 });
                 byte[] zippedFile = zipFiles(tmpFilePath);
-                OutputStream os = new FileOutputStream(tmpFilePath.toFile().getAbsolutePath() + File.separator);
-                os.write(zippedFile);
-                os.close();
-                String to = "parag.ravindranath@westernacher.com";
-                mailUtil.send(to, "test-body.vm", new HashMap<>(),
-                        "test-subject.vm", new HashMap<>(),
-                        tmpFilePath.toFile().getAbsolutePath() + File.separator);
-                return "";
+                DataSource dataSource = new ByteArrayDataSource(zippedFile, "application/zip");
+                boolean isSuccess = mailUtil.send(appraisalCycle.getAdmin(), "test-body.vm", new HashMap<>(),
+                        "test-subject.vm", new HashMap<>(), dataSource);
+                if(isSuccess)
+                    return "Mail sent to "+appraisalCycle.getAdmin();
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong");
             } catch (IOException exception) {
                 log.error(exception.toString());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
