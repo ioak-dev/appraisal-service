@@ -21,9 +21,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -705,21 +707,23 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         StringBuffer response =  new StringBuffer();
         response.append("<div style=\"page-break-before: always;\">");
         response.append("<h3>Rating  Summary:</h3>");
+        DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
         approsalRoleList.stream().forEach(appraisalReviewMaster -> {
             if(!appraisalReviewMaster.getReviewerType().equals("Master")) {
                 if(appraisalReviewMaster.getReviewerType().equals("Self")) {
                     response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
                             personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
                     response.append(" As Self Evaluation</h5>");
-                    response.append("<p>"+"Goals and objectives - "+appraisalReviewMaster.getPrimaryScore()+"</br>");
-                    response.append("Notable Contributions - "+appraisalReviewMaster.getSecondaryScore()+"</p>");
+                    response.append("<p>"+"Goals and objectives - "+df.format(appraisalReviewMaster.getPrimaryScore())+"</br>");
+                    response.append("Notable Contributions - "+df.format(appraisalReviewMaster.getSecondaryScore())+"</p>");
                 }else {
                     if (cycle.getWorkflowMap().get(AppraisalStatusType.valueOf(appraisalReviewMaster.getReviewerType())).equals("Reporting Manager")) {
                         response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
                                 personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
                         response.append(" As Manager Evaluation</h5>");
-                        response.append("<p>"+"Goals and objectives - "+appraisalReviewMaster.getPrimaryScore()+"</br>");
-                        response.append("Notable Contributions - "+appraisalReviewMaster.getSecondaryScore()+"</p>");
+                        response.append("<p>"+"Goals and objectives - "+df.format(appraisalReviewMaster.getPrimaryScore())+"</br>");
+                        response.append("Notable Contributions - "+df.format(appraisalReviewMaster.getSecondaryScore())+"</p>");
                     }
 
                 }
