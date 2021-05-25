@@ -656,11 +656,14 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             }
         }
         for (Map.Entry<String, List<String>> entry : contributerMap.entrySet()) {
-            if (approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())).equalsIgnoreCase("master")) {
-                header.append("<p>Review Master");
+            if (entry.getKey().equals("Level_1")) {
+                header.append("<p>Review Contributor");
                 header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(", "))+"</u></p>");
-            } else {
-                header.append("<p>"+approsalCycle.getWorkflowMap().get(AppraisalStatusType.valueOf(entry.getKey())));
+            } else if (entry.getKey().equals("Level_2")) {
+                header.append("<p>Review Manager");
+                header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(", "))+"</u></p>");
+            } else if (entry.getKey().equals("Master")) {
+                header.append("<p>Review Master");
                 header.append("s: <u>"+entry.getValue().stream().collect(Collectors.joining(", "))+"</u></p>");
             }
 
@@ -700,22 +703,31 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     private StringBuffer createRatingSummary(List<AppraisalRole> approsalRoleList, Map<String, Person> personMap, AppraisalCycle cycle) {
 
         StringBuffer response =  new StringBuffer();
+        response.append("<div style=\"page-break-before: always;\">");
         response.append("<h3>Rating  Summary:</h3>");
         approsalRoleList.stream().forEach(appraisalReviewMaster -> {
             if(!appraisalReviewMaster.getReviewerType().equals("Master")) {
-                response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
-                        personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
-
                 if(appraisalReviewMaster.getReviewerType().equals("Self")) {
-                    response.append(" As Self Appraisal</h5>");
+                    response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
+                            personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
+                    response.append(" As Self Evaluation</h5>");
+                    response.append("<p>"+"Goals and objectives - "+appraisalReviewMaster.getPrimaryScore()+"</br>");
+                    response.append("Notable Contributions - "+appraisalReviewMaster.getSecondaryScore()+"</p>");
                 }else {
-                    response.append(" As " + cycle.getWorkflowMap().get(AppraisalStatusType.valueOf(appraisalReviewMaster.getReviewerType()))+"</h5>");
+                    if (cycle.getWorkflowMap().get(AppraisalStatusType.valueOf(appraisalReviewMaster.getReviewerType())).equals("Reporting Manager")) {
+                        response.append("<h5>"+personMap.get(appraisalReviewMaster.getReviewerId()).getFirstName()+" "+
+                                personMap.get(appraisalReviewMaster.getReviewerId()).getLastName());
+                        response.append(" As Manager Evaluation</h5>");
+                        response.append("<p>"+"Goals and objectives - "+appraisalReviewMaster.getPrimaryScore()+"</br>");
+                        response.append("Notable Contributions - "+appraisalReviewMaster.getSecondaryScore()+"</p>");
+                    }
+
                 }
 
-                response.append("<p>"+"Goals and objectives - "+appraisalReviewMaster.getPrimaryScore()+"</br>");
-                response.append("Notable Contributions - "+appraisalReviewMaster.getSecondaryScore()+"</p>");
+
             }
         });
+        response.append("</div>");
 
         return response;
 
@@ -725,7 +737,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         StringBuffer response = new StringBuffer();
         response.append("<html><head><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">");
         response.append("<link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap\" rel=\"stylesheet\">");
-        response.append("<style>*{font-family: 'Open Sans', sans-serif;}p {text-align: justify; margin: 0; padding: 0; margin-bottom: 10px; font-size: 14px;}h1, h2, h3, h4, h5, h6 {margin: 0; padding: 0;}body {margin: 0 50px;}</style>");
+        response.append("<style>*{font-family: 'Open Sans', sans-serif;}p {text-align: justify; margin: 0; padding: 0; margin-bottom: 10px; font-size: 14px;}h1, h2, h3, h4, h5, h6 {margin: 0; padding: 0;}body {margin: 0 50px;}h3,h4,h5{margin-bottom:10px}</style>");
         response.append("<title>Appraisal</title>");
         response.append("</head>");
         response.append("<body>");
