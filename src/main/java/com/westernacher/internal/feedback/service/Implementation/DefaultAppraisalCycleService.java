@@ -851,7 +851,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         try{
             File output = new File(firstName+ " "+lastName+".pdf");
             ITextRenderer iTextRenderer = new ITextRenderer();
-            iTextRenderer.setDocumentFromString(xhtml);
+            iTextRenderer.setDocumentFromString(xhtml.replaceAll("&(?!amp;)", "&amp;"));
             iTextRenderer.layout();
             OutputStream os = new FileOutputStream(tmpFilePath.toFile().getAbsolutePath() + File.separator + output);
             iTextRenderer.createPDF(os);
