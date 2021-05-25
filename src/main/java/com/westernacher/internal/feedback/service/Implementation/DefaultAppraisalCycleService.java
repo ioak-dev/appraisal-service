@@ -540,7 +540,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
                 appraisalReviews.forEach(appraisalReview -> {
                     try {
                         List<AppraisalRole> appraisalRoleList =
-                                appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
+                                appraisalRoleRepository.findByEmployeeIdAndCycleId(appraisalReview.getEmployeeId(), cycleId);
                         Person person = personMap.get(appraisalReview.getEmployeeId());
                         appraisalRoleList.sort(
                                 Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())
@@ -629,7 +629,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
     private StringBuffer getHeader(String cycleName,
                                    Person person,
-                                   List<AppraisalRole> approsalRoleList,
+                                   List<AppraisalRole> appraisalRoleList,
                                    Map<String, Person> personMap,
                                    AppraisalCycle approsalCycle) {
         StringBuffer header = new StringBuffer();
@@ -645,7 +645,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
         Map<String, List<String>> contributerMap = new LinkedHashMap<>();
 
-        for(AppraisalRole approsalRole: approsalRoleList) {
+        for(AppraisalRole approsalRole: appraisalRoleList) {
             if(!approsalRole.getReviewerType().equals("Self")) {
                 if(contributerMap.containsKey(approsalRole.getReviewerType())) {
                     List<String> list = contributerMap.get(approsalRole.getReviewerType());
