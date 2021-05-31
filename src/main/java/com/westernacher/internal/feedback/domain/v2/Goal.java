@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "goal")
 public class Goal {
     @Id
+    private String id;
     private int order;
     private String criteria;
 

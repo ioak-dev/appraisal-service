@@ -4,6 +4,13 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalDescriptive;
 import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Date;
+
 public interface AppraisalHeaderRepository extends MongoRepository<AppraisalHeader, String> {
+
+    AppraisalHeader findByFromAndToAndEmployeeIdAndReviewerId(Date from,
+                                                              Date to,
+                                                              String employeeId,
+                                                              String reviewerId);
 
 }
