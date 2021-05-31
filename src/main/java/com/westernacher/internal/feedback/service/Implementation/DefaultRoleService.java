@@ -2,10 +2,9 @@ package com.westernacher.internal.feedback.service.Implementation;
 
 
 import com.westernacher.internal.feedback.domain.AppraisalStatusType;
-import com.westernacher.internal.feedback.domain.Person;
+import com.westernacher.internal.feedback.domain.v2.Person;
 import com.westernacher.internal.feedback.domain.Role;
-import com.westernacher.internal.feedback.domain.RoleType;
-import com.westernacher.internal.feedback.repository.PersonRepository;
+import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import com.westernacher.internal.feedback.repository.RoleRepository;
 import com.westernacher.internal.feedback.service.RoleService;
 import com.westernacher.internal.feedback.util.CSVService;

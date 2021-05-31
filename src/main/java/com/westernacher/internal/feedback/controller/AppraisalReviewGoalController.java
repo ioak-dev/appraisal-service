@@ -2,7 +2,6 @@
 package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalReviewGoal;
-import com.westernacher.internal.feedback.domain.AppraisalRole;
 import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
 import com.westernacher.internal.feedback.service.AppraisalReviewGoalService;
 import lombok.extern.slf4j.Slf4j;

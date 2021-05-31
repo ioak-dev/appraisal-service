@@ -1,11 +1,11 @@
 package com.westernacher.internal.feedback.domain;
 
+import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
+import com.westernacher.internal.feedback.domain.v2.Person;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 

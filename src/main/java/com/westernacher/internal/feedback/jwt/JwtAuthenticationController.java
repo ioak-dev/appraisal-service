@@ -1,6 +1,6 @@
 package com.westernacher.internal.feedback.jwt;
 
-import com.westernacher.internal.feedback.repository.PersonRepository;
+import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

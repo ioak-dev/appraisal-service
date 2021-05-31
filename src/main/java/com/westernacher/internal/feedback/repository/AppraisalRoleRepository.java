@@ -1,7 +1,7 @@
 package com.westernacher.internal.feedback.repository;
 
 
-import com.westernacher.internal.feedback.domain.AppraisalRole;
+import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
 import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

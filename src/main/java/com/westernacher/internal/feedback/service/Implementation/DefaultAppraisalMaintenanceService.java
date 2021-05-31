@@ -3,8 +3,9 @@ package com.westernacher.internal.feedback.service.Implementation;
 import com.westernacher.internal.feedback.controller.representation.AppraisalMaintenanceResource;
 import com.westernacher.internal.feedback.domain.AppraisalReview;
 import com.westernacher.internal.feedback.domain.AppraisalReviewGoal;
-import com.westernacher.internal.feedback.domain.AppraisalRole;
+import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
 import com.westernacher.internal.feedback.repository.*;
+import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalMaintenanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class DefaultAppraisalMaintenanceService implements AppraisalMaintenanceS
     private AppraisalCycleRepository repository;
 
     @Autowired
-    private GoalRepository goalRepository;
+    private v1GoalRepository v1GoalRepository;
 
     @Autowired
     private PersonRepository personRepository;

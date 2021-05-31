@@ -3,31 +3,41 @@ package com.westernacher.internal.feedback.config;
 import com.bol.crypt.CryptVault;
 import com.bol.secure.CachedEncryptionEventListener;
 import com.google.common.base.Strings;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.BsonReader;
+import org.bson.BsonWriter;
+import org.bson.codecs.Codec;
+import org.bson.codecs.DecoderContext;
+import org.bson.codecs.EncoderContext;
+import org.bson.codecs.configuration.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
 @Configuration
 @Slf4j
 public class MongoConfiguration {
     @Value("${spring.data.mongodb.uri}")
     String mongoUri;
-
-    /*@Bean
-    public MongoClient mongoClient() {
-        log.info("MONGOURIIIIIIIII"+System.getenv("MONGODB_URI"));
-        String environmentUrl = Strings.isNullOrEmpty(System.getenv("MONGODB_URI")) ? mongoUri : System.getenv("MONGODB_URI");
-        log.info("after seting :"+environmentUrl);
-        MongoClientURI uri = new MongoClientURI(environmentUrl);
-        return new MongoClient(uri);
-    }*/
 
     @Bean
     public MongoDbFactory mongoDbFactory() {
@@ -41,6 +51,66 @@ public class MongoConfiguration {
         return mongoTemplate;
     }
 
+    @Bean
+    public MongoCustomConversions customConversions() {
+        List<Converter<?, ?>> converters = new ArrayList<>();
+        converters.add(new DateToZonedDateTimeConverter());
+        converters.add(new ZonedDateTimeToDateConverter());
+        return new MongoCustomConversions(converters);
+    }
+
+    @Bean
+    public MongoClientOptions.Builder mongoClientOptions() {
+
+        CodecProvider pojoCodecProvider = PojoCodecProvider.builder()
+                .automatic(true)
+                .build();
+
+        CodecRegistry registry = CodecRegistries.fromRegistries(
+                CodecRegistries.fromCodecs(
+                        new ZonedDateTimeCodec()
+                ),
+                MongoClient.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(pojoCodecProvider)
+        );
+
+        return MongoClientOptions.builder()
+                .codecRegistry(registry);
+    }
+
+    class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
+        @Override
+        public Class<ZonedDateTime> getEncoderClass() {
+            return ZonedDateTime.class;
+        }
+
+        @Override
+        public void encode(BsonWriter writer, ZonedDateTime value, EncoderContext encoderContext) {
+            writer.writeDateTime(value.toInstant().toEpochMilli());
+        }
+
+        @Override
+        public ZonedDateTime decode(BsonReader reader, DecoderContext decoderContext) {
+            return ZonedDateTime.ofInstant(Instant.ofEpochMilli(reader.readDateTime()), ZoneId.systemDefault());
+        }
+    }
+
+    class DateToZonedDateTimeConverter implements org.springframework.core.convert.converter.Converter<Date, ZonedDateTime> {
+
+        @Override
+        public ZonedDateTime convert(Date source) {
+            return source == null ? null :
+                    ZonedDateTime.ofInstant(source.toInstant(), ZoneId.systemDefault());
+        }
+    }
+
+    class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
+
+        @Override
+        public Date convert(ZonedDateTime source) {
+            return source == null ? null : Date.from(source.toInstant());
+        }
+    }
 
 //    @Bean
 //    public CryptVault cryptVault() {

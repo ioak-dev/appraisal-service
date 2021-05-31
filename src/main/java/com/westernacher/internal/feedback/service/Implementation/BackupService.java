@@ -1,25 +1,12 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.westernacher.internal.feedback.controller.PersonController;
-import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.repository.*;
+import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import com.opencsv.CSVWriter;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.*;
-import java.util.*;
 
 @Service
 @Slf4j

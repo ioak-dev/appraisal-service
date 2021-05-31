@@ -1,7 +1,10 @@
 package com.westernacher.internal.feedback.service.Implementation;
 
 import com.westernacher.internal.feedback.domain.*;
+import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
+import com.westernacher.internal.feedback.domain.v2.Person;
 import com.westernacher.internal.feedback.repository.*;
+import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalCycleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -32,7 +35,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     private AppraisalCycleRepository repository;
 
     @Autowired
-    private GoalRepository goalRepository;
+    private v1GoalRepository v1GoalRepository;
 
     @Autowired
     private PersonRepository personRepository;
@@ -70,7 +73,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         AppraisalCycle cycle = repository.save(appraisalCycle);
 
         /*Persist appraisal goal from goal*/
-        appraisalGoalRepository.saveAll(getAppraisalGoalFromGoal(goalRepository.findAll(), cycle.getId()));
+        appraisalGoalRepository.saveAll(getAppraisalGoalFromGoal(v1GoalRepository.findAll(), cycle.getId()));
 
         /*Persist appraisal person from person*/
         appraisalPersonRepository.saveAll(getAppraisalPersonFromPerson(personRepository.findAll(), cycle.getId()));
@@ -134,9 +137,9 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
     }
 
-    private List<AppraisalGoal> getAppraisalGoalFromGoal(List<Goal> goals, String cycleId) {
+    private List<AppraisalGoal> getAppraisalGoalFromGoal(List<v1Goal> v1Goals, String cycleId) {
         List<AppraisalGoal> appraisalGoalList = new ArrayList<>();
-        goals.stream().forEach(goal -> {
+        v1Goals.stream().forEach(goal -> {
             AppraisalGoal appraisalGoal = new AppraisalGoal();
             appraisalGoal.setJob(goal.getJob());
             appraisalGoal.setGroup(goal.getGroup());

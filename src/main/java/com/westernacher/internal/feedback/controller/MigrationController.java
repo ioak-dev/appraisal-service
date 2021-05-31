@@ -2,10 +2,11 @@ package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.controller.representation.MigrationAppraisalPayload;
 import com.westernacher.internal.feedback.domain.*;
+import com.westernacher.internal.feedback.domain.v2.Person;
 import com.westernacher.internal.feedback.repository.AppraisalGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewGoalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewRepository;
-import com.westernacher.internal.feedback.repository.PersonRepository;
+import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import com.westernacher.internal.feedback.service.MigrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

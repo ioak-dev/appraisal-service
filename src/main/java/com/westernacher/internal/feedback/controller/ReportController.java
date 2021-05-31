@@ -2,20 +2,17 @@ package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.controller.representation.ReportResource;
 import com.westernacher.internal.feedback.domain.AppraisalCycle;
-import com.westernacher.internal.feedback.domain.AppraisalRole;
+import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
 import com.westernacher.internal.feedback.domain.AppraisalStatusType;
-import com.westernacher.internal.feedback.domain.Person;
+import com.westernacher.internal.feedback.domain.v2.Person;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
 import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
-import com.westernacher.internal.feedback.repository.PersonRepository;
-import com.westernacher.internal.feedback.service.AppraisalCycleService;
-import com.westernacher.internal.feedback.service.Implementation.AppraisalCycleResource;
+import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.*;
 
 @RestController

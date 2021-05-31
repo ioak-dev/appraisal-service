@@ -1,14 +1,14 @@
 package com.westernacher.internal.feedback.controller.representation;
 
 import com.westernacher.internal.feedback.domain.*;
+import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
+import com.westernacher.internal.feedback.domain.v2.Person;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Data
 public class MigrationAppraisalResponse {
