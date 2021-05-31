@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/goal")
+@RequestMapping("/api/appraisal/custom/goalreference")
 public class GoalReferenceController {
     @Autowired
     private GoalRepository repository;

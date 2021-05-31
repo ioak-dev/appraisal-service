@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/goal")
+@RequestMapping("/api/appraisal/custom/goal")
 public class GoalController {
     @Autowired
     private GoalRepository repository;

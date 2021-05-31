@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/appraisal/custom/appraisallong")
 @Slf4j
 public class AppraisalLongController {
 
