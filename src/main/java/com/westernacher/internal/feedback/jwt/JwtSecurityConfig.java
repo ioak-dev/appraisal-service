@@ -51,6 +51,12 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/person/upload").permitAll()
                 .antMatchers("/notification/send").permitAll()
                 .antMatchers("/cycle").permitAll()
+
+                .antMatchers("/api/appraisal/custom/appraisallong").permitAll()
+                .antMatchers("/api/appraisal/custom/goal").permitAll()
+                .antMatchers("/api/appraisal/custom/goalreference").permitAll()
+                .antMatchers("/api/appraisal/custom/target").permitAll()
+
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
