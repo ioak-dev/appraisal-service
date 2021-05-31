@@ -6,7 +6,7 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
 import com.westernacher.internal.feedback.domain.AppraisalStatusType;
 import com.westernacher.internal.feedback.domain.v2.Person;
 import com.westernacher.internal.feedback.repository.AppraisalCycleRepository;
-import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
+import com.westernacher.internal.feedback.repository.v1AppraisalRoleRepository;
 import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,7 @@ import java.util.*;
 public class ReportController {
 
     @Autowired
-    private AppraisalRoleRepository approsalRoleRepository;
+    private v1AppraisalRoleRepository approsalRoleRepository;
     @Autowired
     private AppraisalCycleRepository appraisalCycleRepository;
 

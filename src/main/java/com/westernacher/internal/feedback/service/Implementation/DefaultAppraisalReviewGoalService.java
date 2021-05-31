@@ -31,7 +31,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
     private AppraisalGoalRepository appraisalGoalRepository;
 
     @Autowired
-    private AppraisalRoleRepository appraisalRoleRepository;
+    private v1AppraisalRoleRepository v1AppraisalRoleRepository;
 
     @Autowired
     private MailUtil mailUtil;
@@ -128,7 +128,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
 
             /*Setting appraisal role totalscore and iscomplete*/
             AppraisalReview appraisalReview = appraisalReviewRepository.findById(appraisalReviewGoal.getAppraisalId()).orElse(null);
-            AppraisalRole appraisalRole = appraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
+            AppraisalRole appraisalRole = v1AppraisalRoleRepository.findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(appraisalReviewGoal.getReviewerId(),
                     employeeId, appraisalReview.getCycleId(), AppraisalStatusType.valueOf(appraisalReview.getStatus()));
 
             double primaryNormalizedScore = primaryScore / primaryWeightage;
@@ -146,13 +146,13 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
             }
 
             appraisalRole.setComplete(true);
-            appraisalRoles.add(appraisalRoleRepository.save(appraisalRole));
+            appraisalRoles.add(v1AppraisalRoleRepository.save(appraisalRole));
             type = AppraisalStatusType.valueOf(appraisalReview.getStatus());
             cycleId = appraisalReview.getCycleId();
             reviewerId = appraisalReviewGoal.getReviewerId();
         }
 
-        List<AppraisalRole> appraisalRolesDB = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(
+        List<AppraisalRole> appraisalRolesDB = v1AppraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(
                 employeeId, cycleId, type
         );
         boolean changeStatus = true;
@@ -164,7 +164,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
         }
         AppraisalReview appraisalReview = appraisalReviewRepository.findById(appraisalReviewId).orElse(null);
 
-        List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findByEmployeeIdAndCycleId(employeeId, cycleId);
+        List<AppraisalRole> appraisalRoleList = v1AppraisalRoleRepository.findByEmployeeIdAndCycleId(employeeId, cycleId);
 
         List<AppraisalStatusType> statusTypes = new ArrayList<>();
         appraisalRoleList.stream().forEach(appraisalRole -> {
@@ -232,7 +232,7 @@ public class DefaultAppraisalReviewGoalService implements AppraisalReviewGoalSer
                 appraisalReview.setStatus(AppraisalStatusType.Complete.name());
             }
             appraisalReviewRepository.save(appraisalReview);
-            appraisalRoleListForMail = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(employeeId,
+            appraisalRoleListForMail = v1AppraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(employeeId,
                     cycleId, AppraisalStatusType.valueOf(appraisalReview.getStatus()));
         }
         sendMailAfterSubmit(appraisalRoleListForMail, personStore);

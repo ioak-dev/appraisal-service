@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface AppraisalRoleRepository extends MongoRepository<AppraisalRole, String> {
+public interface v1AppraisalRoleRepository extends MongoRepository<AppraisalRole, String> {
 
     List<AppraisalRole> findAllByCycleId(String cycleId);
     AppraisalRole findByReviewerIdAndEmployeeIdAndCycleIdAndReviewerType(String reviewerId, String employeeId, String cycleId, AppraisalStatusType type);

@@ -5,7 +5,7 @@ import com.westernacher.internal.feedback.domain.*;
 import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
 import com.westernacher.internal.feedback.domain.v2.Person;
 import com.westernacher.internal.feedback.repository.AppraisalReviewRepository;
-import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
+import com.westernacher.internal.feedback.repository.v1AppraisalRoleRepository;
 import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalReviewGoalService;
 import com.westernacher.internal.feedback.util.MailUtil;
@@ -27,7 +27,7 @@ public class NotificationController {
     private AppraisalReviewRepository appraisalReviewRepository;
 
     @Autowired
-    private AppraisalRoleRepository appraisalRoleRepository;
+    private v1AppraisalRoleRepository v1AppraisalRoleRepository;
 
     @Autowired
     private PersonRepository personRepository;
@@ -77,7 +77,7 @@ public class NotificationController {
         List<AppraisalRole> appraisalRoles = new ArrayList<>();
 
         for (AppraisalReview appraisalReview  : appraisalReviews) {
-            List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(appraisalReview.getEmployeeId(),
+            List<AppraisalRole> appraisalRoleList = v1AppraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(appraisalReview.getEmployeeId(),
                     appraisalReview.getCycleId(),AppraisalStatusType.valueOf(appraisalReview.getStatus()));
             appraisalRoleList.stream().forEach(appraisalRole -> {
                 if (!appraisalRole.isComplete()) {
@@ -99,7 +99,7 @@ public class NotificationController {
         AppraisalReview appraisalReview = appraisalReviewRepository.findById(appraisalId).orElse(null);
         List<AppraisalRole> appraisalRoles = new ArrayList<>();
 
-        appraisalRoles.addAll(appraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(appraisalReview.getEmployeeId(),
+        appraisalRoles.addAll(v1AppraisalRoleRepository.findByEmployeeIdAndCycleIdAndReviewerType(appraisalReview.getEmployeeId(),
                 cycleId, AppraisalStatusType.valueOf(appraisalReview.getStatus())));
 
         appraisalReviewGoalService.sendMailAfterSubmit(appraisalRoles, personStore);

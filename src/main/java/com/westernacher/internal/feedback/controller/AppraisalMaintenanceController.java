@@ -7,7 +7,7 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
 import com.westernacher.internal.feedback.domain.v2.Person;
 import com.westernacher.internal.feedback.repository.AppraisalRepository;
 import com.westernacher.internal.feedback.repository.AppraisalReviewMasterRepository;
-import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
+import com.westernacher.internal.feedback.repository.v1AppraisalRoleRepository;
 import com.westernacher.internal.feedback.repository.v2.PersonRepository;
 import com.westernacher.internal.feedback.service.AppraisalMaintenanceService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class AppraisalMaintenanceController {
     private PersonRepository personRepository;
 
     @Autowired
-    private AppraisalRoleRepository appraisalRoleRepository;
+    private v1AppraisalRoleRepository v1AppraisalRoleRepository;
 
     @Autowired
     private AppraisalRepository appraisalRepository;
@@ -74,7 +74,7 @@ public class AppraisalMaintenanceController {
     public List<AppraisalRole> fixMasterStatus(@RequestParam(required = false) Boolean simulate) {
         List<AppraisalReviewMaster> masterList = appraisalReviewMasterRepository.findAll();
         List<Appraisal> appraisalList = appraisalRepository.findAll();
-        List<AppraisalRole> roles = appraisalRoleRepository.findAll();
+        List<AppraisalRole> roles = v1AppraisalRoleRepository.findAll();
         Map<String, AppraisalRole> rolesMap = new HashMap<>();
         Map<String, String> appraisalMap = new HashMap<>();
         for (AppraisalRole role : roles) {
@@ -102,7 +102,7 @@ public class AppraisalMaintenanceController {
         if (!simulate) {
             for (AppraisalRole role : rolesToUpdate) {
                 role.setComplete(true);
-                appraisalRoleRepository.save(role);
+                v1AppraisalRoleRepository.save(role);
             }
         }
 

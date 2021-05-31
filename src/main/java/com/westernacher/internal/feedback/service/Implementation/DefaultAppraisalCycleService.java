@@ -59,7 +59,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
     private AppraisalGoalRepository appraisalGoalRepository;
 
     @Autowired
-    private AppraisalRoleRepository appraisalRoleRepository;
+    private v1AppraisalRoleRepository v1AppraisalRoleRepository;
 
     @Autowired
     private AppraisalReviewMasterRepository appraisalReviewMasterRepository;
@@ -87,7 +87,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         });
 
         /*persist appraisal role from role*/
-        appraisalRoleRepository.saveAll(getAppraisalRoleFromRole(roleRepository.findAllByEmployeeIdIn(personIdList), cycle.getId()));
+        v1AppraisalRoleRepository.saveAll(getAppraisalRoleFromRole(roleRepository.findAllByEmployeeIdIn(personIdList), cycle.getId()));
 
         List<AppraisalGoal> appraisalGoals = appraisalGoalRepository.findAllByCycleId(cycle.getId());
 
@@ -98,7 +98,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         Map<String, List<AppraisalGoal>> countryUnitMap = getCountryUnitAndGoalMap(appraisalGoals);
 
         /*Map of only employees and their respective roles*/
-        Map<String, List<AppraisalRole>> roleMap = getEmployeeAndAppraisalRoleMap(appraisalRoleRepository.findAllByCycleId(cycle.getId()));
+        Map<String, List<AppraisalRole>> roleMap = getEmployeeAndAppraisalRoleMap(v1AppraisalRoleRepository.findAllByCycleId(cycle.getId()));
 
         /*Create appraisal review goal for person's role and job*/
         personList.forEach(person -> {
@@ -126,7 +126,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
         repository.deleteById(id);
 
         AppraisalCycleResource.CycleDeleteResource resource = new AppraisalCycleResource.CycleDeleteResource();
-        resource.setDeletedRoles(appraisalRoleRepository.deleteAllByCycleId(id));
+        resource.setDeletedRoles(v1AppraisalRoleRepository.deleteAllByCycleId(id));
         resource.setDeletedGoals(appraisalGoalRepository.deleteAllByCycleId(id));
         resource.setDeletedAppraisalReviewGoals(reviewGoalRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
         resource.setDeletedAppraisalReviewMasters(appraisalReviewMasterRepository.deleteAllByAppraisalIdIn(appraisalReviewIds));
@@ -457,7 +457,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
             return updatedPersons;
         }
 
-        List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findAllByCycleId(cycleId);
+        List<AppraisalRole> appraisalRoleList = v1AppraisalRoleRepository.findAllByCycleId(cycleId);
         Map<String, List<String>> roleMap = new HashMap<>();
         appraisalRoleList.forEach(appraisalRole -> {
             if (!appraisalRole.isComplete()) {
@@ -539,7 +539,7 @@ public class DefaultAppraisalCycleService implements AppraisalCycleService {
 
                 Person person = personMap.get(appraisalReview.getEmployeeId());
 
-                List<AppraisalRole> appraisalRoleList = appraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
+                List<AppraisalRole> appraisalRoleList = v1AppraisalRoleRepository.findAllByEmployeeId(appraisalReview.getEmployeeId());
 
                 appraisalRoleList.sort(
                         Comparator.comparing((AppraisalRole ARG) -> AppraisalStatusType.valueOf(ARG.getReviewerType()).ordinal())

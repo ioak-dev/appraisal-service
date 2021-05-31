@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Data
 @Builder
@@ -17,8 +18,8 @@ import java.time.ZonedDateTime;
 public class AppraisalHeader {
     @Id
     private String id;
-    private ZonedDateTime from;
-    private ZonedDateTime to;
+    private Date from;
+    private Date to;
     private String employeeId;
     private String reviewerId;
 }

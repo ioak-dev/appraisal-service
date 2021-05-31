@@ -3,7 +3,7 @@ package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.v2.AppraisalRole;
 import com.westernacher.internal.feedback.domain.AppraisalStatusType;
-import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
+import com.westernacher.internal.feedback.repository.v1AppraisalRoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class V1AppraisalRoleController {
 
     @Autowired
-    private AppraisalRoleRepository repository;
+    private v1AppraisalRoleRepository repository;
 
     @GetMapping
     public ResponseEntity<?> getAppraisalRoles (@RequestParam String cycleId) {

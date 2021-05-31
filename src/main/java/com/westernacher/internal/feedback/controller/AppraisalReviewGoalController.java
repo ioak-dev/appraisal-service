@@ -2,7 +2,7 @@
 package com.westernacher.internal.feedback.controller;
 
 import com.westernacher.internal.feedback.domain.AppraisalReviewGoal;
-import com.westernacher.internal.feedback.repository.AppraisalRoleRepository;
+import com.westernacher.internal.feedback.repository.v1AppraisalRoleRepository;
 import com.westernacher.internal.feedback.service.AppraisalReviewGoalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class AppraisalReviewGoalController {
     private AppraisalReviewGoalService service;
 
     @Autowired
-    private AppraisalRoleRepository approsalRoleRepository;
+    private v1AppraisalRoleRepository approsalRoleRepository;
 
     @GetMapping
     public ResponseEntity<?> getReviewGoals (@RequestParam String appraisalId) {

@@ -29,7 +29,7 @@ public class DefaultMigrationService implements MigrationService {
     private AppraisalGoalRepository appraisalGoalRepository;
 
     @Autowired
-    private AppraisalRoleRepository appraisalRoleRepository;
+    private v1AppraisalRoleRepository v1AppraisalRoleRepository;
 
     @Autowired
     private AppraisalReviewGoalRepository appraisalReviewGoalRepository;
@@ -76,7 +76,7 @@ public class DefaultMigrationService implements MigrationService {
         }
 
         if (output.getAppraisalRoles() != null && !output.getAppraisalRoles().isEmpty()) {
-            appraisalRoleRepository.saveAll(output.getAppraisalRoles());
+            v1AppraisalRoleRepository.saveAll(output.getAppraisalRoles());
         }
 
         if (output.getAppraisalReviewGoals() != null && !output.getAppraisalReviewGoals().isEmpty()) {

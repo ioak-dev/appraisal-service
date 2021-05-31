@@ -45,7 +45,7 @@ public class DefaultAppraisalMaintenanceService implements AppraisalMaintenanceS
     private AppraisalGoalRepository appraisalGoalRepository;
 
     @Autowired
-    private AppraisalRoleRepository appraisalRoleRepository;
+    private v1AppraisalRoleRepository v1AppraisalRoleRepository;
 
     @Autowired
     private AppraisalReviewMasterRepository appraisalReviewMasterRepository;
@@ -56,13 +56,13 @@ public class DefaultAppraisalMaintenanceService implements AppraisalMaintenanceS
         response.setReviewGoals(new ArrayList<>());
         response.setRoles(new ArrayList<>());
         AppraisalReview review = appraisalReviewRepository.findFirstByCycleIdAndEmployeeId(cycleId, employeeId);
-        List<AppraisalRole> roleList = appraisalRoleRepository.findAllByCycleIdAndEmployeeIdAndReviewerIdAndReviewerType(cycleId, employeeId, reviewerId, reviewerType);
+        List<AppraisalRole> roleList = v1AppraisalRoleRepository.findAllByCycleIdAndEmployeeIdAndReviewerIdAndReviewerType(cycleId, employeeId, reviewerId, reviewerType);
         roleList.forEach(role -> {
             response.getReviewGoals().addAll(unlockReviewGoals(review.getId(), role.getReviewerId(), role.getReviewerType(), simulate));
             role.setComplete(false);
             response.getRoles().add(role);
             if (!simulate) {
-                appraisalRoleRepository.save(role);
+                v1AppraisalRoleRepository.save(role);
             }
         });
 
