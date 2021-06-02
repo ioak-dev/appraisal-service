@@ -22,4 +22,5 @@ public class AppraisalHeader {
     private Date to;
     private String employeeId;
     private String reviewerId;
+    private String reviewerType;
 }

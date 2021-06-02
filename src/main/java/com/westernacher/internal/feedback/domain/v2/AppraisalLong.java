@@ -18,7 +18,7 @@ public class AppraisalLong {
     @Id
     private String id;
     private String headerId;
-    private String orderId;
-    private String rating;
+    private int orderId;
+    private int rating;
     private String comment;
 }
