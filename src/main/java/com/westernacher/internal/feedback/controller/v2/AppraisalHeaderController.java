@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +25,28 @@ public class AppraisalHeaderController {
     private AppraisalHeaderRepository repository;
 
     @GetMapping
-    public List<AppraisalHeader> getAll () {
+    public List<AppraisalHeader> getAll (@RequestParam(required = false) String from,
+                                         @RequestParam(required = false) String to) {
+        if (from != null && to != null) {
+            try {
+                Date dateFrom=new SimpleDateFormat("dd/MM/yyyy").parse(from);
+                Date dateTo=new SimpleDateFormat("dd/MM/yyyy").parse(to);
+                List<AppraisalHeader> appraisalHeaders = repository.findAll();
+                List<AppraisalHeader> response = new ArrayList<>();
+                for (AppraisalHeader appraisalHeader:appraisalHeaders) {
+                    if ((appraisalHeader.getFrom().before(dateFrom) && appraisalHeader.getTo().after(dateFrom)) ||
+                            (appraisalHeader.getFrom().after(dateFrom) && appraisalHeader.getTo().before(dateTo)) ||
+                            (appraisalHeader.getFrom().before(dateTo) && appraisalHeader.getTo().after(dateTo))) {
+                        response.add(appraisalHeader);
+                    }
+
+                }
+                return response;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
         return repository.findAll();
     }
 
