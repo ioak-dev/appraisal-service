@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Data
 @Builder
@@ -18,7 +19,7 @@ public class GoalEmployee {
     @Id
     private String id;
     private String employeeId;
-    private float orderId;
+    private int orderId;
     private String description;
-    private ZonedDateTime createdDate;
+    private Date createdDate;
 }
