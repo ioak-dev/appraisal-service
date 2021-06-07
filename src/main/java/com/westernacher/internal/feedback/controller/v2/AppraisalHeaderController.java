@@ -34,9 +34,11 @@ public class AppraisalHeaderController {
                 List<AppraisalHeader> appraisalHeaders = repository.findAll();
                 List<AppraisalHeader> response = new ArrayList<>();
                 for (AppraisalHeader appraisalHeader:appraisalHeaders) {
-                    if ((appraisalHeader.getFrom().before(dateFrom) && appraisalHeader.getTo().after(dateFrom)) ||
-                            (appraisalHeader.getFrom().after(dateFrom) && appraisalHeader.getTo().before(dateTo)) ||
-                            (appraisalHeader.getFrom().before(dateTo) && appraisalHeader.getTo().after(dateTo))) {
+                    Date appraisalFrom = new SimpleDateFormat("dd/MM/yyyy").parse(appraisalHeader.getFrom().toString());
+                    Date appraisalTo = new SimpleDateFormat("dd/MM/yyyy").parse(appraisalHeader.getTo().toString());
+                    if ((appraisalFrom.before(dateFrom) && appraisalTo.after(dateFrom)) ||
+                            (appraisalFrom.after(dateFrom) && appraisalTo.before(dateTo)) ||
+                            (appraisalFrom.before(dateTo) && appraisalTo.after(dateTo))) {
                         response.add(appraisalHeader);
                     }
 
