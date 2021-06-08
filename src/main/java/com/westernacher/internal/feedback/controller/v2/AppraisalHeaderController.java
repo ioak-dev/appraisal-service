@@ -36,6 +36,11 @@ public class AppraisalHeaderController {
         return repository.findAll();
     }
 
+    @GetMapping
+    public AppraisalHeader getHeaderByEmployeeId (@RequestParam String employeeId) {
+        return repository.findByEmployeeId(employeeId);
+    }
+
 
     @PostMapping
     public ResponseEntity<AppraisalHeader> create (@RequestBody AppraisalHeader appraisalHeader) {
