@@ -8,12 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -28,26 +23,15 @@ public class AppraisalHeaderController {
     public List<AppraisalHeader> getAll (@RequestParam(required = false) String from,
                                          @RequestParam(required = false) String to) {
         if (from != null && to != null) {
-            try {
-                Date dateFrom=new SimpleDateFormat("dd/MM/yyyy").parse(from);
-                Date dateTo=new SimpleDateFormat("dd/MM/yyyy").parse(to);
-                List<AppraisalHeader> appraisalHeaders = repository.findAll();
-                List<AppraisalHeader> response = new ArrayList<>();
-                for (AppraisalHeader appraisalHeader:appraisalHeaders) {
-                    Date appraisalFrom = new SimpleDateFormat("dd/MM/yyyy").parse(appraisalHeader.getFrom().toString());
-                    Date appraisalTo = new SimpleDateFormat("dd/MM/yyyy").parse(appraisalHeader.getTo().toString());
-                    if ((appraisalFrom.before(dateFrom) && appraisalTo.after(dateFrom)) ||
-                            (appraisalFrom.after(dateFrom) && appraisalTo.before(dateTo)) ||
-                            (appraisalFrom.before(dateTo) && appraisalTo.after(dateTo))) {
-                        response.add(appraisalHeader);
-                    }
-
+            List<AppraisalHeader> response = new ArrayList<>();
+            for (AppraisalHeader appraisalHeader:repository.findAll()) {
+                if ((appraisalHeader.getFrom()< Integer.parseInt(from) && appraisalHeader.getTo()> Integer.parseInt(from)) ||
+                        (appraisalHeader.getFrom()> Integer.parseInt(from) && appraisalHeader.getTo()<Integer.parseInt(to)) ||
+                        (appraisalHeader.getFrom() < Integer.parseInt(to) && appraisalHeader.getTo() >Integer.parseInt(to))) {
+                    response.add(appraisalHeader);
                 }
-                return response;
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
-
+            return response;
         }
         return repository.findAll();
     }
@@ -64,8 +48,5 @@ public class AppraisalHeaderController {
         }else {
             return ResponseEntity.ok(repository.save(appraisalHeader).getId());
         }
-
     }
-
-
 }

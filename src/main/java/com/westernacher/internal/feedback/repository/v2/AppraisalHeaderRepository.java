@@ -8,8 +8,8 @@ import java.util.Date;
 
 public interface AppraisalHeaderRepository extends MongoRepository<AppraisalHeader, String> {
 
-    AppraisalHeader findByFromAndToAndEmployeeIdAndReviewerId(Date from,
-                                                              Date to,
+    AppraisalHeader findByFromAndToAndEmployeeIdAndReviewerId(Integer from,
+                                                              Integer to,
                                                               String employeeId,
                                                               String reviewerId);
 

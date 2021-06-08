@@ -18,8 +18,10 @@ import java.util.Date;
 public class AppraisalHeader {
     @Id
     private String id;
-    private Date from;
-    private Date to;
+    //format YYYYMM
+    private Integer from;
+    //format YYYYMM
+    private Integer to;
     private String employeeId;
     private String reviewerId;
     private String reviewerType;
