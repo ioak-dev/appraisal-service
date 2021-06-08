@@ -14,6 +14,6 @@ public interface AppraisalHeaderRepository extends MongoRepository<AppraisalHead
                                                               String employeeId,
                                                               String reviewerId);
 
-    List<AppraisalHeader> findByEmployeeId(String employeeId);
+    List<AppraisalHeader> findAllByEmployeeId(String employeeId);
 
 }
