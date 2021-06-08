@@ -38,15 +38,15 @@ public class AppraisalHeaderController {
 
 
     @PostMapping
-    public ResponseEntity<String> create (@RequestBody AppraisalHeader appraisalHeader) {
+    public ResponseEntity<AppraisalHeader> create (@RequestBody AppraisalHeader appraisalHeader) {
         AppraisalHeader existingRecord = repository.findByFromAndToAndEmployeeIdAndReviewerId(appraisalHeader.getFrom(),
                 appraisalHeader.getTo(),
                 appraisalHeader.getEmployeeId(),
                 appraisalHeader.getReviewerId());
         if (existingRecord != null) {
-            return ResponseEntity.ok(existingRecord.getId());
+            return ResponseEntity.ok(existingRecord);
         }else {
-            return ResponseEntity.ok(repository.save(appraisalHeader).getId());
+            return ResponseEntity.ok(repository.save(appraisalHeader));
         }
     }
 }
