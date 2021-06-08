@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,17 +22,25 @@ public class AppraisalLongController {
     private AppraisalLongRepository repository;
 
     @GetMapping
-    public List<AppraisalLong> getAll (@RequestParam(required = false) String headerId) {
+    public ResponseEntity<List<AppraisalLong>> getAll (@RequestParam(required = false) String headerId) {
         if (headerId != null) {
-            return repository.findAllByHeaderId(headerId);
+            return ResponseEntity.ok(repository.findAllByHeaderId(headerId));
         }
-        return repository.findAll();
+        return ResponseEntity.ok(repository.findAll());
     }
 
 
     @PostMapping
-    public ResponseEntity<List<AppraisalLong>> create (@RequestBody List<AppraisalLong> appraisalLongs) {
-        return ResponseEntity.ok(repository.saveAll(appraisalLongs));
+    public ResponseEntity<List<AppraisalLong>> create (@RequestBody List<AppraisalLong> appraisalLongs,
+                                                       @RequestParam String headerId) {
+
+        List<AppraisalLong> appraisalLongList = new ArrayList<>();
+        appraisalLongs.stream().forEach(appraisalLong -> {
+            appraisalLong.setHeaderId(headerId);
+            appraisalLongList.add(appraisalLong);
+        });
+
+        return ResponseEntity.ok(repository.saveAll(appraisalLongList));
     }
 
 

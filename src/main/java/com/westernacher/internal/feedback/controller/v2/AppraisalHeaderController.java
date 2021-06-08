@@ -20,7 +20,7 @@ public class AppraisalHeaderController {
     private AppraisalHeaderRepository repository;
 
     @GetMapping
-    public List<AppraisalHeader> getAll (@RequestParam(required = false) String from,
+    public ResponseEntity<List<AppraisalHeader>> getAll (@RequestParam(required = false) String from,
                                          @RequestParam(required = false) String to) {
         if (from != null && to != null) {
             List<AppraisalHeader> response = new ArrayList<>();
@@ -31,27 +31,19 @@ public class AppraisalHeaderController {
                     response.add(appraisalHeader);
                 }
             }
-            return response;
+            return ResponseEntity.ok(response);
         }
-        return repository.findAll();
+        return ResponseEntity.ok(repository.findAll());
     }
 
     @GetMapping("/employee/{employeeId}")
-    public List<AppraisalHeader> getHeaderByEmployeeId (@PathVariable String employeeId) {
-        return repository.findAllByEmployeeId(employeeId);
+    public ResponseEntity<List<AppraisalHeader>> getHeaderByEmployeeId (@PathVariable String employeeId) {
+        return ResponseEntity.ok(repository.findAllByEmployeeId(employeeId));
     }
 
 
     @PostMapping
     public ResponseEntity<AppraisalHeader> create (@RequestBody AppraisalHeader appraisalHeader) {
-        AppraisalHeader existingRecord = repository.findByFromAndToAndEmployeeIdAndReviewerId(appraisalHeader.getFrom(),
-                appraisalHeader.getTo(),
-                appraisalHeader.getEmployeeId(),
-                appraisalHeader.getReviewerId());
-        if (existingRecord != null) {
-            return ResponseEntity.ok(existingRecord);
-        }else {
-            return ResponseEntity.ok(repository.save(appraisalHeader));
-        }
+        return ResponseEntity.ok(repository.save(appraisalHeader));
     }
 }
