@@ -5,6 +5,7 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Date;
+import java.util.List;
 
 public interface AppraisalHeaderRepository extends MongoRepository<AppraisalHeader, String> {
 
@@ -13,6 +14,6 @@ public interface AppraisalHeaderRepository extends MongoRepository<AppraisalHead
                                                               String employeeId,
                                                               String reviewerId);
 
-    AppraisalHeader findByEmployeeId(String employeeId);
+    List<AppraisalHeader> findByEmployeeId(String employeeId);
 
 }
