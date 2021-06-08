@@ -75,15 +75,6 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
             Optional<AppraisalGoal> appraisalGoal = appraisalGoalRepository.
                     findById(appraisalReviewGoal.getGoalId());
 
-            AppraisalHeader appraisalHeader = new AppraisalHeader();
-            appraisalHeader.setId(ObjectId.get().toString());
-            appraisalHeader.setEmployeeId(appraisalReviewGoal.getEmployeeId());
-            appraisalHeader.setReviewerId(appraisalReviewGoal.getReviewerId());
-            appraisalHeader.setReviewerType(appraisalReviewGoal.getReviewerType());
-            appraisalHeader.setFrom(convertDateToInteger(appraisalCycle.get().getStart()));
-            appraisalHeader.setTo(convertDateToInteger(appraisalCycle.get().getEnd()));
-            appraisalHeaders.add(appraisalHeader);
-
             if (appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())){
                 GoalEmployee goalEmployee = new GoalEmployee();
                 goalEmployee.setId(ObjectId.get().toString());
@@ -104,7 +95,16 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 goalEmployee.setCreatedDate(cal.getTime());
                 goalEmployees.add(goalEmployee);
             }
-            else{
+            else if(!appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString()) ||
+                    !appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())) {
+                AppraisalHeader appraisalHeader = new AppraisalHeader();
+                appraisalHeader.setId(ObjectId.get().toString());
+                appraisalHeader.setEmployeeId(appraisalReviewGoal.getEmployeeId());
+                appraisalHeader.setReviewerId(appraisalReviewGoal.getReviewerId());
+                appraisalHeader.setReviewerType(appraisalReviewGoal.getReviewerType());
+                appraisalHeader.setFrom(convertDateToInteger(appraisalCycle.get().getStart()));
+                appraisalHeader.setTo(convertDateToInteger(appraisalCycle.get().getEnd()));
+                appraisalHeaders.add(appraisalHeader);
                 AppraisalLong appraisalLong = new AppraisalLong();
                 appraisalLong.setId(ObjectId.get().toString());
                 appraisalLong.setOrderId(appraisalGoal.get().getOrder());
@@ -114,6 +114,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 appraisalLong.setHeaderId(appraisalHeader.getId());
                 appraisalLongs.add(appraisalLong);
             }
+
         });
         MigrationOutputV2 migrationOutputV2 = new MigrationOutputV2();
         migrationOutputV2.setAppraisalHeaderMap(Map.ofEntries(Map.entry("appraisal.header", appraisalHeaders)));
