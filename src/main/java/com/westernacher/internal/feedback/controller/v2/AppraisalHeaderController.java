@@ -36,8 +36,8 @@ public class AppraisalHeaderController {
         return repository.findAll();
     }
 
-    @GetMapping
-    public AppraisalHeader getHeaderByEmployeeId (@RequestParam String employeeId) {
+    @GetMapping("/{employeeId}")
+    public AppraisalHeader getHeaderByEmployeeId (@PathVariable String employeeId) {
         return repository.findByEmployeeId(employeeId);
     }
 
