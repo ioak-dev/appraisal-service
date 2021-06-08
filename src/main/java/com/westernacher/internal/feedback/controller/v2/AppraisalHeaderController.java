@@ -38,7 +38,7 @@ public class AppraisalHeaderController {
 
     @GetMapping("/employee/{employeeId}")
     public List<AppraisalHeader> getHeaderByEmployeeId (@PathVariable String employeeId) {
-        return repository.findByEmployeeId(employeeId);
+        return repository.findAllByEmployeeId(employeeId);
     }
 
 
