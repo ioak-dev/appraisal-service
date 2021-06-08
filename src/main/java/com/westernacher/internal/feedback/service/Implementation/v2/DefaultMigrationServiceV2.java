@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import static com.westernacher.internal.feedback.domain.AppraisalStatusType.REVIEW_GOAL;
@@ -79,8 +80,8 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
             appraisalHeader.setEmployeeId(appraisalReviewGoal.getEmployeeId());
             appraisalHeader.setReviewerId(appraisalReviewGoal.getReviewerId());
             appraisalHeader.setReviewerType(appraisalReviewGoal.getReviewerType());
-            appraisalHeader.setFrom(appraisalCycle.get().getStart());
-            appraisalHeader.setTo(appraisalCycle.get().getEnd());
+            appraisalHeader.setFrom(convertDateToInteger(appraisalCycle.get().getStart()));
+            appraisalHeader.setTo(convertDateToInteger(appraisalCycle.get().getEnd()));
             appraisalHeaders.add(appraisalHeader);
 
             if (appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())){
@@ -119,6 +120,14 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         migrationOutputV2.setAppraisalLongMap(Map.ofEntries(Map.entry("appraisal.long", appraisalLongs)));
         migrationOutputV2.setGoalEmployeeMap(Map.ofEntries(Map.entry("goal.employee", goalEmployees)));
         return migrationOutputV2;
+    }
+
+    private Integer convertDateToInteger(Date date){
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        return Integer.valueOf(String.valueOf(year) + String.valueOf(month));
     }
 
     public void loadAppraisalData(MigrationOutputV2 appraisalData){
