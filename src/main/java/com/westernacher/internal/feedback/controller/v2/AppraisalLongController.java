@@ -27,8 +27,8 @@ public class AppraisalLongController {
 
 
     @PostMapping
-    public ResponseEntity<AppraisalLong> create (@Valid @RequestBody AppraisalLong appraisalLong) {
-        return ResponseEntity.ok(repository.save(appraisalLong));
+    public ResponseEntity<List<AppraisalLong>> create (@RequestBody List<AppraisalLong> appraisalLongs) {
+        return ResponseEntity.ok(repository.saveAll(appraisalLongs));
     }
 
 
