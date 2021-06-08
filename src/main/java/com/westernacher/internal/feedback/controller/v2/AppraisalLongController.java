@@ -21,7 +21,10 @@ public class AppraisalLongController {
     private AppraisalLongRepository repository;
 
     @GetMapping
-    public List<AppraisalLong> getAll () {
+    public List<AppraisalLong> getAll (@RequestParam(required = false) String headerId) {
+        if (headerId != null) {
+            return repository.findAllByHeaderId(headerId);
+        }
         return repository.findAll();
     }
 
