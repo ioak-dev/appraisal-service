@@ -13,10 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/appraisal/custom/appraisallong")
@@ -50,6 +48,11 @@ public class AppraisalLongController {
         headers.stream().forEach(header->{
             resources.add(AppraisalLongResource.getAppraisalLongResource(header, appraisalHeaderMap));
         });
+
+        resources.stream()
+                .sorted(Comparator.comparing(AppraisalLongResource::getReviewerType)
+        .thenComparing(AppraisalLongResource::getReviewerId))
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(resources);
     }
