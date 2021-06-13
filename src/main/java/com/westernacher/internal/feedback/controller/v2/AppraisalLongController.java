@@ -2,7 +2,10 @@
 package com.westernacher.internal.feedback.controller.v2;
 
 
+import com.westernacher.internal.feedback.controller.representation.AppraisalLongResource;
+import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
 import com.westernacher.internal.feedback.domain.v2.AppraisalLong;
+import com.westernacher.internal.feedback.repository.v2.AppraisalHeaderRepository;
 import com.westernacher.internal.feedback.repository.v2.AppraisalLongRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appraisal/custom/appraisallong")
@@ -21,12 +26,32 @@ public class AppraisalLongController {
     @Autowired
     private AppraisalLongRepository repository;
 
+    @Autowired
+    private AppraisalHeaderRepository appraisalHeaderRepository;
+
     @GetMapping
-    public ResponseEntity<List<AppraisalLong>> getAll (@RequestParam(required = false) String headerId) {
+    public ResponseEntity<List<AppraisalLongResource>> getAll (@RequestParam(required = false) String headerId) {
+
+        Map<String, AppraisalHeader> appraisalHeaderMap = new HashMap<>();
+        appraisalHeaderRepository.findAll().stream().forEach(appraisalHeader -> {
+            appraisalHeaderMap.put(appraisalHeader.getId(), appraisalHeader);
+        });
+
+        List<AppraisalLong> headers = new ArrayList<>();
+
         if (headerId != null) {
-            return ResponseEntity.ok(repository.findAllByHeaderId(headerId));
+            headers = repository.findAllByHeaderId(headerId);
+        } else {
+            headers = repository.findAll();
         }
-        return ResponseEntity.ok(repository.findAll());
+
+        List<AppraisalLongResource> resources = new ArrayList<>();
+
+        headers.stream().forEach(header->{
+            resources.add(AppraisalLongResource.getAppraisalLongResource(header, appraisalHeaderMap));
+        });
+
+        return ResponseEntity.ok(resources);
     }
 
 
