@@ -70,6 +70,8 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         List<GoalEmployee> goalEmployees = new ArrayList<>();
         Optional<AppraisalCycle> appraisalCycle = appraisalCycleRepository.findById(cycleId);
         GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(appraisalCycle.get().getEnd());
+        cal.add(Calendar.DATE, 10);
         List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAll();
         appraisalReviewGoals.forEach(appraisalReviewGoal -> {
             Optional<AppraisalGoal> appraisalGoal = appraisalGoalRepository.
@@ -82,6 +84,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 goalEmployee.setOrderId(appraisalGoal.get().getOrder());
                 goalEmployee.setDescription(appraisalReviewGoal.getComment());
                 goalEmployee.setCreatedDate(appraisalCycle.get().getStart());
+                goalEmployee.setAuditCreateDate(cal.getTime());
                 goalEmployees.add(goalEmployee);
             }
             else if(appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString())){
@@ -90,9 +93,8 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
                 goalEmployee.setOrderId(appraisalGoal.get().getOrder());
                 goalEmployee.setDescription(appraisalReviewGoal.getComment());
-                cal.setTime(appraisalCycle.get().getEnd());
-                cal.add(Calendar.DATE, 10);
                 goalEmployee.setCreatedDate(cal.getTime());
+                goalEmployee.setAuditCreateDate(cal.getTime());
                 goalEmployees.add(goalEmployee);
             }
             else if(!appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString()) ||
@@ -104,6 +106,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 appraisalHeader.setReviewerType(appraisalReviewGoal.getReviewerType());
                 appraisalHeader.setFrom(convertDateToInteger(appraisalCycle.get().getStart()));
                 appraisalHeader.setTo(convertDateToInteger(appraisalCycle.get().getEnd()));
+                appraisalHeader.setCreatedDate(cal.getTime());
                 appraisalHeaders.add(appraisalHeader);
                 AppraisalLong appraisalLong = new AppraisalLong();
                 appraisalLong.setId(ObjectId.get().toString());
@@ -112,6 +115,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 appraisalLong.setRating(Integer.parseInt(appraisalReviewGoal.getRating()
                         .replaceAll("[^0-9]", "")));
                 appraisalLong.setHeaderId(appraisalHeader.getId());
+                appraisalLong.setCreatedDate(cal.getTime());
                 appraisalLongs.add(appraisalLong);
             }
 
