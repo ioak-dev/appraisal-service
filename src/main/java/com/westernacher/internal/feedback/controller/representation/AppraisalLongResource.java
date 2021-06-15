@@ -25,7 +25,7 @@ public class AppraisalLongResource {
                                                                  Map<String, AppraisalHeader> appraisalHeaderMap) {
 
         AppraisalHeader appraisalHeader = appraisalHeaderMap.get(appraisalLong.getHeaderId());
-        if (appraisalHeader.getId() != null) {
+        if (appraisalHeader != null && appraisalHeader.getId() != null) {
             return AppraisalLongResource.builder()
                     .id(appraisalLong.getId())
                     .from(appraisalHeader.getFrom())
