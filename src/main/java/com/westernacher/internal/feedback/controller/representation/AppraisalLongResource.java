@@ -30,17 +30,20 @@ public class AppraisalLongResource {
         System.out.println("appraisalHeader to:"+appraisalHeader.getTo());
         System.out.println("appraisalHeader type:"+appraisalHeader.getReviewerType());
         System.out.println("appraisalHeader reviewerId:"+appraisalHeader.getReviewerId());
-        return AppraisalLongResource.builder()
-                .id(appraisalLong.getId())
-                .from(201922)
-                .to(appraisalHeader.getTo())
-                .employeeId(appraisalHeader.getEmployeeId())
-                .reviewerId(appraisalHeader.getReviewerId())
-                .reviewerType(appraisalHeader.getReviewerType())
-                .orderId(appraisalLong.getOrderId())
-                .rating(appraisalLong.getRating())
-                .comment(appraisalLong.getComment())
-                .build();
+        if (appraisalHeader.getId() != null) {
+            return AppraisalLongResource.builder()
+                    .id(appraisalLong.getId())
+                    .from(appraisalHeader.getFrom())
+                    .to(appraisalHeader.getTo())
+                    .employeeId(appraisalHeader.getEmployeeId())
+                    .reviewerId(appraisalHeader.getReviewerId())
+                    .reviewerType(appraisalHeader.getReviewerType())
+                    .orderId(appraisalLong.getOrderId())
+                    .rating(appraisalLong.getRating())
+                    .comment(appraisalLong.getComment())
+                    .build();
+        }
+       return null;
 
     }
 }
