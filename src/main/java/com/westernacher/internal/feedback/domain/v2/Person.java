@@ -1,4 +1,4 @@
-package com.westernacher.internal.feedback.domain;
+package com.westernacher.internal.feedback.domain.v2;
 
 import com.bol.secure.Encrypted;
 import lombok.Data;
