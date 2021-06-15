@@ -32,16 +32,12 @@ public class AppraisalDescriptiveController {
 
 
     @PostMapping
-    public ResponseEntity<List<AppraisalDescriptive>> create (@RequestBody List<AppraisalDescriptive> appraisalDescriptives,
+    public ResponseEntity<AppraisalDescriptive> create (@RequestBody AppraisalDescriptive appraisalDescriptives,
                                                        @RequestParam String headerId) {
 
-        List<AppraisalDescriptive> appraisalDescriptiveList = new ArrayList<>();
-        appraisalDescriptives.stream().forEach(appraisalLong -> {
-            appraisalLong.setHeaderId(headerId);
-            appraisalDescriptiveList.add(appraisalLong);
-        });
+        appraisalDescriptives.setHeaderId(headerId);
 
-        return ResponseEntity.ok(repository.saveAll(appraisalDescriptiveList));
+        return ResponseEntity.ok(repository.save(appraisalDescriptives));
     }
 
 
