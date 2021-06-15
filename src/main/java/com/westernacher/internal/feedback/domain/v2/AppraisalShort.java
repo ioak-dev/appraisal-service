@@ -4,8 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
 
 @Data
 @Builder
@@ -17,4 +21,10 @@ public class AppraisalShort {
     private String id;
     private String headerId;
     private Boolean value;
+
+    @CreatedDate
+    private Date createdDate;
+
+    @LastModifiedDate
+    private Date lastModifiedDate;
 }

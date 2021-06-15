@@ -1,7 +1,5 @@
 package com.westernacher.internal.feedback.config;
 
-import com.bol.crypt.CryptVault;
-import com.bol.secure.CachedEncryptionEventListener;
 import com.google.common.base.Strings;
 import com.mongodb.MongoClientURI;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-
-import java.util.Base64;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
 @Configuration
 @Slf4j
@@ -30,6 +27,12 @@ public class MongoConfiguration {
     public MongoTemplate mongoTemplate() {
         MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory());
         return mongoTemplate;
+    }
+
+    @Bean
+    public MappingMongoConverter mappingMongoConverter(){
+        MappingMongoConverter conv = (MappingMongoConverter) mongoTemplate().getConverter();
+        return conv;
     }
 
 
