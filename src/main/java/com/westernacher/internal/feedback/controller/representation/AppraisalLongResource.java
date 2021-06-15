@@ -27,7 +27,7 @@ public class AppraisalLongResource {
         AppraisalHeader appraisalHeader = appraisalHeaderMap.get(appraisalLong.getHeaderId());
         return AppraisalLongResource.builder()
                 .id(appraisalLong.getId())
-                .from(appraisalHeader.getFrom())
+                .from(201922)
                 .to(appraisalHeader.getTo())
                 .employeeId(appraisalHeader.getEmployeeId())
                 .reviewerId(appraisalHeader.getReviewerId())
