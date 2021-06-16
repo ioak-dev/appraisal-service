@@ -15,10 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/descriptive")
@@ -53,10 +51,10 @@ public class AppraisalDescriptiveController {
             resources.add(AppraisalDescriptiveResource.getAppraisalDescriptiveResource(header, appraisalHeaderMap));
         });
 
-        /*resources.stream()
+        resources.stream()
                 .sorted(Comparator.comparing(AppraisalDescriptiveResource::getReviewerType)
         .thenComparing(AppraisalDescriptiveResource::getReviewerId))
-                .collect(Collectors.toList());*/
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(resources);
     }

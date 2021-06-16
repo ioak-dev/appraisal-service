@@ -49,10 +49,10 @@ public class AppraisalLongController {
             resources.add(AppraisalLongResource.getAppraisalLongResource(header, appraisalHeaderMap));
         });
 
-        /*resources.stream()
+        resources.stream()
                 .sorted(Comparator.comparing(AppraisalLongResource::getReviewerType)
         .thenComparing(AppraisalLongResource::getReviewerId))
-                .collect(Collectors.toList());*/
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(resources);
     }
