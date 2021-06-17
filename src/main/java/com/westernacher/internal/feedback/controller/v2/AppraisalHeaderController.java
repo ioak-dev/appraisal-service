@@ -56,6 +56,8 @@ public class AppraisalHeaderController {
                     appraisalHeader.getReviewerId());
             if (roles != null && roles.size()>1) {
                 appraisalHeader.setReviewerType(roles.get(0).getReviewerType());
+            } else {
+                appraisalHeader.setReviewerType("Level_1");
             }
         }
         return ResponseEntity.ok(repository.save(appraisalHeader));

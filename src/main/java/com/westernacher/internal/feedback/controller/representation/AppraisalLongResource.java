@@ -5,6 +5,7 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalLong;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.Map;
 
 @Data
@@ -19,6 +20,8 @@ public class AppraisalLongResource {
     private Integer orderId;
     private Integer rating;
     private String comment;
+    private Date createdDate;
+    private Date lastModifiedDate;
 
 
     public static AppraisalLongResource getAppraisalLongResource(AppraisalLong appraisalLong,
@@ -36,6 +39,8 @@ public class AppraisalLongResource {
                     .orderId(appraisalLong.getOrderId())
                     .rating(appraisalLong.getRating())
                     .comment(appraisalLong.getComment())
+                    .createdDate(appraisalLong.getCreatedDate())
+                    .lastModifiedDate(appraisalLong.getLastModifiedDate())
                     .build();
         }
        return null;

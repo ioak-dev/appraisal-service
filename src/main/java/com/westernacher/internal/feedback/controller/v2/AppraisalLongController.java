@@ -51,7 +51,8 @@ public class AppraisalLongController {
 
         resources.stream()
                 .sorted(Comparator.comparing(AppraisalLongResource::getReviewerType)
-        .thenComparing(AppraisalLongResource::getReviewerId))
+        .thenComparing(AppraisalLongResource::getReviewerId)
+                .thenComparing(AppraisalLongResource::getCreatedDate))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(resources);
