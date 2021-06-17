@@ -1,7 +1,9 @@
 
 package com.westernacher.internal.feedback.controller.v2;
 
+import com.westernacher.internal.feedback.domain.Role;
 import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
+import com.westernacher.internal.feedback.repository.RoleRepository;
 import com.westernacher.internal.feedback.repository.v2.AppraisalHeaderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class AppraisalHeaderController {
 
     @Autowired
     private AppraisalHeaderRepository repository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @GetMapping
     public ResponseEntity<List<AppraisalHeader>> getAll (@RequestParam(required = false) String from,
@@ -44,6 +49,15 @@ public class AppraisalHeaderController {
 
     @PostMapping
     public ResponseEntity<AppraisalHeader> create (@RequestBody AppraisalHeader appraisalHeader) {
+        if(appraisalHeader.getEmployeeId().equals(appraisalHeader.getReviewerId())) {
+            appraisalHeader.setReviewerType("Self");
+        } else {
+            List<Role> roles = roleRepository.findAllByEmployeeIdAndReviewerId(appraisalHeader.getEmployeeId(),
+                    appraisalHeader.getReviewerId());
+            if (roles != null && roles.size()>1) {
+                appraisalHeader.setReviewerType(roles.get(0).getReviewerType());
+            }
+        }
         return ResponseEntity.ok(repository.save(appraisalHeader));
     }
 }

@@ -22,5 +22,7 @@ public interface RoleRepository extends MongoRepository<Role, String> {
 
     void deleteByEmployeeIdIn(Set<String> employeeId);
 
+    List<Role> findAllByEmployeeIdAndReviewerId(String employeeId, String reviewerId);
+
 
 }
