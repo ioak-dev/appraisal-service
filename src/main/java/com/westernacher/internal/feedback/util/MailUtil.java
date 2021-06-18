@@ -10,9 +10,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Properties;
@@ -35,20 +41,7 @@ public class MailUtil {
 
     public boolean send( String to, String bodyTemplate, Map<String, String> bodyValues,
                       String subjectTemplate, Map<String, String> subjectValues) {
-
-        Properties props = new Properties();
-        props.put("mail.smtp.host", this.host);
-        props.put("mail.smtp.port", this.port);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable",true);
-
-        Session session = Session.getDefaultInstance(props,
-                                                     new Authenticator() {
-                                                         protected PasswordAuthentication getPasswordAuthentication() {
-                                                             return new PasswordAuthentication(MailUtil.this.from, MailUtil.this.password);
-                                                         }
-                                                     });
-
+        Session session = getPropertyAndSessionDetails();
         try{
             MimeMessage message = new MimeMessage(session);
 
@@ -57,6 +50,34 @@ public class MailUtil {
             message.setSubject(getHtmlByTemplateAndContext(subjectTemplate, subjectValues), "UTF-8");
             message.setText(getHtmlByTemplateAndContext(bodyTemplate, bodyValues), "UTF-8");
 
+            Transport.send(message);
+            log.info("Mail send successfully to :"+to);
+            return true;
+        }catch(MessagingException e){
+            log.info("Sending From: " + this.from + " Sending To: " + to);
+            log.error("Error occured during sending mail"+e);
+            return false;
+        }
+    }
+
+    public boolean send(String to, String bodyTemplate, Map<String, String> bodyValues,
+                        String subjectTemplate, Map<String, String> subjectValues, DataSource dataSource) {
+        Session session = getPropertyAndSessionDetails();
+        try{
+            MimeMessage message = new MimeMessage(session);
+
+            message.setFrom(new InternetAddress(this.from));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject(getHtmlByTemplateAndContext(subjectTemplate, subjectValues), "UTF-8");
+            message.setText(getHtmlByTemplateAndContext(bodyTemplate, bodyValues), "UTF-8");
+
+            MimeBodyPart attachment = new MimeBodyPart();
+            attachment.setDataHandler(new DataHandler(dataSource));
+            attachment.setFileName("Appraisal-Report.zip");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(attachment);
+            message.setContent(multipart);
             Transport.send(message);
             log.info("Mail send successfully to :"+to);
             return true;
@@ -92,5 +113,20 @@ public class MailUtil {
         StringWriter writer = new StringWriter();
         template.merge( context, writer );
         return  writer.toString();
+    }
+
+    private Session getPropertyAndSessionDetails(){
+        Properties props = new Properties();
+        props.put("mail.smtp.host", this.host);
+        props.put("mail.smtp.port", this.port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable",true);
+        Session session = Session.getDefaultInstance(props,
+                new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(MailUtil.this.from, MailUtil.this.password);
+                    }
+                });
+        return session;
     }
 }

@@ -16,5 +16,5 @@ public interface AppraisalCycleService {
 
     List<String> movetonextlevel(String cycleId, String currentLevel, String employeeId, boolean moveBackwards);
 
-    void printPdf(HttpServletResponse response, List<String> appraisalReviewIds);
+    String printPdf(String cycleId);
 }

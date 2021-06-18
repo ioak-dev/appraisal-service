@@ -35,5 +35,7 @@ public class AppraisalCycle {
 
     private Date end;
 
+    private String admin;
+
 }
 
