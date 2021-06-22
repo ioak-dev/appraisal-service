@@ -9,4 +9,6 @@ public interface AppraisalLongRepository extends MongoRepository<AppraisalLong, 
 
     List<AppraisalLong> findAllByHeaderId(String headerId);
 
+    List<AppraisalLong> findAllByHeaderIdIn(List<String> headerIds);
+
 }

@@ -5,6 +5,7 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.Map;
 
 @Data
@@ -19,6 +20,8 @@ public class AppraisalDescriptiveResource {
     private String start;
     private String stop;
     private String toContinue;
+    private Date createdDate;
+    private Date lastModifiedDate;
 
 
     public static AppraisalDescriptiveResource getAppraisalDescriptiveResource(AppraisalDescriptive appraisalDescriptive,
@@ -36,6 +39,8 @@ public class AppraisalDescriptiveResource {
                     .start(appraisalDescriptive.getStart())
                     .stop(appraisalDescriptive.getStop())
                     .toContinue(appraisalDescriptive.getToContinue())
+                    .createdDate(appraisalDescriptive.getCreatedDate())
+                    .lastModifiedDate(appraisalDescriptive.getLastModifiedDate())
                     .build();
         }
        return null;

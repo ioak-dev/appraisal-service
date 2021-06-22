@@ -7,6 +7,7 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
 import com.westernacher.internal.feedback.domain.v2.AppraisalLong;
 import com.westernacher.internal.feedback.repository.v2.AppraisalHeaderRepository;
 import com.westernacher.internal.feedback.repository.v2.AppraisalLongRepository;
+import com.westernacher.internal.feedback.service.v2.AppraisalHeaderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,9 @@ public class AppraisalLongController {
 
     @Autowired
     private AppraisalHeaderRepository appraisalHeaderRepository;
+
+    @Autowired
+    private AppraisalHeaderService appraisalHeaderService;
 
     @GetMapping
     public ResponseEntity<List<AppraisalLongResource>> getAll (@RequestParam(required = false) String headerId) {
@@ -53,6 +57,33 @@ public class AppraisalLongController {
                 .sorted(Comparator.comparing(AppraisalLongResource::getReviewerType)
         .thenComparing(AppraisalLongResource::getReviewerId)
                 .thenComparing(AppraisalLongResource::getCreatedDate))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resources);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AppraisalLongResource>> getByEmployeeId (@RequestParam String employeeId,
+                                                                        @RequestParam String from,
+                                                                        @RequestParam String to) {
+
+        Map<String, AppraisalHeader> appraisalHeaderMap = new HashMap<>();
+        appraisalHeaderService.getHeaderByEmployeeId(employeeId, from, to).stream().forEach(appraisalHeader -> {
+            appraisalHeaderMap.put(appraisalHeader.getId(), appraisalHeader);
+        });
+
+        List<AppraisalLong> appraisalLongList = repository.findAllByHeaderIdIn(appraisalHeaderMap.keySet().stream().collect(Collectors.toList()));
+
+        List<AppraisalLongResource> resources = new ArrayList<>();
+
+        appraisalLongList.stream().forEach(header->{
+            resources.add(AppraisalLongResource.getAppraisalLongResource(header, appraisalHeaderMap));
+        });
+
+        resources.stream()
+                .sorted(Comparator.comparing(AppraisalLongResource::getReviewerType)
+                        .thenComparing(AppraisalLongResource::getReviewerId)
+                        .thenComparing(AppraisalLongResource::getCreatedDate))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(resources);

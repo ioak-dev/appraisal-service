@@ -5,6 +5,7 @@ import com.westernacher.internal.feedback.domain.Role;
 import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
 import com.westernacher.internal.feedback.repository.RoleRepository;
 import com.westernacher.internal.feedback.repository.v2.AppraisalHeaderRepository;
+import com.westernacher.internal.feedback.service.v2.AppraisalHeaderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ public class AppraisalHeaderController {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private AppraisalHeaderService service;
+
     @GetMapping
     public ResponseEntity<List<AppraisalHeader>> getAll (@RequestParam(required = false) String from,
                                          @RequestParam(required = false) String to) {
@@ -39,6 +43,16 @@ public class AppraisalHeaderController {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.ok(repository.findAll());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AppraisalHeader>> getByEmployeeId (@RequestParam String employeeId,
+                                                                  @RequestParam String from,
+                                                                  @RequestParam String to) {
+
+
+        return ResponseEntity.ok(service.getHeaderByEmployeeId(employeeId, from, to));
+
     }
 
     @GetMapping("/employee/{employeeId}")
