@@ -3,9 +3,11 @@ package com.westernacher.internal.feedback.controller.v2;
 
 import com.westernacher.internal.feedback.domain.Role;
 import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
+import com.westernacher.internal.feedback.domain.v2.AppraisalLong;
 import com.westernacher.internal.feedback.repository.RoleRepository;
 import com.westernacher.internal.feedback.repository.v2.AppraisalHeaderRepository;
 import com.westernacher.internal.feedback.service.v2.AppraisalHeaderService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ public class AppraisalHeaderController {
     @Autowired
     private AppraisalHeaderService service;
 
+    @ApiOperation(value = "get AppraisalHeader by from and to",response = List.class)
     @GetMapping
     public ResponseEntity<List<AppraisalHeader>> getAll (@RequestParam(required = false) String from,
                                          @RequestParam(required = false) String to) {
@@ -45,6 +48,7 @@ public class AppraisalHeaderController {
         return ResponseEntity.ok(repository.findAll());
     }
 
+    @ApiOperation(value = "get AppraisalHeader by employeeId and from and to",response = List.class)
     @GetMapping(value = "/custom")
     public ResponseEntity<List<AppraisalHeader>> getByEmployeeId (@RequestParam String employeeId,
                                                                   @RequestParam String from,
@@ -55,12 +59,14 @@ public class AppraisalHeaderController {
 
     }
 
+    @ApiOperation(value = "get AppraisalHeader by employeeId",response = List.class)
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<List<AppraisalHeader>> getHeaderByEmployeeId (@PathVariable String employeeId) {
         return ResponseEntity.ok(repository.findAllByEmployeeId(employeeId));
     }
 
 
+    @ApiOperation(value = "create AppraisalHeader ",response = AppraisalHeader.class)
     @PostMapping
     public ResponseEntity<AppraisalHeader> create (@RequestBody AppraisalHeader appraisalHeader) {
         if(appraisalHeader.getEmployeeId().equals(appraisalHeader.getReviewerId())) {

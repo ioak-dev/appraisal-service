@@ -10,6 +10,7 @@ import com.westernacher.internal.feedback.domain.v2.AppraisalLong;
 import com.westernacher.internal.feedback.repository.v2.AppraisalDescriptiveRepository;
 import com.westernacher.internal.feedback.repository.v2.AppraisalHeaderRepository;
 import com.westernacher.internal.feedback.service.v2.AppraisalHeaderService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,7 @@ public class AppraisalDescriptiveController {
     @Autowired
     private AppraisalHeaderService appraisalHeaderService;
 
+    @ApiOperation(value = "get AppraisalDescriptiveResource by headerId",response = List.class)
     @GetMapping
     public ResponseEntity<List<AppraisalDescriptiveResource>> getAll (@RequestParam(required = false) String headerId) {
 
@@ -63,6 +65,7 @@ public class AppraisalDescriptiveController {
         return ResponseEntity.ok(resources);
     }
 
+    @ApiOperation(value = "get AppraisalDescriptiveResource by employeeId and from and to",response = List.class)
     @GetMapping(value = "/custom")
     public ResponseEntity<List<AppraisalDescriptiveResource>> getByEmployeeId (@RequestParam String employeeId,
                                                                         @RequestParam String from,
@@ -91,6 +94,7 @@ public class AppraisalDescriptiveController {
     }
 
 
+    @ApiOperation(value = "create AppraisalDescriptive ",response = AppraisalDescriptive.class)
     @PostMapping
     public ResponseEntity<AppraisalDescriptive> create (@RequestBody AppraisalDescriptive appraisalDescriptives,
                                                        @RequestParam String headerId) {

@@ -3,11 +3,13 @@ package com.westernacher.internal.feedback.controller.v2;
 
 
 import com.westernacher.internal.feedback.controller.representation.AppraisalLongResource;
+import com.westernacher.internal.feedback.domain.v2.AppraisalDescriptive;
 import com.westernacher.internal.feedback.domain.v2.AppraisalHeader;
 import com.westernacher.internal.feedback.domain.v2.AppraisalLong;
 import com.westernacher.internal.feedback.repository.v2.AppraisalHeaderRepository;
 import com.westernacher.internal.feedback.repository.v2.AppraisalLongRepository;
 import com.westernacher.internal.feedback.service.v2.AppraisalHeaderService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,7 @@ public class AppraisalLongController {
     @Autowired
     private AppraisalHeaderService appraisalHeaderService;
 
+    @ApiOperation(value = "get AppraisalLongResource by headerId",response = List.class)
     @GetMapping
     public ResponseEntity<List<AppraisalLongResource>> getAll (@RequestParam(required = false) String headerId) {
 
@@ -62,6 +65,7 @@ public class AppraisalLongController {
         return ResponseEntity.ok(resources);
     }
 
+    @ApiOperation(value = "get AppraisalLongResource by employeeId and from and to",response = List.class)
     @GetMapping(value = "/custom")
     public ResponseEntity<List<AppraisalLongResource>> getByEmployeeId (@RequestParam String employeeId,
                                                                         @RequestParam String from,
@@ -90,6 +94,7 @@ public class AppraisalLongController {
     }
 
 
+    @ApiOperation(value = "create AppraisalLong ",response = AppraisalLong.class)
     @PostMapping
     public ResponseEntity<List<AppraisalLong>> create (@RequestBody List<AppraisalLong> appraisalLongs,
                                                        @RequestParam String headerId) {
