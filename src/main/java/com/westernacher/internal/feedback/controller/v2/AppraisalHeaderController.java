@@ -45,7 +45,7 @@ public class AppraisalHeaderController {
         return ResponseEntity.ok(repository.findAll());
     }
 
-    @GetMapping
+    @GetMapping(value = "/custom")
     public ResponseEntity<List<AppraisalHeader>> getByEmployeeId (@RequestParam String employeeId,
                                                                   @RequestParam String from,
                                                                   @RequestParam String to) {

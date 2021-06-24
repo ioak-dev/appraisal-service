@@ -62,7 +62,7 @@ public class AppraisalLongController {
         return ResponseEntity.ok(resources);
     }
 
-    @GetMapping
+    @GetMapping(value = "/custom")
     public ResponseEntity<List<AppraisalLongResource>> getByEmployeeId (@RequestParam String employeeId,
                                                                         @RequestParam String from,
                                                                         @RequestParam String to) {

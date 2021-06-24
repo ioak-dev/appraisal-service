@@ -63,7 +63,7 @@ public class AppraisalDescriptiveController {
         return ResponseEntity.ok(resources);
     }
 
-    @GetMapping
+    @GetMapping(value = "/custom")
     public ResponseEntity<List<AppraisalDescriptiveResource>> getByEmployeeId (@RequestParam String employeeId,
                                                                         @RequestParam String from,
                                                                         @RequestParam String to) {
