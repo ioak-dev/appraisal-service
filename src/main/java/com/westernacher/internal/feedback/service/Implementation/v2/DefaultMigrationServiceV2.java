@@ -31,9 +31,6 @@ import static com.westernacher.internal.feedback.domain.AppraisalStatusType.SET_
 public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
 
     @Autowired
-    private v1GoalRepository v1GoalRepository;
-
-    @Autowired
     private AppraisalReviewGoalRepository appraisalReviewGoalRepository;
 
     @Autowired
@@ -51,16 +48,6 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
     @Autowired
     private GoalEmployeeRepository goalEmployeeRepository;
 
-
-    @Override
-    public void migratePrerequisiteData() {
-        List<v1Goal> v1GoalRepositories = v1GoalRepository.findAll();
-        v1GoalRepositories.forEach(v1Goal -> {
-            Goal goal = Goal.builder().criteria(v1Goal.getCriteria()).build();
-            GoalReference goalReference = GoalReference.builder().description(v1Goal.getDescription())
-                    .job(v1Goal.getJob()).build();
-        });
-    }
 
     @Override
     public MigrationOutputV2 getAppraisalData(String cycleId) {
@@ -138,13 +125,23 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
 
     public void loadAppraisalData(MigrationOutputV2 appraisalData) {
         try {
+            log.info("Loading appraisal header collection");
             appraisalHeaderRepository.saveAll(appraisalData.getAppraisalHeaderMap().get("appraisal.header"));
+            log.info("Loading appraisal long collection");
             appraisalLongRepository.saveAll(appraisalData.getAppraisalLongMap().get("appraisal.long"));
+            log.info("Loading goal employee collection");
             goalEmployeeRepository.saveAll(appraisalData.getGoalEmployeeMap().get("goal.employee"));
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }
 
+    public GetAndLoadOutput geMigrationOutputCount(){
+        GetAndLoadOutput getAndLoadOutput = new GetAndLoadOutput();
+        getAndLoadOutput.setAppraisalHeaderCount(appraisalHeaderRepository.count());
+        getAndLoadOutput.setAppraisalLongCount(appraisalLongRepository.count());
+        getAndLoadOutput.setGoalEmployeeCount(goalEmployeeRepository.count());
+        return getAndLoadOutput;
     }
 }

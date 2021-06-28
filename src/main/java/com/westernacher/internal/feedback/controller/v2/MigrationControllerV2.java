@@ -1,15 +1,12 @@
 package com.westernacher.internal.feedback.controller.v2;
 
-import com.westernacher.internal.feedback.domain.MigrationOutput;
+import com.westernacher.internal.feedback.domain.v2.GetAndLoadOutput;
 import com.westernacher.internal.feedback.domain.v2.MigrationOutputV2;
 import com.westernacher.internal.feedback.service.v2.MigrationServiceV2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -18,11 +15,6 @@ public class MigrationControllerV2 {
 
     @Autowired
     private MigrationServiceV2 serviceV2;
-
-    @PostMapping("/prerequisiteData")
-    public void migratePrerequisiteData() {
-        serviceV2.migratePrerequisiteData();
-    }
 
     @GetMapping("/getAppraisalData/{cycleId}")
     @ResponseStatus(HttpStatus.OK)
@@ -36,4 +28,15 @@ public class MigrationControllerV2 {
         serviceV2.loadAppraisalData(appraisalData);
     }
 
+    @PostMapping("/getAndLoadAppraisalData/{cycleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetAndLoadOutput getAndLoadAppraisalData(@PathVariable String cycleId){
+        log.info("getting appraisal data for cycleId " + cycleId);
+        MigrationOutputV2 migrationOutputV2 = serviceV2.getAppraisalData(cycleId);
+        log.info("Appraisal Data retrieved for cycleId " + cycleId);
+        log.info("Loading retrieved appraisal data to DB");
+        serviceV2.loadAppraisalData(migrationOutputV2);
+        log.info("Migration Successful");
+        return serviceV2.geMigrationOutputCount();
+    }
 }
