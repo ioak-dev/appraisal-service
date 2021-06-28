@@ -53,7 +53,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
 
 
     @Override
-    public void migratePrerequisiteData(){
+    public void migratePrerequisiteData() {
         List<v1Goal> v1GoalRepositories = v1GoalRepository.findAll();
         v1GoalRepositories.forEach(v1Goal -> {
             Goal goal = Goal.builder().criteria(v1Goal.getCriteria()).build();
@@ -63,7 +63,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
     }
 
     @Override
-    public MigrationOutputV2 getAppraisalData(String cycleId){
+    public MigrationOutputV2 getAppraisalData(String cycleId) {
         Map<String, List<?>> responseMap = new HashMap<>();
         List<AppraisalHeader> appraisalHeaders = new ArrayList<>();
         List<AppraisalLong> appraisalLongs = new ArrayList<>();
@@ -77,7 +77,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
             Optional<AppraisalGoal> appraisalGoal = appraisalGoalRepository.
                     findById(appraisalReviewGoal.getGoalId());
 
-            if (appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())){
+            if (appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())) {
                 GoalEmployee goalEmployee = new GoalEmployee();
                 goalEmployee.setId(ObjectId.get().toString());
                 goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
@@ -86,8 +86,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 goalEmployee.setCreatedDate(appraisalCycle.get().getStart());
                 goalEmployee.setAuditCreateDate(cal.getTime());
                 goalEmployees.add(goalEmployee);
-            }
-            else if(appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString())){
+            } else if (appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString())) {
                 GoalEmployee goalEmployee = new GoalEmployee();
                 goalEmployee.setId(ObjectId.get().toString());
                 goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
@@ -96,8 +95,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 goalEmployee.setCreatedDate(cal.getTime());
                 goalEmployee.setAuditCreateDate(cal.getTime());
                 goalEmployees.add(goalEmployee);
-            }
-            else if(!appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString()) ||
+            } else if (!appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString()) ||
                     !appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())) {
                 AppraisalHeader appraisalHeader = new AppraisalHeader();
                 appraisalHeader.setId(ObjectId.get().toString());
@@ -112,8 +110,11 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 appraisalLong.setId(ObjectId.get().toString());
                 appraisalLong.setOrderId(appraisalGoal.get().getOrder());
                 appraisalLong.setComment(appraisalReviewGoal.getComment());
-                appraisalLong.setRating(Integer.parseInt(appraisalReviewGoal.getRating()
-                        .replaceAll("[^0-9]", "")));
+                if (appraisalReviewGoal.getRating() == null || appraisalReviewGoal.getRating().equals(""))
+                    appraisalLong.setRating(0);
+                else
+                    appraisalLong.setRating(Integer.parseInt(appraisalReviewGoal.getRating()
+                            .replaceAll("[^0-9]", "")));
                 appraisalLong.setHeaderId(appraisalHeader.getId());
                 appraisalLong.setCreatedDate(cal.getTime());
                 appraisalLongs.add(appraisalLong);
@@ -127,7 +128,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         return migrationOutputV2;
     }
 
-    private Integer convertDateToInteger(Date date){
+    private Integer convertDateToInteger(Date date) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         int year = calendar.get(Calendar.YEAR);
@@ -135,12 +136,12 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         return Integer.valueOf(String.valueOf(year) + String.valueOf(month));
     }
 
-    public void loadAppraisalData(MigrationOutputV2 appraisalData){
-        try{
+    public void loadAppraisalData(MigrationOutputV2 appraisalData) {
+        try {
             appraisalHeaderRepository.saveAll(appraisalData.getAppraisalHeaderMap().get("appraisal.header"));
             appraisalLongRepository.saveAll(appraisalData.getAppraisalLongMap().get("appraisal.long"));
             goalEmployeeRepository.saveAll(appraisalData.getGoalEmployeeMap().get("goal.employee"));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
