@@ -16,8 +16,11 @@ import com.westernacher.internal.feedback.service.v2.MigrationServiceV2;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
@@ -143,12 +146,15 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
     public void loadAppraisalData(MigrationOutputV2 appraisalData) {
         try {
             log.info("Loading appraisal header collection");
-            appraisalHeaderRepository.saveAll(appraisalData.getAppraisalHeaderMap().get("appraisal.header"));
+            List<AppraisalHeader> appraisalHeaders = appraisalData.getAppraisalHeaderMap().get("appraisal.header");
+            appraisalHeaders.forEach(appraisalHeader -> appraisalHeaderRepository.save(appraisalHeader));
+            //appraisalHeaderRepository.saveAll(appraisalData.getAppraisalHeaderMap().get("appraisal.header"));
             log.info("Loading appraisal long collection");
             appraisalLongRepository.saveAll(appraisalData.getAppraisalLongMap().get("appraisal.long"));
             log.info("Loading goal employee collection");
             goalEmployeeRepository.saveAll(appraisalData.getGoalEmployeeMap().get("goal.employee"));
         } catch (Exception e) {
+            //transactionManager.rollback(TransactionInterceptor.currentTransactionStatus());
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

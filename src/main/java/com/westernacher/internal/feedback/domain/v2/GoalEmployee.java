@@ -21,7 +21,7 @@ public class GoalEmployee {
     @Id
     private String id;
     private String employeeId;
-    private int orderId;
+    private Integer orderId;
     private String description;
     private Date createdDate;
 

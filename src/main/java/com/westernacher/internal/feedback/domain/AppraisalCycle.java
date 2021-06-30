@@ -19,6 +19,7 @@ public class AppraisalCycle {
     private String name;
 
     private AppraisalCycleStatusType status;
+
     private String cu;
 
     private Map<AppraisalStatusType, Date> deadline;
