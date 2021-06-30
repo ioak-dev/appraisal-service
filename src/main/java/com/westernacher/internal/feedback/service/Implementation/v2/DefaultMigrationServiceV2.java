@@ -20,8 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.westernacher.internal.feedback.domain.AppraisalStatusType.REVIEW_GOAL;
 import static com.westernacher.internal.feedback.domain.AppraisalStatusType.SET_GOAL;
@@ -51,6 +53,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
 
     @Override
     public MigrationOutputV2 getAppraisalData(String cycleId) {
+        Map<String, AppraisalHeader> headerMap = new HashMap<>();
         Map<String, List<?>> responseMap = new HashMap<>();
         List<AppraisalHeader> appraisalHeaders = new ArrayList<>();
         List<AppraisalLong> appraisalLongs = new ArrayList<>();
@@ -82,17 +85,24 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 goalEmployee.setCreatedDate(cal.getTime());
                 goalEmployee.setAuditCreateDate(cal.getTime());
                 goalEmployees.add(goalEmployee);
-            } else if (!appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString()) ||
-                    !appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())) {
-                AppraisalHeader appraisalHeader = new AppraisalHeader();
-                appraisalHeader.setId(ObjectId.get().toString());
-                appraisalHeader.setEmployeeId(appraisalReviewGoal.getEmployeeId());
-                appraisalHeader.setReviewerId(appraisalReviewGoal.getReviewerId());
-                appraisalHeader.setReviewerType(appraisalReviewGoal.getReviewerType());
-                appraisalHeader.setFrom(convertDateToInteger(appraisalCycle.get().getStart()));
-                appraisalHeader.setTo(convertDateToInteger(appraisalCycle.get().getEnd()));
-                appraisalHeader.setCreatedDate(cal.getTime());
-                appraisalHeaders.add(appraisalHeader);
+            } else {
+                String headerKey = appraisalReviewGoal.getEmployeeId() + "--" + appraisalReviewGoal.getReviewerId() +
+                        "--" + appraisalReviewGoal.getReviewerType();
+                String headerId;
+                if (headerMap.containsKey(headerKey))
+                    headerId = headerMap.get(headerKey).getId();
+                else {
+                    AppraisalHeader appraisalHeader = new AppraisalHeader();
+                    appraisalHeader.setId(ObjectId.get().toString());
+                    appraisalHeader.setEmployeeId(appraisalReviewGoal.getEmployeeId());
+                    appraisalHeader.setReviewerId(appraisalReviewGoal.getReviewerId());
+                    appraisalHeader.setReviewerType(appraisalReviewGoal.getReviewerType());
+                    appraisalHeader.setFrom(convertDateToInteger(appraisalCycle.get().getStart()));
+                    appraisalHeader.setTo(convertDateToInteger(appraisalCycle.get().getEnd()));
+                    appraisalHeader.setCreatedDate(cal.getTime());
+                    headerMap.put(headerKey, appraisalHeader);
+                    headerId = headerMap.get(headerKey).getId();
+                }
                 AppraisalLong appraisalLong = new AppraisalLong();
                 appraisalLong.setId(ObjectId.get().toString());
                 appraisalLong.setOrderId(appraisalGoal.get().getOrder());
@@ -102,12 +112,13 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                 else
                     appraisalLong.setRating(Integer.parseInt(appraisalReviewGoal.getRating()
                             .replaceAll("[^0-9]", "")));
-                appraisalLong.setHeaderId(appraisalHeader.getId());
+                appraisalLong.setHeaderId(headerId);
                 appraisalLong.setCreatedDate(cal.getTime());
                 appraisalLongs.add(appraisalLong);
             }
 
         });
+        appraisalHeaders = new ArrayList<>(headerMap.values());
         MigrationOutputV2 migrationOutputV2 = new MigrationOutputV2();
         migrationOutputV2.setAppraisalHeaderMap(Map.ofEntries(Map.entry("appraisal.header", appraisalHeaders)));
         migrationOutputV2.setAppraisalLongMap(Map.ofEntries(Map.entry("appraisal.long", appraisalLongs)));
@@ -120,7 +131,13 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         calendar.setTime(date);
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
-        return Integer.valueOf(String.valueOf(year) + String.valueOf(month));
+        String sMonth;
+        if (month < 10) {
+            sMonth = "0" + String.valueOf(month);
+        } else {
+            sMonth = String.valueOf(month);
+        }
+        return Integer.valueOf(String.valueOf(year) + String.valueOf(sMonth));
     }
 
     public void loadAppraisalData(MigrationOutputV2 appraisalData) {
@@ -137,7 +154,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         }
     }
 
-    public GetAndLoadOutput geMigrationOutputCount(){
+    public GetAndLoadOutput geMigrationOutputCount() {
         GetAndLoadOutput getAndLoadOutput = new GetAndLoadOutput();
         getAndLoadOutput.setAppraisalHeaderCount(appraisalHeaderRepository.count());
         getAndLoadOutput.setAppraisalLongCount(appraisalLongRepository.count());
