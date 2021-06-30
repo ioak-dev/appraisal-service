@@ -28,5 +28,7 @@ public interface AppraisalReviewGoalRepository extends MongoRepository<Appraisal
 
     List<AppraisalReviewGoal> findAllByAppraisalIdAndReviewerIdAndReviewerType(String appraisalId, String reviewerId, String reviewerType);
 
+    List<AppraisalReviewGoal> findAllByAppraisalIdIn(List<String> appraisalIdList);
+
 
 }
