@@ -67,7 +67,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/cycle").permitAll()
 
                 .antMatchers("/api/appraisal/custom/appraisallong").permitAll()
-                .antMatchers("/api/appraisal/custom/goal").permitAll()
+                .antMatchers("/api/appraisal/custom/goal/**").permitAll()
                 .antMatchers("/api/appraisal/custom/goalreference").permitAll()
                 .antMatchers("/api/appraisal/custom/target").permitAll()
                 .antMatchers("/migrateV2/**/**").permitAll()
