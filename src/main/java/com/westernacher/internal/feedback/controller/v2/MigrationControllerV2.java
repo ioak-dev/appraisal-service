@@ -31,6 +31,8 @@ public class MigrationControllerV2 {
     @PostMapping("/getAndLoadAppraisalData/{cycleId}")
     @ResponseStatus(HttpStatus.OK)
     public GetAndLoadOutput getAndLoadAppraisalData(@PathVariable String cycleId){
+        log.info("Updating CU Level Order ID's");
+        serviceV2.updateCUObjectives();
         log.info("getting appraisal data for cycleId " + cycleId);
         MigrationOutputV2 migrationOutputV2 = serviceV2.getAppraisalData(cycleId);
         log.info("Appraisal Data retrieved for cycleId " + cycleId);
