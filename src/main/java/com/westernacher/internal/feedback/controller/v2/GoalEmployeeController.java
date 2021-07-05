@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -27,9 +28,15 @@ public class GoalEmployeeController {
         return repository.findAllByEmployeeId(employeeId);
     }
 
-    @PostMapping
-    public ResponseEntity<List<GoalEmployee>> create (@RequestBody List<GoalEmployee> targets) {
-        return ResponseEntity.ok(repository.saveAll(targets));
+    @PostMapping("{employeeId}")
+    public ResponseEntity<List<GoalEmployee>> create (@RequestBody List<GoalEmployee> targets,
+                                                      @PathVariable String employeeId) {
+        List<GoalEmployee> targetList = new ArrayList<>();
+        for(GoalEmployee target:targets) {
+            target.setEmployeeId(employeeId);
+            targetList.add(target);
+        }
+        return ResponseEntity.ok(repository.saveAll(targetList));
     }
 
 }
