@@ -31,8 +31,8 @@ public class GoalController {
 
 
     @PostMapping
-    public ResponseEntity<Goal> create(@Valid @RequestBody Goal goal) {
-        return ResponseEntity.ok(repository.save(goal));
+    public ResponseEntity<List<Goal>> create(@Valid @RequestBody List<Goal> goals) {
+        return ResponseEntity.ok(repository.saveAll(goals));
     }
 
     @GetMapping({"{employeeId}"})
