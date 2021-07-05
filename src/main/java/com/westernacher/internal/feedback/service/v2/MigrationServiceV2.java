@@ -5,6 +5,8 @@ import com.westernacher.internal.feedback.domain.v2.MigrationOutputV2;
 
 public interface MigrationServiceV2 {
 
+    void updateCUObjectives();
+
     MigrationOutputV2 getAppraisalData(String cycleId);
 
     void loadAppraisalData(MigrationOutputV2 appraisalData);

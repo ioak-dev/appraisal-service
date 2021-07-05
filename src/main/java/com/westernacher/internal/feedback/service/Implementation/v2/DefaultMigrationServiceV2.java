@@ -50,6 +50,17 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
     @Autowired
     private AppraisalReviewRepository appraisalReviewRepository;
 
+    @Override
+    public void updateCUObjectives() {
+        List<AppraisalGoal> appraisalGoalList = appraisalGoalRepository.findAllByJob("");
+        int order = 14;
+        for (AppraisalGoal appraisalGoal : appraisalGoalList) {
+            appraisalGoal.setOrder(order);
+            appraisalGoalRepository.save(appraisalGoal);
+            order += 1;
+        }
+    }
+
 
     @Override
     public MigrationOutputV2 getAppraisalData(String cycleId) {
@@ -60,26 +71,19 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         List<GoalEmployee> goalEmployees = new ArrayList<>();
         Optional<AppraisalCycle> appraisalCycle = appraisalCycleRepository.findById(cycleId);
         List<AppraisalReview> appraisalReviewList;
-        if (appraisalCycle.isPresent()){
+        if (appraisalCycle.isPresent()) {
             appraisalReviewList = appraisalReviewRepository.findAllByCycleId(appraisalCycle.get().getId());
             List<String> appraisalIdList = appraisalReviewList.stream().map(AppraisalReview::getId).collect(Collectors.toList());
             GregorianCalendar cal = new GregorianCalendar();
             cal.setTime(appraisalCycle.get().getEnd());
             cal.add(Calendar.DATE, 10);
-            List<AppraisalGoal> appraisalGoalList = appraisalGoalRepository.findAllByJob("");
-            int order = 15;
-            for (AppraisalGoal appraisalGoal : appraisalGoalList){
-                appraisalGoal.setOrder(order);
-                appraisalGoalRepository.save(appraisalGoal);
-                order += 1;
-            }
             List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAllByAppraisalIdIn(appraisalIdList);
             appraisalReviewGoals.forEach(appraisalReviewGoal -> {
                 Optional<AppraisalGoal> appraisalGoal = appraisalGoalRepository.
                         findById(appraisalReviewGoal.getGoalId());
 
                 if (appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())) {
-                    if(!appraisalReviewGoal.getComment().isEmpty()){
+                    if (!appraisalReviewGoal.getComment().isEmpty()) {
                         GoalEmployee goalEmployee = new GoalEmployee();
                         goalEmployee.setId(ObjectId.get().toString());
                         goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
@@ -90,7 +94,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         goalEmployees.add(goalEmployee);
                     }
                 } else if (appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString())) {
-                    if(!appraisalReviewGoal.getComment().isEmpty()){
+                    if (!appraisalReviewGoal.getComment().isEmpty()) {
                         GoalEmployee goalEmployee = new GoalEmployee();
                         goalEmployee.setId(ObjectId.get().toString());
                         goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
@@ -139,8 +143,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
             migrationOutputV2.setAppraisalLongMap(Map.ofEntries(Map.entry("appraisal.long", appraisalLongs)));
             migrationOutputV2.setGoalEmployeeMap(Map.ofEntries(Map.entry("goal.employee", goalEmployees)));
             return migrationOutputV2;
-        }
-        else
+        } else
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
