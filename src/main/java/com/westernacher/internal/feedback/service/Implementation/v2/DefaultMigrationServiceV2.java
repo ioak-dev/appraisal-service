@@ -66,29 +66,40 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
             GregorianCalendar cal = new GregorianCalendar();
             cal.setTime(appraisalCycle.get().getEnd());
             cal.add(Calendar.DATE, 10);
+            List<AppraisalGoal> appraisalGoalList = appraisalGoalRepository.findAllByJob("");
+            int order = 15;
+            for (AppraisalGoal appraisalGoal : appraisalGoalList){
+                appraisalGoal.setOrder(order);
+                appraisalGoalRepository.save(appraisalGoal);
+                order += 1;
+            }
             List<AppraisalReviewGoal> appraisalReviewGoals = appraisalReviewGoalRepository.findAllByAppraisalIdIn(appraisalIdList);
             appraisalReviewGoals.forEach(appraisalReviewGoal -> {
                 Optional<AppraisalGoal> appraisalGoal = appraisalGoalRepository.
                         findById(appraisalReviewGoal.getGoalId());
 
                 if (appraisalReviewGoal.getReviewerType().equals(SET_GOAL.toString())) {
-                    GoalEmployee goalEmployee = new GoalEmployee();
-                    goalEmployee.setId(ObjectId.get().toString());
-                    goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
-                    goalEmployee.setOrderId(appraisalGoal.get().getOrder());
-                    goalEmployee.setDescription(appraisalReviewGoal.getComment());
-                    goalEmployee.setCreatedDate(appraisalCycle.get().getStart());
-                    goalEmployee.setAuditCreateDate(cal.getTime());
-                    goalEmployees.add(goalEmployee);
+                    if(!appraisalReviewGoal.getComment().isEmpty()){
+                        GoalEmployee goalEmployee = new GoalEmployee();
+                        goalEmployee.setId(ObjectId.get().toString());
+                        goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
+                        goalEmployee.setOrderId(appraisalGoal.get().getOrder());
+                        goalEmployee.setDescription(appraisalReviewGoal.getComment());
+                        goalEmployee.setCreatedDate(appraisalCycle.get().getStart());
+                        goalEmployee.setAuditCreateDate(cal.getTime());
+                        goalEmployees.add(goalEmployee);
+                    }
                 } else if (appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString())) {
-                    GoalEmployee goalEmployee = new GoalEmployee();
-                    goalEmployee.setId(ObjectId.get().toString());
-                    goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
-                    goalEmployee.setOrderId(appraisalGoal.get().getOrder());
-                    goalEmployee.setDescription(appraisalReviewGoal.getComment());
-                    goalEmployee.setCreatedDate(cal.getTime());
-                    goalEmployee.setAuditCreateDate(cal.getTime());
-                    goalEmployees.add(goalEmployee);
+                    if(!appraisalReviewGoal.getComment().isEmpty()){
+                        GoalEmployee goalEmployee = new GoalEmployee();
+                        goalEmployee.setId(ObjectId.get().toString());
+                        goalEmployee.setEmployeeId(appraisalReviewGoal.getEmployeeId());
+                        goalEmployee.setOrderId(appraisalGoal.get().getOrder());
+                        goalEmployee.setDescription(appraisalReviewGoal.getComment());
+                        goalEmployee.setCreatedDate(cal.getTime());
+                        goalEmployee.setAuditCreateDate(cal.getTime());
+                        goalEmployees.add(goalEmployee);
+                    }
                 } else {
                     String headerKey = appraisalReviewGoal.getEmployeeId() + "--" + appraisalReviewGoal.getReviewerId() +
                             "--" + appraisalReviewGoal.getReviewerType();
