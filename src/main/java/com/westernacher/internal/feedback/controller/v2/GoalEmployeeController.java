@@ -2,7 +2,9 @@ package com.westernacher.internal.feedback.controller.v2;
 
 
 import com.westernacher.internal.feedback.domain.v2.Goal;
+import com.westernacher.internal.feedback.domain.v2.GoalEmployee;
 import com.westernacher.internal.feedback.domain.v2.GoalReference;
+import com.westernacher.internal.feedback.repository.v2.GoalEmployeeRepository;
 import com.westernacher.internal.feedback.repository.v2.GoalReferenceRepository;
 import com.westernacher.internal.feedback.repository.v2.GoalRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -18,17 +20,16 @@ import java.util.List;
 @RequestMapping("/api/appraisal/custom/target")
 public class GoalEmployeeController {
     @Autowired
-    private GoalReferenceRepository repository;
+    private GoalEmployeeRepository repository;
 
-    @GetMapping
-    public List<GoalReference> getAll () {
-        return repository.findAll();
+    @GetMapping("{employeeId}")
+    public List<GoalEmployee> getAll (@PathVariable String employeeId) {
+        return repository.findAllByEmployeeId(employeeId);
     }
 
-
     @PostMapping
-    public ResponseEntity<GoalReference> create (@Valid @RequestBody GoalReference goal) {
-        return ResponseEntity.ok(repository.save(goal));
+    public ResponseEntity<List<GoalEmployee>> create (@RequestBody List<GoalEmployee> targets) {
+        return ResponseEntity.ok(repository.saveAll(targets));
     }
 
 }
