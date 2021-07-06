@@ -123,7 +123,6 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         headerMap.put(headerKey, appraisalHeader);
                         headerId = headerMap.get(headerKey).getId();
                     }
-                    if (!appraisalReviewGoal.getComment().isEmpty()){
                         AppraisalLong appraisalLong = new AppraisalLong();
                         appraisalLong.setId(ObjectId.get().toString());
                         if (appraisalGoal.get().getJob().isEmpty())
@@ -139,7 +138,6 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         appraisalLong.setHeaderId(headerId);
                         appraisalLong.setCreatedDate(cal.getTime());
                         appraisalLongs.add(appraisalLong);
-                    }
                 }
 
             });
