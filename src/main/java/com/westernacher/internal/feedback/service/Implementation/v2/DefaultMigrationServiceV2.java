@@ -56,6 +56,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
         int order = 14;
         for (AppraisalGoal appraisalGoal : appraisalGoalList) {
             appraisalGoal.setOrder(order);
+            log.info("Appraisal Goal Id and Order " + appraisalGoal.getId() + " " + appraisalGoal.getOrder());
             appraisalGoalRepository.save(appraisalGoal);
             order += 1;
         }
@@ -122,18 +123,23 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         headerMap.put(headerKey, appraisalHeader);
                         headerId = headerMap.get(headerKey).getId();
                     }
-                    AppraisalLong appraisalLong = new AppraisalLong();
-                    appraisalLong.setId(ObjectId.get().toString());
-                    appraisalLong.setOrderId(appraisalGoal.get().getOrder());
-                    appraisalLong.setComment(appraisalReviewGoal.getComment());
-                    if (appraisalReviewGoal.getRating() == null || appraisalReviewGoal.getRating().equals(""))
-                        appraisalLong.setRating(0);
-                    else
-                        appraisalLong.setRating(Integer.parseInt(appraisalReviewGoal.getRating()
-                                .replaceAll("[^0-9]", "")));
-                    appraisalLong.setHeaderId(headerId);
-                    appraisalLong.setCreatedDate(cal.getTime());
-                    appraisalLongs.add(appraisalLong);
+                    if (!appraisalReviewGoal.getComment().isEmpty()){
+                        AppraisalLong appraisalLong = new AppraisalLong();
+                        appraisalLong.setId(ObjectId.get().toString());
+                        if (appraisalGoal.get().getJob().isEmpty())
+                            log.info("Appraisal Long's goal id and order " + appraisalGoal.get().getId()
+                                    + " " + String.valueOf(appraisalGoal.get().getOrder()));
+                        appraisalLong.setOrderId(appraisalGoal.get().getOrder());
+                        appraisalLong.setComment(appraisalReviewGoal.getComment());
+                        if (appraisalReviewGoal.getRating() == null || appraisalReviewGoal.getRating().equals(""))
+                            appraisalLong.setRating(0);
+                        else
+                            appraisalLong.setRating(Integer.parseInt(appraisalReviewGoal.getRating()
+                                    .replaceAll("[^0-9]", "")));
+                        appraisalLong.setHeaderId(headerId);
+                        appraisalLong.setCreatedDate(cal.getTime());
+                        appraisalLongs.add(appraisalLong);
+                    }
                 }
 
             });
