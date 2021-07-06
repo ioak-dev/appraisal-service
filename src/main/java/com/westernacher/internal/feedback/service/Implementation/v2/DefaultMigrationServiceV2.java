@@ -94,7 +94,6 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         goalEmployee.setOrderId(appraisalGoal.get().getOrder());
                         goalEmployee.setDescription(appraisalReviewGoal.getComment());
                         goalEmployee.setCreatedDate(appraisalCycle.get().getStart());
-                        goalEmployee.setAuditCreateDate(cal.getTime());
                         goalEmployees.add(goalEmployee);
                     }
                 } else if (appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString())) {
@@ -105,7 +104,6 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         goalEmployee.setOrderId(appraisalGoal.get().getOrder());
                         goalEmployee.setDescription(appraisalReviewGoal.getComment());
                         goalEmployee.setCreatedDate(cal.getTime());
-                        goalEmployee.setAuditCreateDate(cal.getTime());
                         goalEmployees.add(goalEmployee);
                     }
                 } else {

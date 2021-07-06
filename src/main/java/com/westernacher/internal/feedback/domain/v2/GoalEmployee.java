@@ -23,10 +23,8 @@ public class GoalEmployee {
     private String employeeId;
     private Integer orderId;
     private String description;
-    private Date createdDate;
-
     @CreatedDate
-    private Date auditCreateDate;
+    private Date createdDate;
 
     @LastModifiedDate
     private Date lastModifiedDate;
