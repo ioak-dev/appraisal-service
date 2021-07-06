@@ -22,6 +22,12 @@ public class MigrationControllerV2 {
         return serviceV2.getAppraisalData(cycleId);
     }
 
+    @PostMapping("/updateCuObjectives/{cycleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateOrderForCUObjectives(@PathVariable String cycleId){
+        serviceV2.updateCUObjectives(cycleId);
+    }
+
     @PostMapping("/loadAppraisalData")
     @ResponseStatus(HttpStatus.OK)
     public void loadAppraisalData(@RequestBody MigrationOutputV2 appraisalData){
@@ -32,7 +38,7 @@ public class MigrationControllerV2 {
     @ResponseStatus(HttpStatus.OK)
     public GetAndLoadOutput getAndLoadAppraisalData(@PathVariable String cycleId){
         log.info("Updating CU Level Order ID's");
-        serviceV2.updateCUObjectives();
+        serviceV2.updateCUObjectives(cycleId);
         log.info("getting appraisal data for cycleId " + cycleId);
         MigrationOutputV2 migrationOutputV2 = serviceV2.getAppraisalData(cycleId);
         log.info("Appraisal Data retrieved for cycleId " + cycleId);

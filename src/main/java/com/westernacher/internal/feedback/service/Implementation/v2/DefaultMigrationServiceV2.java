@@ -51,14 +51,17 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
     private AppraisalReviewRepository appraisalReviewRepository;
 
     @Override
-    public void updateCUObjectives() {
-        List<AppraisalGoal> appraisalGoalList = appraisalGoalRepository.findAllByJob("");
-        int order = 14;
-        for (AppraisalGoal appraisalGoal : appraisalGoalList) {
-            appraisalGoal.setOrder(order);
-            log.info("Appraisal Goal Id and Order " + appraisalGoal.getId() + " " + appraisalGoal.getOrder());
-            appraisalGoalRepository.save(appraisalGoal);
-            order += 1;
+    public void updateCUObjectives(String cycleId) {
+        Optional<AppraisalCycle> appraisalCycle = appraisalCycleRepository.findById(cycleId);
+        if (appraisalCycle.isPresent()){
+            List<AppraisalGoal> appraisalGoalList = appraisalGoalRepository.findAllByCuIs(appraisalCycle.get().getCu());
+            int order = 14;
+            for (AppraisalGoal appraisalGoal : appraisalGoalList) {
+                appraisalGoal.setOrder(order);
+                log.info("Appraisal Goal Id and Order " + appraisalGoal.getId() + " " + appraisalGoal.getOrder());
+                appraisalGoalRepository.save(appraisalGoal);
+                order += 1;
+            }
         }
     }
 
@@ -125,7 +128,8 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                     }
                     AppraisalLong appraisalLong = new AppraisalLong();
                     appraisalLong.setId(ObjectId.get().toString());
-                    if (appraisalGoal.get().getJob().isEmpty())
+                    if (appraisalGoal.get().getCu() !=null &&
+                            appraisalGoal.get().getCu().equals(appraisalCycle.get().getCu()))
                         log.info("Appraisal Long's goal id and order " + appraisalGoal.get().getId()
                                 + " " + String.valueOf(appraisalGoal.get().getOrder()));
                     appraisalLong.setOrderId(appraisalGoal.get().getOrder());
