@@ -24,17 +24,19 @@ public class GoalEmployeeController {
     private GoalEmployeeRepository repository;
 
     @GetMapping("{employeeId}")
-    public List<GoalEmployee> getAll (@PathVariable String employeeId) {
+    public List<GoalEmployee> getAll(@PathVariable String employeeId) {
         return repository.findAllByEmployeeId(employeeId);
     }
 
     @PostMapping("{employeeId}")
-    public ResponseEntity<List<GoalEmployee>> create (@RequestBody List<GoalEmployee> targets,
-                                                      @PathVariable String employeeId) {
+    public ResponseEntity<List<GoalEmployee>> create(@RequestBody List<GoalEmployee> targets,
+                                                     @PathVariable String employeeId) {
         List<GoalEmployee> targetList = new ArrayList<>();
-        for(GoalEmployee target:targets) {
-            target.setEmployeeId(employeeId);
-            targetList.add(target);
+        for (GoalEmployee target : targets) {
+            if (!target.getDescription().isEmpty() || target.getDescription() != null){
+                target.setEmployeeId(employeeId);
+                targetList.add(target);
+            }
         }
         return ResponseEntity.ok(repository.saveAll(targetList));
     }

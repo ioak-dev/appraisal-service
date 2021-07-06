@@ -94,6 +94,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         goalEmployee.setOrderId(appraisalGoal.get().getOrder());
                         goalEmployee.setDescription(appraisalReviewGoal.getComment());
                         goalEmployee.setCreatedDate(appraisalCycle.get().getStart());
+                        goalEmployee.setLastModifiedDate(appraisalCycle.get().getStart());
                         goalEmployees.add(goalEmployee);
                     }
                 } else if (appraisalReviewGoal.getReviewerType().equals(REVIEW_GOAL.toString())) {
@@ -104,6 +105,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         goalEmployee.setOrderId(appraisalGoal.get().getOrder());
                         goalEmployee.setDescription(appraisalReviewGoal.getComment());
                         goalEmployee.setCreatedDate(cal.getTime());
+                        goalEmployee.setLastModifiedDate(cal.getTime());
                         goalEmployees.add(goalEmployee);
                     }
                 } else {
@@ -121,6 +123,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                         appraisalHeader.setFrom(convertDateToInteger(appraisalCycle.get().getStart()));
                         appraisalHeader.setTo(convertDateToInteger(appraisalCycle.get().getEnd()));
                         appraisalHeader.setCreatedDate(cal.getTime());
+                        appraisalHeader.setLastModifiedDate(cal.getTime());
                         headerMap.put(headerKey, appraisalHeader);
                         headerId = headerMap.get(headerKey).getId();
                     }
@@ -139,6 +142,7 @@ public class DefaultMigrationServiceV2 implements MigrationServiceV2 {
                                 .replaceAll("[^0-9]", "")));
                     appraisalLong.setHeaderId(headerId);
                     appraisalLong.setCreatedDate(cal.getTime());
+                    appraisalLong.setLastModifiedDate(cal.getTime());
                     appraisalLongs.add(appraisalLong);
                 }
 
