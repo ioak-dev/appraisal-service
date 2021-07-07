@@ -33,7 +33,7 @@ public class GoalEmployeeController {
                                                      @PathVariable String employeeId) {
         List<GoalEmployee> targetList = new ArrayList<>();
         for (GoalEmployee target : targets) {
-            if (!target.getDescription().isEmpty() || target.getDescription() != null){
+            if (target.getDescription() != null && !target.getDescription().isEmpty()){
                 target.setEmployeeId(employeeId);
                 targetList.add(target);
             }
